@@ -1,0 +1,28 @@
+1.1 Login (3 role: Academic Staff, Lecturer, Student)
+1.2 Show menu
+1.3 View profile info
+1.4 Change password
+2.2 Manually add a new student to a class
+2.3 Edit an existing student
+2.4 Remove a student
+2.5 Change students from class A to class B
+2.6 View list of class
+2.7 View list of students in a class
+3.4 Edit an existing course
+3.5 Remove a course
+3.8 View list of courses in the current semester
+3.9 View attendance list of a course *
+3.11 Create / update / delete / view all lecturers
+4.1 Search and view the scoreboard of a course
+4.2 Export a scoreboard to a csv file
+6.1 View list of courses in the current semester
+6.2 View list of students of a course
+6.3 View attendance list of a course *
+6.4 Edit an attendance *
+6.6 Edit grade of a student
+7.3 View schedules
+7.4 View his/her scores of a course *
+
+// * : willing but not sure.
+// may cau khac m giao cho t cung duoc, t cung muon hoc hoi cai moi me.
+
