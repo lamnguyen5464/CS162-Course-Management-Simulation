@@ -31,7 +31,7 @@ struct CoreData{
     int numOfYears;
     Year *pHeadYear, *pTailYear;    //pHead cua Year
     int numOfLecturers;
-    Lecturer *pLecturer;
+    Lecturer *pHeadLecturer, *pTailLecturer;
 };
 
 struct Class{
@@ -41,11 +41,11 @@ struct Class{
     Student *pHeadStudent, *pTailStudent;
 };
 struct Student{
+    Student *next;
     long long id;
     string  lastName, firstName, dOB, gender, hashPassword;
+    int numOfCourse;
     CourseManager *pCourseManager;
-    int numOfYears;
-    Year *pYear;
 };
 struct courseManager{
     courseManager *next;
@@ -77,11 +77,11 @@ struct CheckIn{
     bool result;
     long long start, end;
 };
- //1> ab
-
-//2>
-
 void importDataBase(string pathName, CoreData &data);
-
-Student *find(long long id);
+void saveToDataBase(string pathName, CoreData data);
+void parseString(string &s);
+void addStudentToClass(string className, Student *&st, CoreData &data);
+void removeStudent(long long id, CoreData &data);
+void deallocatedStudent(Student *&st);
+Student *findStudent(long long id, CoreData data);
 #endif /* Data_hpp */
