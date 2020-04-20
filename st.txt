@@ -1,21 +1,21 @@
 3
-  19CTT1
+19CTT1
 3
-001
+1
 Nguyen Van
 A
 Male
 2001-09-25
 20010925A
 0
-002
+2
 Tran Thi
 B
 Female
 2001-09-25
 20010925B
 0
-005
+5
 Pham Van
 C
 Male
@@ -23,15 +23,8 @@ Male
 20010925C
 0
 19CTT2
-2
-003
-Tran Van
-D
-Male
-2001-09-25
-20010925D
-0
-007
+1
+7
 Pham Van
 E
 Male
@@ -40,18 +33,17 @@ Male
 0
 18CTT1
 2
-004
+4
 Pham 
 F
 Male
 2001-09-25
 20010925C
 0
-008
+8
 Nguyen Van
 G
 Male
 2001-09-25
 20010925H
 0
-
