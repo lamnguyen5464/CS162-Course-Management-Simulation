@@ -20,57 +20,64 @@ struct ScoreBoard;
 struct Year;
 struct Semester;
 struct CourseManager;
-struct CtudentManager;
+struct StudentManager;
 struct CheckIn;
 struct Lecturer;
 //definition
 
 struct CoreData{
-    int numOfClasses;
-    Class *pHeadClass, *pTailClass;
-    int numOfYears;
-    Year *pHeadYear, *pTailYear;    //pHead cua Year
-    int numOfLecturers;
-    Lecturer *pHeadLecturer, *pTailLecturer;
+    int numOfClasses = 0;
+    Class *pHeadClass = NULL;
+    int numOfYears = 0 ;
+    Year *pHeadYear = NULL;    //pHead cua Year
+    int numOfLecturers = 0;
+    Lecturer *pHeadLecturer = NULL;
 };
 
 struct Class{
     string name;
-    int numOfStudents;
-    Class *next;
-    Student *pHeadStudent, *pTailStudent;
+    int numOfStudents = NULL;
+    Class *next = NULL;
+    Student *pHeadStudent = NULL, *pTailStudent = NULL;
 };
 struct Student{
-    Student *next;
-    long long id;
-    string  lastName, firstName, dOB, gender, hashPassword;
-    int numOfCourse;
-    CourseManager *pCourseManager;
+    Student *next = NULL;
+    long long id, hashPassword;
+    string  lastName, firstName, dOB, gender;
+    int numOfCourse = 0;
+    CourseManager *pHeadCourseManager = NULL;
 };
-struct courseManager{
-    courseManager *next;
-    Course *pCourse;
-    ScoreBoard *pScore;
-    CheckIn *checkin;
+struct ScoreBoard{
+    double midTerm = -1, finalTerm = -1, lab = -1, bonus = -1;
+};
+struct CourseManager{
+    string year, semester;
+    CourseManager *next = NULL;
+    Course *pCourse = NULL;
+    ScoreBoard scoreBoard;
+    CheckIn *checkin = NULL;
     
 };
+struct StudentManager{
+    StudentManager *next;
+    Student *pStudent;
+};
 struct Year{
-    string yearName;
-    int numOfSems;
-    Semester *pHeadSemesters, *pTailSemester;  //pHead of semester
+    string name;
+    int numOfSems = 0;
+    Year *next = NULL;
+    Semester *pHeadSemesters = NULL;  //pHead of semester
 };
 struct Semester{
-    int numOfCourses;
-    string semesterName;
-    Course *pHeadCourse;
-};
-struct studentManager{
-    studentManager *next;
-    Student *pSt;
-};
+    int numOfCourses = 0;
+    string name;
+    Semester *next = NULL;
+    Course *pHeadCourse = NULL;
+}; 
 struct Course{
+    Course *next = NULL;
     string id, name, lectureAccount, startDate, endDate, dayOfWeek, room;
-    studentManager *pHeadStudentManager;
+    StudentManager *pHeadStudentManager = NULL;
 };
 //YYYYmmDDhhMMss -> long long
 struct CheckIn{
@@ -80,8 +87,22 @@ struct CheckIn{
 void importDataBase(string pathName, CoreData &data);
 void saveToDataBase(string pathName, CoreData data);
 void parseString(string &s);
-void addStudentToClass(string className, Student *&st, CoreData &data);
+long long hashPass(string s);
+//Class - Student
+bool findStudent(long long id, CoreData data, Student *&st, Class *&ofClass);
 void removeStudent(long long id, CoreData &data);
+bool findClass(string className, CoreData data, Class *&foundClass);
 void deallocatedStudent(Student *&st);
-Student *findStudent(long long id, CoreData data);
+void createNewEmptyClass(string className, CoreData &data);
+void addStudentToClass(Class *&pClass, Student *& tmpSt);
+void addStudentToClass(string className, Student *&st, CoreData &data);
+//Year - Semester - Course
+bool findYear(string yearName, Year *&foundYear, CoreData data);
+void createNewEmptyYear(string yearName, CoreData &data);
+bool findSemester(string yearName, string semesterName, Semester *&foundSemester, CoreData data);
+void createNewEmptySemester(string yearName, string semesterName, CoreData &data);
+bool findCourse(string yearName, string semesterName, string courseID, Course *&foundCourse, CoreData data);
+void addNewCourse(string inYear, string inSemester, Course *&newCourse, CoreData &data);
+void addStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear, string inSemester);
+bool findStudentInCourse(long long stId, Student *&foundSt, Course *curCourse);
 #endif /* Data_hpp */
