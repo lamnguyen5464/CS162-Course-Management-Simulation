@@ -2,7 +2,14 @@
 19_20
 2
 HK2
-0
+1
+CS162
+Computer science 2
+dbt
+1/1/1
+1/5/1
+Fri
+I34
 HK1
 2
 MTH1

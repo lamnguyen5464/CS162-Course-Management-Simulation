@@ -38,8 +38,7 @@ void importDataBase(string pathName, CoreData &data){
                     getline(fin, newC->endDate);
                     getline(fin, newC->dayOfWeek);
                     getline(fin, newC->room);
-                    newC->next = newSem->pHeadCourse;
-                    newSem->pHeadCourse = newC;
+                    addNewCourse(newSem, newC);
                 }
                 newSem->next = newYear->pHeadSemesters;
                 newYear->pHeadSemesters = newSem;
@@ -79,7 +78,7 @@ void importDataBase(string pathName, CoreData &data){
                 fin>>numOfCourse;
                 fin.ignore(256,'\n');
                 //link Course of semester of year here;
-                for(int k=1; k<=numOfCourse; k++){       
+                for(int k=1; k<=numOfCourse; k++){            
                     string courseId, year, semester;
                     //read info
                     getline(fin, year);
@@ -124,7 +123,7 @@ void saveToDataBase(string pathName, CoreData data){
         parseString(curClass->name);
         fout<<curClass->numOfStudents<<endl;
         Student *curSt = curClass->pHeadStudent;
-        while (curSt !=NULL ){                          cout<<curClass->name<<" "<<curSt->id<<endl;
+        while (curSt !=NULL ){                          // cout<<curClass->name<<" "<<curSt->id<<endl;
             fout<<curSt->id<<endl;
             fout<<curSt->lastName<<endl;
             fout<<curSt->firstName<<endl;
@@ -237,7 +236,7 @@ void removeStudent(long long id, CoreData &data){
         }
     }
 }
-void deallocatedStudent(Student *&st){
+void deallocateStudent(Student *&st){
 //    while (st->numOfCourse--){
 //        //deallocate *year
 //    }
@@ -327,7 +326,7 @@ bool findYear(string yearName, Year *&foundYear, CoreData data){
         tmp = tmp->next;
     }
     //not found this year;
-//    cout<<"The year "<<yearName<<" is not existing!"<<endl;
+    cout<<"The year "<<yearName<<" is not existing!"<<endl;
     return false;
 }
 void createNewEmptyYear(string yearName, CoreData &data){
@@ -356,7 +355,7 @@ bool findSemester(string yearName, string semesterName, Semester *&foundSemester
             curSem = curSem->next;
         }
         //not found this semester
-//        cout<<"The semester "<<semesterName<<" is not existing!"<<endl;
+        cout<<"The semester "<<semesterName<<" is not existing!"<<endl;
         return false;
     }else{
         //this year is not existing
@@ -387,53 +386,164 @@ void createNewEmptySemester(string yearName, string semesterName, CoreData &data
 bool findCourse(string yearName, string semesterName, string courseID, Course *&foundCourse, CoreData data){
     Semester *curSemester;
     if (findSemester(yearName, semesterName, curSemester, data)){
-        Course *curCourse = curSemester->pHeadCourse;
-        while (curCourse != NULL){
-            if (curCourse->id == courseID){
-                foundCourse = curCourse;
-                return true;
-            }
-            curCourse = curCourse->next;
+        Course *curCourse;
+        if (findCourse(courseID, curSemester, curCourse, data)){
+            foundCourse = curCourse;
+            return true;
         }
-        //not found
-        return false;
-    }else{
-        return false;
     }
-    
+    return false;
 }
+bool findCourse(string courseID, Semester *curSemester, Course *&foundCourse, CoreData data){
+    Course *curCourse = curSemester->pHeadCourse;
+    while (curCourse != NULL){
+        if (curCourse->id == courseID){
+            foundCourse = curCourse;
+            return true;
+        }
+        curCourse = curCourse->next;
+    }
+    //not found
+    cout<<"The Course "<<courseID<<" could not be found in this semester of this year"<<endl;
+    return false;
+}
+
 void addNewCourse(string inYear, string inSemester, Course *&newCourse, CoreData &data){
     Semester *curSem;
     if (findSemester(inYear, inSemester, curSem, data)){
         curSem->numOfCourses++;
         newCourse->next = curSem->pHeadCourse;
+        newCourse->pre = NULL;
+        if (curSem->pHeadCourse!=NULL) curSem->pHeadCourse->pre = newCourse;
         curSem->pHeadCourse = newCourse;
         cout<<"Add course successfully"<<endl;
     }
 }
+void addNewCourse(Semester *curSem, Course *&newCourse){ 
+    newCourse->next = curSem->pHeadCourse;
+    newCourse->pre = NULL;
+    if (curSem->pHeadCourse!=NULL) curSem->pHeadCourse->pre = newCourse;
+    curSem->pHeadCourse = newCourse; 
+}
+
 void addStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear, string inSemester){
     CourseManager *courseManager = new CourseManager;
     courseManager->pCourse = curCourse;
     courseManager->year = inYear;
     courseManager->semester = inSemester;
     courseManager->next = curStudent->pHeadCourseManager;
+    courseManager->pre = NULL;
+    if (curStudent->pHeadCourseManager!=NULL) curStudent->pHeadCourseManager->pre = courseManager;
     curStudent->pHeadCourseManager = courseManager;
     curStudent->numOfCourse++;
-    
     
     StudentManager *studentManager = new StudentManager;
     studentManager->pStudent = curStudent;
     studentManager->next = curCourse->pHeadStudentManager;
+    studentManager->pre = NULL;
+    if (curCourse->pHeadStudentManager!=NULL) curCourse->pHeadStudentManager->pre = studentManager;
     curCourse->pHeadStudentManager = studentManager;
+    
+    studentManager->pCourseManager = courseManager;
+    courseManager->pStudentManager = studentManager;
 }
-bool findStudentInCourse(long long stId, Student *&foundSt, Course *curCourse){
+bool findStudentInCourse(long long stId, StudentManager *&foundStudentManager, Course *curCourse){
     StudentManager *cur = curCourse->pHeadStudentManager;
     while (cur != NULL){
         if (cur->pStudent->id == stId){
-            foundSt = cur->pStudent;
+            foundStudentManager = cur;
             return true;
         }
         cur = cur->next;
     }
     return false;
+}
+void removeCourseManager(StudentManager *curStudentManager){
+    Student *curSt = curStudentManager->pStudent;
+    CourseManager *curCourseManager = curStudentManager->pCourseManager;
+    curSt->numOfCourse--;
+    
+    //remove course from student
+    if (curCourseManager->pre == NULL){
+        curSt->pHeadCourseManager = curCourseManager->next;
+    }else{
+        curCourseManager->pre->next = curCourseManager->next;
+    }
+    if (curCourseManager->next != NULL) curCourseManager->next->pre = curCourseManager->pre;
+    
+    deallocateCourseManager(curCourseManager);
+    deallocateStudentManager(curStudentManager);
+}
+void removeCourse(Course *curCourse){
+    StudentManager *curStudentManager = curCourse->pHeadStudentManager;
+    while (curStudentManager != NULL){
+        removeCourseManager(curStudentManager);
+        
+        StudentManager *tmp = curStudentManager->next;
+        curStudentManager = tmp;
+    }
+}
+void deallocateCourse(Course *curCourse){
+    
+}
+void deallocateCourseManager(CourseManager *curCourseManager){
+    
+}
+void deallocateStudentManager(StudentManager *curStudentManager){
+    
+}
+bool removeCourse(string yearName, string semesterName, string courseID, CoreData &data){
+    Course *curCourse;
+    Semester *curSem;
+    if (findSemester(yearName, semesterName, curSem, data)){
+        if (findCourse(courseID, curSem, curCourse, data)){
+            curSem->numOfCourses--;
+            if (curCourse->pre == NULL){
+                curSem->pHeadCourse = curCourse->next;
+            }else{
+                curCourse->pre->next = curCourse->next;
+            }
+            if (curCourse->next !=NULL) curCourse->next->pre = curCourse->pre;
+            removeCourse(curCourse);
+            return true;
+        }
+    }
+    
+    return 0; // could not find the course
+}
+void removeStudentFromCourse(long long stID, Course *curCourse){
+    StudentManager *curStudentManager;
+    if (findStudentInCourse(stID, curStudentManager, curCourse)){
+        removeCourseManager(curStudentManager);
+        //remove Student manager
+        if (curStudentManager->pre == NULL){
+            curCourse->pHeadStudentManager = curStudentManager;
+        }else{
+            curStudentManager->pre->next = curStudentManager->next;
+        }
+        if (curStudentManager->next != NULL) curStudentManager->next->pre = curStudentManager->pre;
+        deallocateStudentManager(curStudentManager);
+    }
+}
+void showDataStudent(CoreData data){
+    cout<<"Number of class: "<<data.numOfClasses<<endl;
+    Class *curClass = data.pHeadClass;
+    while ((curClass != NULL)){
+        cout<<"     Class "<<curClass->name<<" - "<<curClass->numOfStudents<<" student(s):"<<endl;
+        Student *curSt = curClass->pHeadStudent; 
+        while (curSt != NULL){
+            cout<<"         Id: "<<curSt->id<<endl;
+            cout<<"         Name: "<<curSt->firstName<<" "<<curSt->lastName<<endl;
+            cout<<"         NumOfCourses: "<<curSt->numOfCourse<<endl;
+            CourseManager *curCourse = curSt->pHeadCourseManager;
+            while (curCourse != NULL){
+                cout<<"             "<<curCourse->pCourse->name<<endl;
+                curCourse = curCourse->next;
+            }
+            curSt = curSt->next;
+            cout<<endl;
+        }
+        curClass = curClass->next;
+        cout<<endl;
+    }
 }
