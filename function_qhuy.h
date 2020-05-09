@@ -7,7 +7,7 @@ void staffClassMenu (CoreData &data);
 void importStudentFromCsvFile (CoreData &data);
 
 void edit(Student *&tmpSt,int choice);
-void editAnExistingStudent (long long id, CoreData &data);
+void editAnExistingStudent ( CoreData &data);
 
 void viewListOfClasses(CoreData data);
 void viewListOfStudents(CoreData data);
