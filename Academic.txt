@@ -1,18 +1,21 @@
 1
-
 19_20
 2
-	HK1
-	3
-		cs161 
-			cs161
-			Computer 
-			Class
-			... 
-			*pStudentIn;
-		cs162
-		cs163
-	HK2
-	0
-
-20_21
+HK2
+0
+HK1
+2
+MTH1
+Calculus 1
+daa
+1/1/1
+1/5/1
+Mon
+I54
+CM
+Communication management
+dnv
+1/1/1
+1/5/1
+Wed
+I24
