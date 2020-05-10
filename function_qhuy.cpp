@@ -55,69 +55,76 @@ void staffClassMenu (CoreData &data){
     }
 }
 
+void inputStudentFromFile(Student *tmpSt,Class *&tmpClass,ifstream &fin){
+    string tmp;
+    int number;
+    tmpSt = new Student;
+    getline(fin,tmp,'\n');
+    while(!fin.eof()){
+        fin >> number;
+        fin.ignore(1);
+        fin >> tmpSt->id;
+        fin.ignore(1);
+        getline(fin,tmpSt->lastName,',');
+        getline(fin,tmpSt->firstName,',');
+        getline(fin,tmpSt->gender,',');
+        getline(fin,tmpSt->dOB,'\n');
+        tmpClass->numOfStudents++;
+        addStudentToClass(tmpClass,tmpSt);
+    }
+}
+
 void importStudentFromCsvFile (CoreData &data){
     ifstream fin;
     string linkOfFile,nameOfClass;
-    cout << "Which class do you want to import: ";
-    cin.ignore();
-    getline(cin, nameOfClass);
-    cout << "Please let us know the link of your csv file: ";
-    cin.ignore();
-    getline(cin, linkOfFile);
-    fin.open(linkOfFile);
-    if (!fin.is_open()){
-        cout << "can not open file"<<endl;
-    }
-    else{
-        int choice = 2;
-        Class *tmpClass = NULL;
-        while (findClass(nameOfClass,data,tmpClass) && choice == 2){////check whether the class has existed
-            cout << "This class has already existed"<<endl;
-            cout << "1.Add to the existing class."<<endl;
-            cout << "2.Input another class. "<<endl;
-            cout << "Your choice: "<<endl;
-            cin >> choice;
-            switch (choice){
-                case 2:
-                    cout << "Which class do you want to import: ";
-                    cin.ignore();
-                    getline(cin, nameOfClass);
-                    break;
-                default:
-                    break;
+    while(1){
+        cout << "Which class do you want to import: ";
+        cin.ignore();
+        getline(cin, nameOfClass);
+        cout << "Please let us know the link of your csv file: ";
+        getline(cin, linkOfFile);
+        fin.open(linkOfFile);
+        if (!fin.is_open()){
+            cout << "can not open file"<<endl;
+        }
+        else{
+            Class *tmpClass;
+            Student *tmpSt;
+            if (findClass(nameOfClass,data,tmpClass)){////check whether the class has existed
+                cout << "This class has already existed"<<endl;
+                cout << "1.Add to the existing class."<<endl;
+                cout << "2.Input another class. "<<endl;
+                cout << "3.Return"<<endl;
+                cout << "Your choice: "<<endl;
+                int choice;
+                cin >> choice;
+                switch(choice){
+                    case 1:
+                        inputStudentFromFile(tmpSt,tmpClass,fin);
+                    case 3:
+                        return;
+                    default:
+                        break;
+                }
+            }
+            else{
+                createNewEmptyClass(nameOfClass,data);
+                inputStudentFromFile(tmpSt,data.pHeadClass,fin);
+                int tmp;
+                cout << "Do you want to continue(1.Yes 0.No): ";
+                cin >> tmp;
+                switch(tmp){
+                    case 0:
+                        return;
+                    default:
+                        break;
+                }
+            fin.close();
             }
         }
-        Student *tmpSt;
-        int number;
-        // ? how to ignore the header
-        if (choice == 1){//user choose to add the file to the existing class.
-            while (!fin.eof()){
-                fin >> number;
-                fin >> tmpSt->id;
-                getline(fin,tmpSt-> lastName);
-                getline(fin,tmpSt->firstName);
-                getline(fin,tmpSt->gender);
-                getline(fin,tmpSt->dOB);
-                tmpClass->numOfStudents++;
-                addStudentToClass(tmpClass,tmpSt);
-            }
-        }
-        else{//a new class.
-            createNewEmptyClass(nameOfClass,data);
-            while (!fin.eof()){
-                fin >> number;
-                fin >> tmpSt->id;
-                getline(fin,tmpSt-> lastName);
-                getline(fin,tmpSt->firstName);
-                getline(fin,tmpSt->gender);
-                getline(fin,tmpSt->dOB);
-                tmpClass->numOfStudents++;
-                addStudentToClass(data.pHeadClass,tmpSt);//the new class become pheadclass
-            }
-        }
-        fin.close();
     }
 }
+
 void edit(Student *&tmpSt,int choice,bool &checkChoice){
     switch(choice){
         case 1:{
@@ -125,7 +132,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             long long tmpID;
             cin >> tmpID;
             tmpSt ->id = tmpID;
-            cout << "Edit successfully";
+            cout << "Edit successfully"<<endl;
             break;
         }
         case 2:{
@@ -134,7 +141,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             cin.ignore();
             getline(cin,tmpLast);
             tmpSt ->lastName = tmpLast;
-            cout << "Edit successfully";
+            cout << "Edit successfully"<<endl;
             break;
         }
         case 3:{
@@ -143,7 +150,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             cin.ignore();
             getline(cin,tmpFirst);
             tmpSt ->firstName = tmpFirst;
-            cout << "Edit successfully";
+            cout << "Edit successfully"<<endl;
             break;
         }
         case 4:{
@@ -152,7 +159,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             cin.ignore();
             getline(cin,tmpdob);
             tmpSt ->dOB = tmpdob;
-            cout << "Edit successfully";
+            cout << "Edit successfully"<<endl;
             break;
         }
         case 5:{
@@ -161,7 +168,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             cin.ignore();
             getline(cin,tmpgender);
             tmpSt ->gender= tmpgender;
-            cout << "Edit successfully";
+            cout << "Edit successfully"<<endl;
             break;
         }
         default:
@@ -170,10 +177,10 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
     }
 }
 void editAnExistingStudent(CoreData &data){
+    bool checkChoice = true;
     while(1){
         long long ID;
-        bool checkChoice = true;
-        if (checkChoice == false) cout << "Your choice is invalid";
+        if (checkChoice == false) cout << "Your choice is invalid"<<endl;
         cout << "Please input id of the student you want to edit: ";
         cin >> ID;
         Student *tmpSt=NULL;
@@ -218,17 +225,18 @@ void viewListOfClasses(CoreData data){
             return;
         }
         else{
-            int a = 0,choice;
+            int a = 1,choice;
             while (curClass != NULL){
                 cout<< a <<". " << "Class: " << curClass ->name << " has " << curClass ->numOfStudents << " students." <<endl;
                 curClass = curClass ->next;
+                a++;
             }
             cout << "Which class do you want to view list of students (0 to return): ";
             cin >> choice;
             if (choice == 0) return;
-            else if (choice <= a){
+            else if (choice <= data.numOfClasses){
                 curClass = data.pHeadClass;
-                int i = 0;
+                int i = 1;
                 while (i < choice){
                     curClass = curClass ->next;
                     i++;
@@ -246,41 +254,60 @@ void viewListOfStudents(Class *curClass){
         cout << "there is no student in this class"<<endl;
     }
     else{
-        cout << "---------------------------------------------------------------"<<endl;
+        cout << "----LIST OF STUDENTS----"<<endl;
         while(tmpSt != NULL){
-            cout << "--------------------------------------"<<endl;
+            cout << "--------------------------------"<<endl;
             cout <<"| " << tmpSt->id <<" | " << tmpSt->lastName <<" | " << tmpSt->firstName <<" | "<< tmpSt->dOB <<" | " << tmpSt->gender<<" |"<<endl;
+            tmpSt = tmpSt ->next;
         }
-        cout << "---------------------------------------------------------------"<<endl;
+        cout << "---------------------------------"<<endl;
     }
 }
 
 void addAStudent(CoreData &data){
     while(1){
         Student *tmpSt = new Student;
+        Student *curSt;
+        Class *curClass;
         string classname;
         cout << "Please input the student's ID: " ;
         cin >> tmpSt->id;
-        cout << "Please input the student's last name: " ;
-        cin.ignore();
-        getline(cin,tmpSt->lastName);
-        cout << "Please input the student's first name: " ;
-        getline(cin,tmpSt->firstName);
-        cout << "Please input the student's DoB : " ;
-        getline(cin,tmpSt->dOB);
-        cout << "Please input the student's gender: " ;
-        getline(cin,tmpSt->gender);
-        cout << "Which class you want to put this student in: ";
-        getline(cin,classname);
-        addStudentToClass(classname,tmpSt,data);
-        int tmp;
-        cout << "Do you want to continue(1.Yes 0.No): ";
-        cin >> tmp;
-        switch(tmp){
-            case 0:
-                return;
-            default:
-                break;
+        if(findStudent(tmpSt->id,data,curSt,curClass)){
+            cout << "This student has already exist"<<endl;
+            cout << "1.Input another student."<<endl;
+            cout << "2.Return"<<endl;
+            int choice;
+            cout << "Your choice: "<<endl;
+            cin >> choice;
+            switch(choice){
+                case 2:
+                    return;
+                default:
+                    break;
+            }
+        }
+        else{
+            cout << "Please input the student's last name: " ;
+            cin.ignore();
+            getline(cin,tmpSt->lastName);
+            cout << "Please input the student's first name: " ;
+            getline(cin,tmpSt->firstName);
+            cout << "Please input the student's DoB : " ;
+            getline(cin,tmpSt->dOB);
+            cout << "Please input the student's gender: " ;
+            getline(cin,tmpSt->gender);
+            cout << "Which class you want to put this student in: ";
+            getline(cin,classname);
+            addStudentToClass(classname,tmpSt,data);
+            int tmp;
+            cout << "Do you want to continue(1.Yes 0.No): ";
+            cin >> tmp;
+            switch(tmp){
+                case 0:
+                    return;
+                default:
+                    break;
+            }
         }
     }
 }
@@ -319,8 +346,10 @@ void moveStudentFromAToB (CoreData &data){
             cout << "Which class do you want this student to move to?" <<endl;
             cin.ignore();
             getline(cin,classmove);
-            addStudentToClass(classmove,tmpSt,data);
+            Student *cur = new Student;
+            copyStudentInfor(cur,tmpSt);
             removeStudent(id,data);
+            addStudentToClass(classmove,cur,data);
             int tmp;
             cout << "Do you want to continue(1.Yes 0.No): ";
             cin >> tmp;
@@ -345,4 +374,16 @@ void moveStudentFromAToB (CoreData &data){
             }
         }
     }
+}
+
+void copyStudentInfor(Student *&dup,Student *tmpSt){
+    dup->id = tmpSt->id;
+    dup->lastName = tmpSt->lastName;
+    dup->firstName = tmpSt->firstName;
+    dup->dOB = tmpSt->dOB;
+    dup->gender = tmpSt->gender;
+    dup->hashPassword = tmpSt->hashPassword;
+    dup->next = tmpSt->next;
+    dup->numOfCourse = tmpSt->numOfCourse;
+    dup->pHeadCourseManager = tmpSt ->pHeadCourseManager;
 }
