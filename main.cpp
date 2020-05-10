@@ -13,12 +13,8 @@ int main() {
     
     showCourse(data);
     cout<<"_______________"<<endl;
-    if (findCourse("19_20", "HK1", "CM", newCourse, data)){
-        if (removeStudent(7, data)){
-            cout<<"Remove "<<7<<" successfully"<<endl;
-        }else{
-            cout<<"Could not find "<<7<<" in database"<<endl;
-        }
+    if (findSemester("19_20", "HK1", curSem, data) && findCourse("MTH1", curSem, newCourse, data)){
+        removeCourse(curSem, newCourse);
     }
 //
     showCourse(data);

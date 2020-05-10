@@ -482,7 +482,14 @@ void removeCourseManager(StudentManager *curStudentManager){
     deallocateCourseManager(curCourseManager);
     deallocateStudentManager(curStudentManager);
 }
-void removeCourse(Course *curCourse){
+void removeCourse(Semester *curSem ,Course *curCourse){
+    curSem->numOfCourses--;
+    if (curCourse->pre == NULL){
+        curSem->pHeadCourse = curCourse->next;
+    }else{
+        curCourse->pre->next = curCourse->next;
+    }
+    if (curCourse->next !=NULL) curCourse->next->pre = curCourse->pre;
     StudentManager *curStudentManager = curCourse->pHeadStudentManager;
     while (curStudentManager != NULL){
         removeCourseManager(curStudentManager);
@@ -505,14 +512,7 @@ bool removeCourse(string yearName, string semesterName, string courseID, CoreDat
     Semester *curSem;
     if (findSemester(yearName, semesterName, curSem, data)){
         if (findCourse(courseID, curSem, curCourse, data)){
-            curSem->numOfCourses--;
-            if (curCourse->pre == NULL){
-                curSem->pHeadCourse = curCourse->next;
-            }else{
-                curCourse->pre->next = curCourse->next;
-            }
-            if (curCourse->next !=NULL) curCourse->next->pre = curCourse->pre;
-            removeCourse(curCourse);
+            removeCourse(curSem, curCourse);
             return true;
         }
     }
