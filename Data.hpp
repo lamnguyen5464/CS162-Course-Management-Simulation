@@ -89,11 +89,12 @@ struct CheckIn{
 void importDataBase(string pathName, CoreData &data);
 void saveToDataBase(string pathName, CoreData data);
 void showDataStudent(CoreData data);
+void showCourse(CoreData data);
 void parseString(string &s);
 long long hashPass(string s);
 //Class - Student
 bool findStudent(long long id, CoreData data, Student *&st, Class *&ofClass);
-void removeStudent(long long id, CoreData &data);
+bool removeStudent(long long id, CoreData &data);
 bool findClass(string className, CoreData data, Class *&foundClass);
 void deallocateStudent(Student *&st);
 void createNewEmptyClass(string className, CoreData &data);

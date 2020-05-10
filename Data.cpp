@@ -208,7 +208,7 @@ bool findClass(string className, CoreData data, Class *&foundClass){
     }
     return false;
 }
-void removeStudent(long long id, CoreData &data){
+bool removeStudent(long long id, CoreData &data){
     Class *curClass = data.pHeadClass;
     while (curClass != NULL){
         //check if class is empty
@@ -229,12 +229,20 @@ void removeStudent(long long id, CoreData &data){
                     if (curStudent->next==NULL) curClass->pTailStudent = preStudent; //remove at ptail
                     preStudent->next = curStudent->next;
                 }
-                //remove in course 
+                //remove in course
+                CourseManager *courseManager = curStudent->pHeadCourseManager;
+                while (courseManager != NULL){
+                    removeStudentFromCourse(curStudent->id, courseManager->pCourse);
+                    courseManager = courseManager->next;
+                }
+                deallocateStudent(curStudent);
+                return true;
                 //
             }
             curClass = curClass->next;
         }
     }
+    return false;
 }
 void deallocateStudent(Student *&st){
 //    while (st->numOfCourse--){
@@ -545,5 +553,27 @@ void showDataStudent(CoreData data){
         }
         curClass = curClass->next;
         cout<<endl;
+    }
+}
+void showCourse(CoreData data){
+    Year *curYear = data.pHeadYear;
+    while (curYear != NULL){
+        cout<<"Year: "<<curYear->name<<endl;
+        Semester *curSem = curYear->pHeadSemesters;
+        while (curSem != NULL){
+            cout<<"     "<<curSem->name<<": "<<endl;
+            Course *curCourse = curSem->pHeadCourse;
+            while (curCourse != NULL){
+                cout<<"         "<<curCourse->name<<endl;
+                StudentManager *curSt = curCourse->pHeadStudentManager;
+                while (curSt != NULL){
+                    cout<<"             "<<curSt->pStudent->firstName<<" "<<curSt->pStudent->lastName<<" "<<curSt->pStudent->id<<endl;
+                    curSt = curSt->next;
+                }
+                curCourse = curCourse->next;
+            }
+            curSem = curSem->next;
+        }
+        curYear = curYear->next;
     }
 }
