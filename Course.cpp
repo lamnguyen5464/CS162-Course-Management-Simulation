@@ -1,75 +1,36 @@
 #include <fstream>
+#include <iostream>
 #include <string>
 #include "Data.hpp"
 #include "Course.h"
 
-const string pathName = "D:/Uni/CS162/project/Project";
-
-void displayAllYears(CoreData data)
+//DISPLAYS
+void displayYearInfo(Year* curYear)
 {
-	for (int i = 1; i <= data.numOfYears; ++i)
-	{
-		cout << i << ". " << data.pHeadYear->name << endl;
-		data.pHeadYear = data.pHeadYear->next;
-	}
-}
-
-void displayAllSemesters(CoreData data)
-{
-	for (int i = 1; i <= data.numOfYears; ++i)
-	{
-		cout << (char)(i + 64) << ". " << data.pHeadYear->name << endl;
-		for (int j = 1; j <= data.pHeadYear->numOfSems; ++j)
-		{
-			cout << j << ". " << data.pHeadYear->pHeadSemesters->name << endl;
-			data.pHeadYear->pHeadSemesters = data.pHeadYear->pHeadSemesters->next;
-		}
-		data.pHeadYear = data.pHeadYear->next;
-	}
-}
-
-void displayAllCourses(CoreData data)
-{
-	for (int i = 1; i <= data.numOfYears; ++i)
-	{
-		cout << (char)(i + 64) << ". " << data.pHeadYear->name << endl;
-		for (int j = 1; j <= data.pHeadYear->numOfSems; ++j)
-		{
-			cout << j << ". " << data.pHeadYear->pHeadSemesters->name << endl;
-			for (int k = 1; k <= data.pHeadYear->pHeadSemesters->numOfCourses; ++k)
-			{
-				cout << k << ". " << data.pHeadYear->pHeadSemesters->pHeadCourse->name << endl;
-				data.pHeadYear->pHeadSemesters->pHeadCourse = data.pHeadYear->pHeadSemesters->pHeadCourse->next;
-			}
-			data.pHeadYear->pHeadSemesters = data.pHeadYear->pHeadSemesters->next;
-		}
-		data.pHeadYear = data.pHeadYear->next;
-	}
-}
-
-void displayYearInfo(Year* curYear, CoreData data)
-{
-	cout << "Name: " << curYear->name << endl;
-	cout << "Number of semesters: " << curYear->numOfSems << endl;
+	Year* tmpYear = curYear;
+	cout << "Name: " << tmpYear->name << endl;
+	cout << "Number of semesters: " << tmpYear->numOfSems << endl;
 	cout << "Semesters' details: " << endl;
-	while (curYear->pHeadSemesters != NULL) {
-		cout << curYear->pHeadSemesters->name << endl;
-		curYear->pHeadSemesters = curYear->pHeadSemesters->next;
+	Semester* tmpSem = tmpYear->pHeadSemesters;
+	while (tmpSem != NULL) 
+	{
+		cout << tmpSem->name << endl;
+		tmpSem = tmpSem->next;
 	}
 }
-
-void displaySemInfo(Semester* curSem, CoreData data)
+void displaySemInfo(Semester* curSem)
 {
-	cout << "Name: " << curSem->name << endl;
-	cout << "Number of courses: " << curSem->numOfCourses << endl;
+	Semester* tmpSem = curSem;
+	cout << "Name: " << tmpSem->name << endl;
+	cout << "Number of courses: " << tmpSem->numOfCourses << endl;
 	cout << "Courses' details: " << endl;
-	while (curSem->pHeadCourse != NULL) {
-		cout << curSem->pHeadCourse->name << endl;
-		curSem->pHeadCourse = curSem->pHeadCourse->next;
+	Course* tmpCourse = tmpSem->pHeadCourse;
+	while (tmpCourse != NULL) {
+		cout << tmpCourse->name << endl;
+		tmpCourse = tmpCourse->next;
 	}
 }
-
-void displayCourseInfo(Course* curCourse, CoreData data)
+void displayCourseInfo(Course* curCourse)
 {
 	cout << "Course ID: " << curCourse->id << endl;
 	cout << "Course name: " << curCourse->name << endl;
@@ -79,89 +40,493 @@ void displayCourseInfo(Course* curCourse, CoreData data)
 	cout << "Day of week: " << curCourse->dayOfWeek << endl;
 	cout << "Room: " << curCourse->room << endl;
 }
+void displayCoursesCurSem(Year* curYear, Semester* curSem)
+{
+	cout << endl << "Courses of " << curSem->name << " of " << curYear->name << ": " << endl;
+	Course* tmpCourse = curSem->pHeadCourse;
+	for (int i = 1; tmpCourse != NULL; ++i)
+	{
+		cout << i << ". " << tmpCourse->name << endl;
+		tmpCourse = tmpCourse->next;
+	}
+}
+void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse)
+{
+	cout << endl;
+	cout << "Year: " << curYear->name << endl;
+	cout << "    Semester: " << curSemester->name << endl;
+	cout << "        Course: " << curCourse->name << endl;
 
+	StudentManager* cur = curCourse->pHeadStudentManager;
+	int i = 1;
+	while (cur != NULL)
+	{
+		cout << "            " << i++ << ". " << cur->pStudent->lastName << " " << cur->pStudent->firstName << " " << cur->pStudent->id << endl;
+		cur = cur->next;
+	}
+}
+
+//EDITS
 void editYear(Year*& curYear, CoreData& data)
 {
 	//Display the info one time before editing
-	cout << "This is the information of the academic year you want to edit: ";
-	displayYearInfo(curYear, data);
-	//cout << "Do you want to edit? (0 - NO, 1 - YES): ";
-
-	//Input again all the info
-	cout << endl << "Please input again all the information of that academic year: ";
-	cout << "Name: ";
-	getline(cin, curYear->name);
-	cout << "Number of semesters: ";
-	int tmpNumOfSems = curYear->numOfSems;
-	cin >> curYear->numOfSems;
-
-	//If the number of semesters changes, update accordingly
-	if (curYear->numOfSems > tmpNumOfSems)
+	cout << endl << "This is the information of the academic year you want to edit: " << endl;
+	displayYearInfo(curYear);
+	cout << endl << "Do you want to edit this academic year? (0 - NO, 1 - YES)" << endl;
+	bool showOption = true;
+	while (1)
 	{
-		for (int i = 1; i <= curYear->numOfSems - tmpNumOfSems; ++i)
+		if (!showOption)
 		{
-			cout << "New semester name: ";
-			string semName;
-			getline(cin, semName);
-			createNewEmptySemester(curYear->name, semName, data);
-			cout << endl;
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			cout << "Then you will be brought back." << endl;
+			return;
+		case 1:
+		{
+			//Input again all the info
+			cout << endl << "Please input again all the information of that academic year: " << endl;
+			cin.ignore();
+			cout << "Name: ";
+			string prevYearName = curYear->name;
+			getline(cin, curYear->name);
+			cout << "Number of semesters: ";
+			int tmpNumOfSems = curYear->numOfSems;
+			cin >> curYear->numOfSems;
+
+			//Edit the year of students in that academic year
+			if (curYear->name != prevYearName && curYear->pHeadSemesters != NULL)
+			{
+				Semester* tmpSem = curYear->pHeadSemesters;
+				while (tmpSem != NULL)
+				{
+					if (tmpSem->pHeadCourse != NULL)
+					{
+						Course* tmpCourse = tmpSem->pHeadCourse;
+							while (tmpCourse != NULL)
+							{
+								if (tmpCourse->pHeadStudentManager != NULL)
+								{
+									StudentManager* tmpStdMng = tmpCourse->pHeadStudentManager;
+									while (tmpStdMng != NULL)
+									{
+										tmpStdMng->pCourseManager->year = curYear->name;
+										tmpStdMng = tmpStdMng->next;
+									}
+								}
+								tmpCourse = tmpCourse->next;
+							}
+					}
+					tmpSem = tmpSem->next;
+				}
+			}
+
+			//If the number of semesters changes, update accordingly
+			if (curYear->numOfSems > tmpNumOfSems)
+			{
+				cin.ignore();
+				for (int i = 1; i <= curYear->numOfSems - tmpNumOfSems; ++i)
+				{
+					cout << "Please input the name of the semester you want to create:";
+					string semesterName;
+					getline(cin, semesterName);
+					Semester* tmpSem = NULL;
+					if (findSemester(curYear->name, semesterName, tmpSem, data))
+					{
+						i--;
+						cout << "This semester has already existed. Please input again." << endl;
+					}
+					else
+					{
+						createNewEmptySemester(curYear->name, semesterName, data);
+						curYear->numOfSems--; //redundant addition of numOfSems in createNewEmptySemester function
+					}
+				}
+			}
+			else if (curYear->numOfSems < tmpNumOfSems)
+			{
+				//remove semesters
+				/*for (int j = curYear->numOfSems; j <= tmpNumOfSems; ++j)
+				{
+					Semester* curSem = NULL;
+					semesterMenu(curYear, curSem, data);
+					if (curSem != NULL)
+					{
+						removeSemDirect(curYear, curSem, data);
+					}
+				}*/
+			}
+
+			cout << endl << "Your updated academic year: " << endl;
+			displayYearInfo(curYear);
+			return;
+		}
+		default:
+			showOption = false;
+			break;
 		}
 	}
-	else if (curYear->numOfSems < tmpNumOfSems)
-	{
-		//delete Semester
-	}
-
-	cout << "Your updated academic year: " << endl;
-	displayYearInfo(curYear, data);
 }
-
-void deleteYear(Year*& curYear, CoreData& data)
-{
-	//Display the info one time before deleting
-	cout << "This is the information of the academic year you want to delete: ";
-	displayYearInfo(curYear, data);
-	//cout << "Do you want to edit? (0 - NO, 1 - YES): ";
-
-
-}
-
-void editSem(Semester*& curSem, CoreData& data)
+void editSem(Year*& curYear, Semester*& curSem, CoreData& data)
 {
 	//Display the info one time before editing
-	cout << "This is the information of the semester you want to edit: ";
-	displaySemInfo(curSem, data);
-	//cout << "Do you want to edit? (0 - NO, 1 - YES): ";
-
-	//Input again all the info
-	cout << endl << "Please input again all the information of that semester: ";
-	cout << "Name: ";
-	getline(cin, curSem->name);
-	cout << "Number of courses: ";
-	int tmpNumOfCourses = curSem->numOfCourses;
-	cin >> curSem->numOfCourses;
-
-	//If the number of semesters changes, update accordingly
-	if (curSem->numOfCourses > tmpNumOfCourses)
+	cout << endl << "This is the information of the semester you want to edit: " << endl;
+	displaySemInfo(curSem);
+	cout << endl << "Do you want to edit this semester? (0 - NO, 1 - YES)" << endl;
+	bool showOption = true;
+	while (1)
 	{
-		for (int i = 1; i <= curSem->numOfCourses - tmpNumOfCourses; ++i)
+		if (!showOption)
 		{
-			Course* newCourse = new Course;
-			inputCourseDetail(newCourse);
-			addNewCourse(curYear, curSem->name, newCourse, data);
-			cout << endl;
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			cout << "Then you will be brought back." << endl;
+			return;
+		case 1:
+		{
+			//Input again all the info
+			cout << endl << "Please input again all the information of that semester: " << endl;
+			cin.ignore();
+			cout << "Name: ";
+			string prevSemName = curSem->name;
+			getline(cin, curSem->name);
+			cout << "Number of courses: ";
+			int tmpNumOfCourses = curSem->numOfCourses;
+			cin >> curSem->numOfCourses;
+
+			//Edit the Sem of students in that semester
+			if (curSem->name != prevSemName && curSem->pHeadCourse != NULL)
+			{
+				Course* tmpCourse = curSem->pHeadCourse;
+				while (tmpCourse != NULL)
+				{
+					if (tmpCourse->pHeadStudentManager != NULL)
+					{
+						StudentManager* tmpStdMng = tmpCourse->pHeadStudentManager;
+						while (tmpStdMng != NULL)
+						{
+							tmpStdMng->pCourseManager->semester = curSem->name;
+							tmpStdMng = tmpStdMng->next;
+						}
+					}
+					tmpCourse = tmpCourse->next;
+				}
+			}
+
+			//If the number of courses changes, update accordingly
+			if (curSem->numOfCourses > tmpNumOfCourses)
+			{
+				for (int i = 1; i <= curSem->numOfCourses - tmpNumOfCourses; ++i)
+				{
+					cin.ignore();
+					for (int i = 1; i <= curSem->numOfCourses - tmpNumOfCourses; ++i)
+					{
+						cout << "Please input the ID of the course you want to create:";
+						string courseID;
+						getline(cin, courseID);
+						Course* tmpCourse = NULL;
+						if (findCourse(courseID, curSem, tmpCourse, data))
+						{
+							i--;
+							cout << "This course has already existed. Please input again." << endl;
+						}
+						else
+						{
+							createNewEmptyCourse(curYear->name, curSem->name, courseID, data);
+							curSem->numOfCourses--; //redundant addition of numOfCourses in createNewEmptyCourses function
+						}
+					}
+				}
+			}
+			else if (curSem->numOfCourses < tmpNumOfCourses)
+			{
+				//remove courses
+				/*for (int j = curSem->numOfCourses; j <= tmpNumOfCourses; ++j)
+				{
+					Course* curCourse = NULL;
+					courseMenu(curYear, curSem, curCourse, data);
+					if (curCourse != NULL)
+					{
+						removeCourse(curSem, curCourse);
+					}
+				}*/
+			}
+
+			cout << endl << "Your updated semester: " << endl;
+			displaySemInfo(curSem);
+			return;
+		}
+		default:
+			showOption = false;
+			break;
 		}
 	}
-	else if (curSem->numOfCourses < tmpNumOfCourses)
+}
+void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& data)
+{
+	//Display the info one time before editing
+	cout << endl << "This is the information of the course you want to edit: " << endl;
+	displayCourseInfo(curCourse);
+	cout << endl << "Do you want to edit this course? (0 - NO, 1 - YES)" << endl;
+	bool showOption = true;
+	while (1)
 	{
-		//delete Semester
+		if (!showOption)
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			cout << "Then you will be brought back." << endl;
+			return;
+		case 1:
+		{
+			//Input again all the info
+			cout << endl << "Please input again all the information of that course: " << endl;
+			string courseID;
+			cin.ignore();
+			cout << "Course ID: ";
+			getline(cin, courseID);
+
+			//Check if new ID exist
+			if (findSemester(curYear->name, curSem->name, curSem, data))
+			{
+				Course* newCourse;
+				if (findCourse(curYear->name, curSem->name, courseID, newCourse, data))
+				{
+					cout << "The course " << courseID << " of semester " << curSem->name << " of year " << curYear->name << " is already existing!" << endl;
+					return;
+				}
+			}
+
+			curCourse->id = courseID;
+			inputCourseDetail(curYear->name, curSem->name, curCourse, data);
+			//Check link with the class????
+
+			cout << endl << "Your updated semester: " << endl;
+			displaySemInfo(curSem);
+			return;
+		}
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void createNewEmptyCourse(string yearName, string semesterName, string courseID, CoreData& data) {
+	Semester* curSem;
+	if (findSemester(yearName, semesterName, curSem, data)) {
+		Course* newCourse;
+		if (findCourse(yearName, semesterName, courseID, newCourse, data)) {
+			cout << "The course " << courseID << " of semester " << semesterName << " of year " << yearName << " is already existing!" << endl;
+			return;
+		}
+		curSem->numOfCourses++;
+		newCourse = new Course;
+		newCourse->id = courseID;
+		inputCourseDetail(yearName, semesterName, newCourse, data);
+		newCourse->pHeadStudentManager = NULL;
+		newCourse->next = curSem->pHeadCourse;
+		curSem->pHeadCourse = newCourse;
+	}
+	else {
+		//ask to create a new year
+	}
+}
+void removeYear(Year*& curYear, CoreData& data)
+{
+	//Display the info one time before editing
+	cout << endl << "This is the information of the academic year you want to delete: " << endl;
+	displayYearInfo(curYear);
+	cout << endl << "Do you want to delete this academic year? (0 - NO, 1 - YES)" << endl;
+	bool showOption = true;
+	while (1)
+	{
+		if (!showOption)
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			cout << "Then you will be brought back." << endl;
+			return;
+		case 1:
+		{
+			//Remove all semesters of current year
+			Semester* tmpSem = curYear->pHeadSemesters;
+			Semester* tmpSem2 = tmpSem;
+			while (tmpSem != NULL)
+			{
+				tmpSem = tmpSem->next;
+				removeSemIndirect(curYear, tmpSem2, data);
+				tmpSem2 = tmpSem;
+				curYear->pHeadSemesters = tmpSem2;
+			}
+
+			data.numOfYears--;
+			if (curYear == data.pHeadYear)
+			{
+				data.pHeadYear = curYear->next;
+			}
+			else {
+				Year* tmpYear = data.pHeadYear;
+				while (tmpYear->next != curYear)
+				{
+					tmpYear = tmpYear->next;
+				}
+				tmpYear->next = curYear->next;
+			}
+
+			cout << "Deleted." << endl;
+			return;
+		}
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void removeSemDirect(Year*& curYear, Semester*& curSem, CoreData& data)
+{
+	//Display the info one time before editing
+	cout << endl << "This is the information of the semester you want to delete: " << endl;
+	displaySemInfo(curSem);
+	cout << endl << "Do you want to delete this semester? (0 - NO, 1 - YES)" << endl;
+	bool showOption = true;
+	while (1)
+	{
+		if (!showOption)
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			cout << "Then you will be brought back." << endl;
+			return;
+		case 1:
+		{
+			//Remove all courses of current semesters
+			Course* tmpCourse = curSem->pHeadCourse;
+			while (tmpCourse != NULL)
+			{
+				curSem->pHeadCourse = curSem->pHeadCourse->next;
+				removeCourse(curSem, tmpCourse);
+				tmpCourse = curSem->pHeadCourse;
+			}
+
+			curYear->numOfSems--;
+			if (curSem == curYear->pHeadSemesters)
+			{
+				curYear->pHeadSemesters = curSem->next;
+			}
+			else {
+				Semester* tmpSem = curYear->pHeadSemesters;
+				if (tmpSem != NULL)
+				{
+					while (tmpSem->next != curSem)
+					{
+						tmpSem = tmpSem->next;
+					}
+					tmpSem->next = curSem->next;
+				}
+			}
+
+			cout << endl << "Updated academic year " << curYear->name << ": " << endl;
+			displayYearInfo(curYear);
+			return;
+		}
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void removeSemIndirect(Year*& curYear, Semester*& curSem, CoreData& data)
+{
+	//Remove all courses of current semesters
+	Course* tmpCourse = curSem->pHeadCourse;
+	while (tmpCourse != NULL)
+	{
+		curSem->pHeadCourse = curSem->pHeadCourse->next;
+		removeCourse(curSem, tmpCourse);
+		tmpCourse = curSem->pHeadCourse;
 	}
 
-	cout << "Your updated semester: " << endl;
-	displaySemInfo(curSem, data);
+	curYear->numOfSems--;
+	if (curSem == curYear->pHeadSemesters)
+	{
+		curYear->pHeadSemesters = curSem->next;
+	}
+	else {
+		Semester* tmpSem = curYear->pHeadSemesters;
+		if (tmpSem->next != NULL)
+		{
+			while (tmpSem->next != curSem)
+			{
+				tmpSem = tmpSem->next;
+			}
+			tmpSem->next = curSem->next;
+		}
+	}
 }
 
-void importCourse(string address, CoreData& data)
+//INPUT
+void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newCourse, CoreData& data)
+{
+	getline(fin, newCourse->name, ',');
+	string tmpClassName;
+	Class* tmpClass = NULL;
+	getline(fin, tmpClassName,',');
+	if (findClass(tmpClassName, data, tmpClass))
+	{
+		if (tmpClass->pHeadStudent != NULL)
+		{
+			Student* tmpStd = tmpClass->pHeadStudent;
+			while (tmpStd != NULL)
+			{
+				addStudentToCourse(tmpStd, newCourse, inYear, inSemester);
+				tmpStd = tmpStd->next;
+			}
+		}
+	}
+	getline(fin, newCourse->lectureAccount, ',');
+	getline(fin, newCourse->startDate, ',');
+	getline(fin, newCourse->endDate, ',');
+	getline(fin, newCourse->dayOfWeek, ',');
+	getline(fin, newCourse->startHour, ',');
+	getline(fin, newCourse->startHour, ',');
+	getline(fin, newCourse->room, '\n');
+}
+void importCourse(string address, string yearName, string semesterName, CoreData& data)
 {
 	ifstream fin;
 	fin.open(address);
@@ -172,18 +537,57 @@ void importCourse(string address, CoreData& data)
 	}
 	else
 	{
+		string headers;
+		getline(fin, headers, '\n'); //ignore the headers
 
+		while (!fin.eof())
+		{
+			string no;
+			getline(fin, no, ','); //ignore the number
+			string courseID;
+			getline(fin, courseID, ',');
+			Semester* curSem;
+			if (findSemester(yearName, semesterName, curSem, data)) {
+				Course* newCourse;
+				if (findCourse(yearName, semesterName, courseID, newCourse, data)) {
+					cout << "The course " << courseID << " of semester " << semesterName << " of year " << yearName << " is already existing!" << endl;
+					return;
+				}
+				curSem->numOfCourses++;
+				newCourse = new Course;
+				newCourse->id = courseID;
+				importCourse(fin, yearName, semesterName, newCourse, data);
+				newCourse->pHeadStudentManager = NULL;
+				newCourse->next = curSem->pHeadCourse;
+				curSem->pHeadCourse = newCourse;
+			}
+			else {
+				//ask to create a new year
+			}
+		}
 	}
 }
-
-void inputCourseDetail (Course* &newCourse)
+void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, CoreData data)
 {
-	cin.ignore();
 	cout << "Please input your course details:" << endl;
-	cout << "Course id: ";
-	getline(cin, newCourse->id);
 	cout << "Course name: ";
 	getline(cin, newCourse->name);
+	string tmpClassName;
+	Class* tmpClass = NULL;
+	cout << "Class: ";
+	getline(cin, tmpClassName);
+	if (findClass(tmpClassName, data, tmpClass))
+	{
+		if (tmpClass->pHeadStudent != NULL)
+		{
+			Student* tmpStd = tmpClass->pHeadStudent;
+			while (tmpStd != NULL)
+			{
+				addStudentToCourse(tmpStd, newCourse, inYear, inSemester);
+				tmpStd = tmpStd->next;
+			}
+		}
+	}
 	cout << "Account of the lecturer: ";
 	getline(cin, newCourse->lectureAccount);
 	cout << "Start date: ";
@@ -192,101 +596,18 @@ void inputCourseDetail (Course* &newCourse)
 	getline(cin, newCourse->endDate);
 	cout << "Day of the week: ";
 	getline(cin, newCourse->dayOfWeek);
-	cout << "Start date: ";
-	getline(cin, newCourse->startDate);
+	cout << "Start hour: ";
+	getline(cin, newCourse->startHour);
+	cout << "End hour: ";
+	getline(cin, newCourse->startHour);
 	cout << "Room: ";
 	getline(cin, newCourse->room);
 }
 
-void editCourse(Course*& curCourse, CoreData& data)
+//MENUS
+void menuCourse(string pathName, CoreData& data)
 {
-	//Display the info one time before editing
-	cout << "This is the information of the course you want to edit: ";
-	displayCourseInfo(curCourse, data);
-	//cout << "Do you want to edit? (0 - NO, 1 - YES): ";
-
-	//Input again all the info
-	inputCourseDetail(curCourse);
-
-	cout << "Your updated course: " << endl;
-	displayCourseInfo(curCourse, data);
-}
-
-void removeStdFromCourse(Course*& curCourse, CoreData& data)
-{
-	cout << "Please input the id of the student you want to remove from this course: ";
-	long long tmpID;
-	cin >> tmpID;
-	Student* tmpStd;
-
-	if (findStudentInCourse(tmpID, tmpStd, curCourse))
-	{
-		CourseManager* cur1 = tmpStd->pHeadCourseManager;
-		CourseManager* prev1 = NULL;
-		while (cur1 != NULL)
-		{
-			if (cur1->pCourse == curCourse)
-			{
-				if (prev1 != NULL)
-				{
-					prev1->next = cur1->next;
-				}
-				else //class at head
-				{
-					tmpStd->pHeadCourseManager = cur1->next;
-				}
-				break;
-			}
-			prev1 = cur1;
-			cur1 = cur1->next;
-		}
-
-		StudentManager* cur2 = curCourse->pHeadStudentManager;
-		StudentManager* prev2 = NULL;
-		while (cur2 != NULL)
-		{
-			if (cur2->pStudent->id == tmpID)
-			{
-				if (prev2 != NULL)
-				{
-					prev2->next = cur2->next;
-				}
-				else //std at head
-				{
-					curCourse->pHeadStudentManager = cur2->next;
-				}
-				break;
-			}
-			prev2 = cur2;
-			cur2 = cur2->next;
-		}
-	}
-
-}
-
-void displayCoursesCurSem(Semester* curSem, CoreData data)
-{
-	for (int i = 1; i <= curSem->numOfCourses; ++i)
-	{
-		cout << i << ". " << curSem->name << endl;
-		curSem = curSem->next;
-	}
-}
-
-void displayStdInCourse(Course* curCourse, CoreData data)
-{
-	StudentManager* cur = curCourse->pHeadStudentManager;
-	int i = 1;
-	while (cur != NULL)
-	{
-		cout << i++ << ". " << cur->pStudent->id << " - " << cur->pStudent->lastName << " " << cur->pStudent->firstName << endl;
-		cur = cur->next;
-	}
-}
-
-void menuCourse(CoreData& data) 
-{
-	cout << string(100, '\n');
+	cout << string(100, '\n'); //thay bang clear screen
 	bool showOption = true;
 	while (1)
 	{
@@ -341,284 +662,882 @@ void menuCourse(CoreData& data)
 	switch (yourChoice)
 	{
 	case 0:
-	{
 		return;
-	}
 	case 1:
-	{
-		cout << "Please input the name of the academic year you want to create: ";
-		string curYearName;
-		cin.ignore();
-		getline(cin, curYearName);
-		createNewEmptyYear(curYearName, data);
-		//saveToDataBase(pathName, data);
+		activity1(pathName, data);
 		break;
-	}
 	case 2:
-	{
-		//Display the list of years to choose -> get name from that choice 
-		string curYearName;
-		Year* curYear;
-		getline(cin, curYearName);
-		if (findYear(curYearName, curYear, data)) 
-		{
-			editYear(curYear, data);
-		}
-		else cout << "This year does not exist. Please try again." << endl;
+		activity2(pathName, data);
 		break;
-	}
 	case 3:
-	{
-		string curYearName;
-		Year* curYear;
-		getline(cin, curYearName);
-		if (findYear(curYearName, curYear, data)) 
-		{
-			deleteYear(curYear, data);
-		}
-		else cout << "This year does not exist. Please try again." << endl;
+		activity3(pathName, data);
 		break;
-	}
 	case 4:
-	{
-		string curYearName;
-		Year* curYear;
-		getline(cin, curYearName);
-		if (findYear(curYearName, curYear, data))
-		{
-			displayYearInfo(curYear, data);
-		}
-		else cout << "This year does not exist. Please try again." << endl;
+		activity4(data);
+		break;
+	case 5:
+		activity5(pathName, data);
+		break;
+	case 6:
+		activity6(pathName, data);
+		break;
+	case 7:
+		activity7(pathName, data);
+		break;
+	case 8:
+		activity8(data);
+		break;
+	case 9:
+		activity9(pathName, data);
+		break;
+	case 10:
+		activity10(pathName, data);
+		break;
+	case 11:
+		activity11(pathName, data);
+		break;
+	case 12:
+		activity12(pathName, data);
+		break;
+	case 13:
+		activity13(pathName, data);
+		break;
+	case 14:
+		activity14(pathName, data);
+		break; 
+	case 15:
+		activity15(data);
+		break;
+	case 16:
+		activity16(data);
+		break;
+	default:
+		showOption = false;
 		break;
 	}
-	case 5:
+	}
+}
+void yearMenu(Year*& curYear, CoreData data)
+{
+	cout << endl << "Please input 1, 2, 3, 4, ... corresponding to your selection below: " << endl;
+	cout << "Year: " << endl;
+	Year* tmpYear = data.pHeadYear;
+	for (int i = 1; tmpYear != NULL; ++i)
 	{
-		/*cout << "Which year do you want to create a new semester in?" << endl;
-		Year* curYear;
+		cout << "    " << i << ". " << tmpYear->name << endl;
+		tmpYear = tmpYear->next;
+	}
 
-		//pick the year -> pick year name from that choice*/
+	bool showOption = true;
+	while (1)
+	{
+		if (!showOption)
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice (INPUT 0 TO GO BACK): ";
+		cin >> yourChoice;
 
-		string curYear;
-		getline(cin, curYear);
+		if (yourChoice > 0 && yourChoice <= data.numOfYears)
+		{
+			tmpYear = data.pHeadYear;
+			for (int j = 1; j < yourChoice; ++j)
+			{
+				tmpYear = tmpYear->next;
+			}
+			curYear = tmpYear;
+			break;
+		}
+		else if (yourChoice == 0)
+		{
+			curYear = NULL;
+			break;
+		}
+		else
+			showOption = false;
+	}
+}
+void semesterMenu(Year*& curYear, Semester*& curSem, CoreData data)
+{
+	if (curYear == NULL) yearMenu(curYear, data);
+	if (curYear == NULL) return;
+	cout << endl << "        Semester: " << endl;
+	Semester* tmpSem = curYear->pHeadSemesters;
+	for (int i = 1; tmpSem != NULL; ++i)
+	{
+		cout << "            " << i << ". " << tmpSem->name << endl;
+		tmpSem = tmpSem->next;
+	}
 
+	bool showOption = true;
+	while (1)
+	{
+		if (!showOption)
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice (INPUT 0 TO GO BACK): ";
+		cin >> yourChoice;
+
+		if (yourChoice > 0 && yourChoice <= curYear->numOfSems)
+		{
+			tmpSem = curYear->pHeadSemesters;
+			for (int j = 1; j < yourChoice; ++j)
+			{
+				tmpSem = tmpSem->next;
+			}
+			curSem = tmpSem;
+			break;
+		}
+		else if (yourChoice == 0)
+		{
+			curYear = NULL;
+			curSem = NULL;
+			semesterMenu(curYear, curSem, data);
+			break;
+		}
+		else
+			showOption = false;
+	}
+}
+void courseMenu(Year*& curYear, Semester*& curSem, Course*& curCourse, CoreData data)
+{
+	if (curSem == NULL) semesterMenu(curYear, curSem, data);
+	if (curSem == NULL) return;
+	cout << endl << "                    Course: " << endl;
+	Course* tmpCourse = curSem->pHeadCourse;
+	for (int i = 1; tmpCourse != NULL; ++i)
+	{
+		cout << "                        " << i << ". " << tmpCourse->name << endl;
+		tmpCourse = tmpCourse->next;
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (!showOption)
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice (INPUT 0 TO GO BACK): ";
+		cin >> yourChoice;
+
+		if (yourChoice > 0 && yourChoice <= curYear->numOfSems)
+		{
+			tmpCourse = curSem->pHeadCourse;
+			for (int j = 1; j < yourChoice; ++j)
+			{
+				tmpCourse = tmpCourse->next;
+			}
+			curCourse = tmpCourse;
+			break;
+		}
+		else if (yourChoice == 0)
+		{
+			curSem = NULL;
+			curCourse = NULL;
+			courseMenu(curYear, curSem, curCourse, data);
+			break;
+		}
+		else
+			showOption = false;
+	}
+}
+void activity1(string pathName, CoreData& data)
+{
+	cout << "Please input the name of the academic year you want to create: ";
+	string curYearName;
+	cin.ignore();
+	getline(cin, curYearName);
+	createNewEmptyYear(curYearName, data);
+	saveToDataBase(pathName, data);
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity1(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity2(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	yearMenu(curYear, data);
+	if (curYear != NULL)
+	{
+		editYear(curYear, data);
+		saveToDataBase(pathName, data);
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity2(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity3(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	yearMenu(curYear, data);
+	if (curYear != NULL)
+	{
+		removeYear(curYear, data);
+		saveToDataBase(pathName, data);
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity3(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity4(CoreData data)
+{
+	Year* curYear = NULL;
+	yearMenu(curYear, data);
+	if (curYear != NULL)
+	{
+		cout << endl << "Academic year " << curYear->name << " info: " << endl;
+		displayYearInfo(curYear);
+	}
+
+	bool showOption = true;
+
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity4(data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity5(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	yearMenu(curYear, data);
+
+	if (curYear != NULL)
+	{
 		cout << "Please input the name of the semester you want to create:";
 		string curSemester;
+		cin.ignore();
 		getline(cin, curSemester);
-		createNewEmptySemester(curYear, curSemester, data);
-		break;
+		createNewEmptySemester(curYear->name, curSemester, data);
+		saveToDataBase(pathName, data);
 	}
-	case 6:
-	{
-		//Display the list of years with semesters to choose
-		string curYearName;
-		getline(cin, curYearName);
 
-		string curSemName;
-		getline(cin, curSemName);
-		Semester* curSem;
-		if (findSemester(curYearName, curSemName, curSem, data))
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
 		{
-			editSem(curSem, data);
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
 		}
-		else cout << "This semester does not exist. Please try again." << endl;
-		break;
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity5(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
 	}
-	case 9:
+}
+void activity6(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	semesterMenu(curYear, curSem, data);
+	if (curSem != NULL)
+	{
+		editSem(curYear, curSem, data);
+		saveToDataBase(pathName, data);
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity6(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity7(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	semesterMenu(curYear, curSem, data);
+	if (curSem != NULL)
+	{
+		removeSemDirect(curYear, curSem, data);
+		saveToDataBase(pathName, data);
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity7(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity8(CoreData data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	semesterMenu(curYear, curSem, data);
+
+	if (curSem != NULL)
+	{
+		cout << endl << "Semester " << curSem->name << " of year " << curYear->name << " info: " << endl;
+		displaySemInfo(curSem);
+	}
+
+	bool showOption = true;
+
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity8(data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity9(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	semesterMenu(curYear, curSem, data);
+
+	if (curSem != NULL)
 	{
 		cout << "Please input the location of the .csv file of the course you want to input: ";
 		string address;
 		cin.ignore();
 		getline(cin, address);
-		importCourse(address, data);
-		break;
+		importCourse(address, curYear->name, curSem->name, data);
+		saveToDataBase(pathName, data);
 	}
-	case 10:
+
+	bool showOption = true;
+	while (1)
 	{
-		/*cout << "List of semesters: " << endl;
-		displayAllSemesters(data);
-		int yourChoice;
-		cout << "Please input the number of the semester you want to choose: ";
-		cin >> yourChoice;*/
-		string curYear;
-		getline(cin, curYear);
-
-		string curSem;
-		getline(cin, curSem);
-	
-		Course* newCourse = new Course;
-		inputCourseDetail(newCourse);
-		addNewCourse(curYear, curSem, newCourse, data);
-		break;
-	}
-	case 11:
-	{
-		/*cout << "List of courses: " << endl;
-		displayAllCourses(data);
-		int yourChoice;
-		cout << "Please input the number of the semester you want to choose: ";
-		cin >> yourChoice;*/
-
-		string curYear;
-		getline(cin, curYear);
-
-		string curSem;
-		getline(cin, curSem);
-
-		string curCourseID;
-		getline(cin, curCourseID);
-
-		Course* curCourse;
-
-		if (findCourse(curYear, curSem, curCourseID,curCourse, data))
+		if (showOption)
 		{
-			editCourse(curCourse, data);
-		}
-		else cout << "This course does not exist. Please try again." << endl;
-		break;
-	}
-	case 12:
-	{
-		/*cout << "List of courses: " << endl;
-		displayAllCourses(data);
-		int yourChoice;
-		cout << "Please input the number of the semester you want to choose: ";
-		cin >> yourChoice;
-
-		string curYear;
-		getline(cin, curYear);
-
-		string curSem;
-		getline(cin, curSem);
-
-		string curCourseID;
-		getline(cin, curCourseID);
-
-		Course* curCourse;
-
-		if (findCourse(curYear, curSem, curCourseID, curCourse, data))
-		{
-			deleteCourse(curCourse, data);
-		}
-		else cout << "This course does not exist. Please try again." << endl;
-		break;*/
-	}
-	case 13:
-	{
-		/*cout << "List of courses: " << endl;
-		displayAllCourses(data);
-		int yourChoice;
-		cout << "Please input the number of the semester you want to choose: ";
-		cin >> yourChoice;*/
-
-		string curYear;
-		getline(cin, curYear);
-
-		string curSem;
-		getline(cin, curSem);
-
-		string curCourseID;
-		getline(cin, curCourseID);
-
-		Course* curCourse;
-
-		if (findCourse(curYear, curSem, curCourseID, curCourse, data))
-		{
-			removeStdFromCourse(curCourse, data);
-		}
-		else cout << "This course does not exist. Please try again." << endl;
-		break;
-	}
-	case 14:
-	{
-		/*cout << "List of courses: " << endl;
-		displayAllCourses(data);
-		int yourChoice;
-		cout << "Please input the number of the semester you want to choose: ";
-		cin >> yourChoice;*/
-
-		string curYear;
-		getline(cin, curYear);
-
-		string curSem;
-		getline(cin, curSem);
-
-		string curCourseID;
-		getline(cin, curCourseID);
-
-		Course* curCourse;
-
-		if (findCourse(curYear, curSem, curCourseID, curCourse, data))
-		{
-			cout << "Please input the id of the student you want to add to this course: ";
-			long long tmpID;
-			cin >> tmpID;
-			Student* tmpStd;
-			Class* ofClass;
-
-			if (findStudent(tmpID, data, tmpStd, ofClass))
-			{
-				addStudentToCourse(tmpStd, curCourse, curYear, curSem);
-			}
-		}
-		else cout << "This course does not exist. Please try again." << endl;
-		break; 
-	}
-	case 15:
-	{
-		/*cout << "List of semesters: " << endl;
-		displayAllSemesters(data);
-		int yourChoice;
-		cout << "Please input the number of the semester you want to choose: ";
-		cin >> yourChoice;*/
-		
-		string curYear;
-		getline(cin, curYear);
-
-		string curSemName;
-		getline(cin, curSemName);
-		
-		Semester* curSem;
-		if (findSemester(curYear, curSemName, curSem, data))
-		{
-			displayCoursesCurSem(curSem, data);
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
 		}
 		else
 		{
-			cout << "This semester does not exist" << endl;
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
 		}
-		break;
-	}
-	case 16:
-	{
-		/*cout << "List of courses: " << endl;
-		displayAllCourses(data);
 		int yourChoice;
-		cout << "Please input the number of the semester you want to choose: ";
-		cin >> yourChoice;*/
-
-		string curYear;
-		getline(cin, curYear);
-
-		string curSem;
-		getline(cin, curSem);
-
-		string curCourseID;
-		getline(cin, curCourseID);
-
-		Course* curCourse;
-
-		if (findCourse(curYear, curSem, curCourseID, curCourse, data))
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
 		{
-			displayStdInCourse(curCourse, data);
+		case 0:
+			return;
+		case 1:
+			activity9(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
 		}
-		else cout << "This course does not exist. Please try again." << endl;
-		break;
 	}
-	default:
+}
+void activity10(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	semesterMenu(curYear, curSem, data);
+
+	if (curSem != NULL)
 	{
-		showOption = false;
-		break;
+		cout << "Please input the ID of the course you want to create:";
+		string curCourseID;
+		cin.ignore();
+		getline(cin, curCourseID);
+		createNewEmptyCourse(curYear->name, curSem->name, curCourseID, data);
+		saveToDataBase(pathName, data);
 	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity10(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
 	}
+}
+void activity11(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	Course* curCourse = NULL;
+	courseMenu(curYear, curSem, curCourse, data);
+	if (curCourse != NULL)
+	{
+		editCourse(curYear, curSem, curCourse, data);
+		saveToDataBase(pathName, data);
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity11(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity12(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	Course* curCourse = NULL;
+	courseMenu(curYear, curSem, curCourse, data);
+	if (curCourse != NULL)
+	{
+		removeCourse(curSem, curCourse);
+		saveToDataBase(pathName, data);
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity12(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity13(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	Course* curCourse = NULL;
+	courseMenu(curYear, curSem, curCourse, data);
+
+	if (curCourse != NULL)
+	{
+		cout << endl << "List of students attending in course " << curCourse->name << ": " << endl;
+		displayStdInCourse(curYear, curSem, curCourse);
+		cout << endl << "Please input the ID of the student you want to remove from this course: ";
+		long long stdID;
+		cin >> stdID;
+		removeStudentFromCourse(stdID, curCourse);
+		saveToDataBase(pathName, data);
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity13(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity14(string pathName, CoreData& data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	Course* curCourse = NULL;
+	courseMenu(curYear, curSem, curCourse, data);
+
+	if (curCourse != NULL)
+	{
+		cout << endl << "List of students attending in course " << curCourse->name << ": " << endl;
+		displayStdInCourse(curYear, curSem, curCourse);
+		cout << endl << "Please input the ID of the student you want to add to this course: ";
+		long long stdID;
+		Student* std;
+		Class* stdClass;
+		cin >> stdID;
+		if (findStudent(stdID, data, std, stdClass))
+		{
+			addStudentToCourse(std, curCourse, curYear->name, curSem->name);
+			cout << endl << "Your updated list of students in course " << curCourse->name << ": " << endl;
+			displayStdInCourse(curYear, curSem, curCourse);
+			saveToDataBase(pathName, data);
+		}
+		else
+			cout << "There is no student with this ID. " << endl;
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity14(pathName, data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity15(CoreData data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	semesterMenu(curYear, curSem, data);
+	if (curSem != NULL)
+	{
+		displayCoursesCurSem(curYear, curSem);
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity15(data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
+void activity16(CoreData data)
+{
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	Course* curCourse = NULL;
+	courseMenu(curYear, curSem, curCourse, data);
+	if (curCourse != NULL)
+	{
+		displayStdInCourse(curYear, curSem, curCourse);
+	}
+
+	bool showOption = true;
+	while (1)
+	{
+		if (showOption)
+		{
+			cout << endl;
+			cout << "0. Return" << endl;
+			cout << "1. Run this function again." << endl;
+		}
+		else
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+			activity16(data);
+			return;
+		default:
+			showOption = false;
+			break;
+		}
 	}
 }
