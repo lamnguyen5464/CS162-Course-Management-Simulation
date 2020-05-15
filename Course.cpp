@@ -523,7 +523,7 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 	getline(fin, newCourse->endDate, ',');
 	getline(fin, newCourse->dayOfWeek, ',');
 	getline(fin, newCourse->startHour, ',');
-	getline(fin, newCourse->startHour, ',');
+	getline(fin, newCourse->endHour, ',');
 	getline(fin, newCourse->room, '\n');
 }
 void importCourse(string address, string yearName, string semesterName, CoreData& data)
@@ -599,7 +599,7 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 	cout << "Start hour: ";
 	getline(cin, newCourse->startHour);
 	cout << "End hour: ";
-	getline(cin, newCourse->startHour);
+	getline(cin, newCourse->endHour);
 	cout << "Room: ";
 	getline(cin, newCourse->room);
 }
@@ -828,7 +828,7 @@ void courseMenu(Year*& curYear, Semester*& curSem, Course*& curCourse, CoreData 
 		cout << "Your choice (INPUT 0 TO GO BACK): ";
 		cin >> yourChoice;
 
-		if (yourChoice > 0 && yourChoice <= curYear->numOfSems)
+		if (yourChoice > 0 && yourChoice <= curSem->numOfCourses)
 		{
 			tmpCourse = curSem->pHeadCourse;
 			for (int j = 1; j < yourChoice; ++j)
