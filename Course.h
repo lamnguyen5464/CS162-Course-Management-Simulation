@@ -1,7 +1,7 @@
 #ifndef Course_h
 #define Course_h
 
-#include "Data.hpp"
+#include "Course.h"
 
 //MENU
 void menuCourse(string pathName, CoreData& data);
@@ -21,11 +21,9 @@ void activity13(string pathName, CoreData& data);
 void activity14(string pathName, CoreData& data);
 void activity15(CoreData data);
 void activity16(CoreData data);
-
-void (*returnMenu1Arg(int actNum))(CoreData);
-void exit(CoreData data);
-void (*returnMenu2Arg(int actNum))(string, CoreData&);
-void exit2(string tmp, CoreData& data);
+void activity17(CoreData data);
+void returnMenu1Arg(void (*tmp)(CoreData), CoreData data);
+void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& data);
 
 //ACADEMIC YEARS
 void yearMenu(Year*& curYear, CoreData data);
@@ -51,7 +49,7 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse);
 
-//LECTURERS
+void upper(string& str);
 
 
 #endif
