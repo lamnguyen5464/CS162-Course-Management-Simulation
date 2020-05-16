@@ -997,7 +997,7 @@ void activity9(string pathName, CoreData& data)
 
 	if (curSem != NULL)
 	{
-		cout << ".CSV LOCATION: ";
+		cout << "INPUT .CSV LOCATION: ";
 		string address;
 		cin.ignore();
 		getline(cin, address);
@@ -1169,7 +1169,8 @@ void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& d
 
 void upper(string& str) {
 	for (int i = 0; i < str.length(); i++)
-		str[i] = str[i] - 32;
+		if (str[i] >= 'a' && str[i] <= 'z')
+			str[i] = str[i] - 32;
 }
 void findMaxLength(Student* curSt, int& last, int& first, int& dob) {
 	while (curSt != NULL) {
