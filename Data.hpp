@@ -25,6 +25,7 @@ struct CheckInCell;
 struct CheckInBoard;
 struct Lecturer;
 struct Time;
+struct Staff;
 //definition
 
 struct CoreData{
@@ -44,7 +45,7 @@ struct Lecturer{
 struct Staff{
     string name;
     Staff *next = NULL;
-}
+};
 struct Class{
     string name;
     int numOfStudents = NULL;
