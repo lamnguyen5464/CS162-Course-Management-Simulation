@@ -48,6 +48,8 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 void importCourse(string address, string yearName, string semesterName, CoreData& data);
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse);
+bool viewListOfStudents(Course* curCourse, CoreData data);
+void findMaxLength(Student* curSt, int& last, int& first, int& dob);
 
 void upper(string& str);
 

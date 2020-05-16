@@ -3,6 +3,7 @@
 #include <string>
 #include "Data.hpp"
 #include "Course.h"
+#include <iomanip>
 
 //DISPLAYS
 void displayYearInfo(Year* curYear)
@@ -67,6 +68,31 @@ void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse)
 		cur = cur->next;
 	}
 }
+bool viewListOfStudents(Course* curCourse, CoreData data) {
+	if (curCourse == NULL) return false;
+	cout << endl;
+	StudentManager* tmpStMng = curCourse->pHeadStudentManager;
+	if (tmpStMng == NULL) {
+		cout << "       There is no student in this course" << endl;
+		return true;
+	}
+	else {
+		int last = 10, first = 10, dob = 0;
+		findMaxLength(tmpStMng->pStudent, last, first, dob);
+		int k = (last + first + dob + 30);
+		tmpStMng = curCourse->pHeadStudentManager;
+		int i = 1;
+		cout << "        " << setw(k / 2 + 7) << right << "STUDENTS IN COURSE " << curCourse->name << endl;
+		cout << "       " << "|" << "No" << " |" << setw(8) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(6) << left << "Gender" << "  |" << endl;
+		while (tmpStMng != NULL) {
+			cout << "       " << "|" << i << ". |" << setw(8) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(6) << left << tmpStMng->pStudent->gender << "  |" << endl;
+			tmpStMng = tmpStMng->next;
+			++i;
+		}
+	}
+	return true;
+}
+
 
 //EDITS
 void editYear(Year*& curYear, CoreData& data)
@@ -201,7 +227,10 @@ void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& d
 	//Display the info one time before editing
 	cout << endl << "CHOSEN COURSE INFO: " << endl;
 	displayCourseInfo(curCourse);
-	cout << endl << "EDIT? (0 - NO, 1 - YES)" << endl;
+	cout << "What part do you want to edit? " << endl;
+	cout << "1.Name" << endl;
+	cout << "2.Lecturer account" << endl;
+	cout << "3.Room" << endl;
 	bool showOption = true;
 	while (1)
 	{
@@ -211,39 +240,30 @@ void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& d
 			showOption = true;
 		}
 		int yourChoice;
-		cout << "Your choice: ";
+		cout << "Your choice (0 to return): ";
 		cin >> yourChoice;
 		switch (yourChoice)
 		{
 		case 0:
 			return;
 		case 1:
-		{
-			//Input again all the info
-			cout << endl << "Please input again all the information of that course: " << endl;
-			string courseID;
 			cin.ignore();
-			cout << "Course ID: ";
-			getline(cin, courseID);
-
-			//Check if new ID exist
-			if (findSemester(curYear->name, curSem->name, curSem, data))
-			{
-				Course* newCourse;
-				if (findCourse(curYear->name, curSem->name, courseID, newCourse, data))
-				{
-					cout << "The course " << courseID << " of semester " << curSem->name << " of year " << curYear->name << " is already existing!" << endl;
-					return;
-				}
-			}
-
-			curCourse->id = courseID;
-			inputCourseDetail(curYear->name, curSem->name, curCourse, data);
-			//Check link with the class????
-
+			cout << "New course name: ";
+			getline(cin, curCourse->name);
 			cout << "Update successfully " << endl;
-			return;
-		}
+			break;
+		case 2:
+			cin.ignore();
+			cout << "New lecturer account: ";
+			getline(cin, curCourse->lectureAccount);
+			cout << "Update successfully " << endl;
+			break;
+		case 3:
+			cin.ignore();
+			cout << "New room: ";
+			getline(cin, curCourse->room);
+			cout << "Update successfully " << endl;
+			break;
 		default:
 			showOption = false;
 			break;
@@ -1048,14 +1068,16 @@ void activity13(string pathName, CoreData& data)
 
 	if (curCourse != NULL)
 	{
-		cout << endl << "List of students attending in course " << curCourse->name << ": " << endl;
-		displayStdInCourse(curYear, curSem, curCourse);
-		cout << endl << "Please input the ID of the student you want to remove from this course: ";
-		long long stdID;
-		cin >> stdID;
-		removeStudentFromCourse(stdID, curCourse);
-		cout << "Remove successfully!" << endl;
-		saveToDataBase(pathName, data);
+		viewListOfStudents(curCourse, data);
+		if (curCourse->pHeadStudentManager != NULL)
+		{
+			cout << endl << "Please input the ID of the student you want to remove from this course: ";
+			long long stdID;
+			cin >> stdID;
+			removeStudentFromCourse(stdID, curCourse);
+			cout << "Remove successfully!" << endl;
+			saveToDataBase(pathName, data);
+		}
 	}
 	returnMenu2Arg(&activity13, pathName, data);
 }
@@ -1111,7 +1133,8 @@ void activity16(CoreData data)
 	courseMenu(curYear, curSem, curCourse, data);
 	if (curCourse != NULL)
 	{
-		displayStdInCourse(curYear, curSem, curCourse);
+		viewListOfStudents(curCourse, data);
+		//displayStdInCourse(curYear, curSem, curCourse);
 	}
 	returnMenu1Arg(&activity16, data);
 }
@@ -1147,4 +1170,12 @@ void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& d
 void upper(string& str) {
 	for (int i = 0; i < str.length(); i++)
 		str[i] = str[i] - 32;
+}
+void findMaxLength(Student* curSt, int& last, int& first, int& dob) {
+	while (curSt != NULL) {
+		if ((curSt->lastName).length() > last) last = (curSt->lastName).length();
+		if ((curSt->firstName).length() > first) first = (curSt->firstName).length();
+		if ((curSt->dOB).length() > dob) dob = (curSt->dOB).length();
+		curSt = curSt->next;
+	}
 }
