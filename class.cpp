@@ -93,18 +93,14 @@ void importStudentFromCsvFile (CoreData &data){
         cout << "can not open file"<<endl;
     }
     else{
-        char *classname;
-        classname = new char[10];
-        for (int i = 0;i <= linkOfFile.length()-5;i++){
-            classname[i] = linkOfFile[i];
-        }
+        string classname;
+        classname = linkOfFile; // t chua biet xu li ten lop sao
         createNewEmptyClass(classname,data);
         Class *tmpClass = NULL;
         if (!findClass(classname,data,tmpClass)) return;
         Student *tmpSt = NULL ;
         inputStudentFromFile(tmpSt,tmpClass,fin,data);
         fin.close();
-        delete classname;
     }
 }
 
@@ -520,7 +516,6 @@ void activity4(string pathname, CoreData &data){
 
 void activity1(string pathname, CoreData &data){
     importStudentFromCsvFile(data);
-    saveToDataBase(pathname,data);
     cout << "Import successfully!"<<endl;
     cout << "Input any integer to run again (0 to return): ";
     int choice;
