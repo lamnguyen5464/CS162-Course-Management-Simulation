@@ -22,6 +22,11 @@ void activity14(string pathName, CoreData& data);
 void activity15(CoreData data);
 void activity16(CoreData data);
 
+void (*returnMenu1Arg(int actNum))(CoreData);
+void exit(CoreData data);
+void (*returnMenu2Arg(int actNum))(string, CoreData&);
+void exit2(string tmp, CoreData& data);
+
 //ACADEMIC YEARS
 void yearMenu(Year*& curYear, CoreData data);
 void displayYearInfo(Year* curYear);

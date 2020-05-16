@@ -856,37 +856,8 @@ void activity1(string pathName, CoreData& data)
 	cin.ignore();
 	getline(cin, curYearName);
 	createNewEmptyYear(curYearName, data);
-	saveToDataBase(pathName, data);
-
-	bool showOption = true;
-	while (1)
-	{
-		if (showOption)
-		{
-			cout << endl;
-			cout << "0. Return" << endl;
-			cout << "1. Run this function again." << endl;
-		}
-		else
-		{
-			cout << "Invalid choice. Try again." << endl;
-			showOption = true;
-		}
-		int yourChoice;
-		cout << "Your choice: ";
-		cin >> yourChoice;
-		switch (yourChoice)
-		{
-		case 0:
-			return;
-		case 1:
-			activity1(pathName, data);
-			return;
-		default:
-			showOption = false;
-			break;
-		}
-	}
+	//saveToDataBase(pathName, data);
+	returnMenu2Arg(1)(pathName, data);
 }
 void activity2(string pathName, CoreData& data)
 {
@@ -978,36 +949,13 @@ void activity4(CoreData data)
 		displayYearInfo(curYear);
 	}
 
-	bool showOption = true;
-
-	while (1)
-	{
-		if (showOption)
-		{
-			cout << endl;
-			cout << "0. Return" << endl;
-			cout << "1. Run this function again." << endl;
-		}
-		else
-		{
-			cout << "Invalid choice. Try again." << endl;
-			showOption = true;
-		}
-		int yourChoice;
-		cout << "Your choice: ";
-		cin >> yourChoice;
-		switch (yourChoice)
-		{
-		case 0:
-			return;
-		case 1:
-			activity4(data);
-			return;
-		default:
-			showOption = false;
-			break;
-		}
-	}
+	/*bool showOption = true;
+	cout << "Input any key to return (1 to run again): ";
+	char yourChoice;
+	cin >> yourChoice;
+	if (yourChoice != 1) return;
+	activity4(data);*/
+	returnMenu1Arg(4)(data);
 }
 void activity5(string pathName, CoreData& data)
 {
@@ -1148,7 +1096,7 @@ void activity8(CoreData data)
 		displaySemInfo(curSem);
 	}
 
-	bool showOption = true;
+	/*bool showOption = true;
 
 	while (1)
 	{
@@ -1177,7 +1125,8 @@ void activity8(CoreData data)
 			showOption = false;
 			break;
 		}
-	}
+	}*/
+	returnMenu1Arg(8)(data);
 }
 void activity9(string pathName, CoreData& data)
 {
@@ -1541,3 +1490,45 @@ void activity16(CoreData data)
 		}
 	}
 }
+
+void (*returnMenu1Arg(int actNum))(CoreData)
+{
+	cout << "Input any number to return (1 to run again): ";
+	int yourChoice;
+	cin >> yourChoice;
+	if (yourChoice != 1) return exit;
+	switch (actNum)
+	{
+	case 4:
+		return activity4;
+	case 8:
+		return activity8;
+	case 15:
+		return activity15;
+	case 16:
+		return activity16;
+	}
+}
+
+void (*returnMenu2Arg(int actNum))(string, CoreData&)
+{
+	cout << "Input any number to return (1 to run again): ";
+	int yourChoice;
+	cin >> yourChoice;
+	if (yourChoice != 1) return exit2;
+	switch (actNum)
+	{
+	case 1:
+		return activity1;
+	case 2:
+		return activity2;
+	case 3:
+		return activity3;
+	case 5:
+		return activity5;
+	}
+}
+
+void exit(CoreData data) { return; }
+
+void exit2(string tmp, CoreData& data) { return; }
