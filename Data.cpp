@@ -1,7 +1,9 @@
 
 #include <fstream>
-#include <cstring>
+#include <string>
+#include <ctime>
 #include <iostream>
+#include <sstream>
 #include "Data.hpp"
 using namespace std;
 ifstream fin;
@@ -36,6 +38,8 @@ void importDataBase(string pathName, CoreData &data){
                     getline(fin, newC->lectureAccount);
                     getline(fin, newC->startDate);
                     getline(fin, newC->endDate);
+                    getline(fin, newC->startHour);
+                    getline(fin, newC->endHour);
                     getline(fin, newC->dayOfWeek);
                     getline(fin, newC->room);
                     addNewCourse(newSem, newC);
@@ -87,15 +91,24 @@ void importDataBase(string pathName, CoreData &data){
                     //read score
                     Course *tmpCourse;
                     if (findCourse(year, semester, courseId, tmpCourse, data)){ //must true
-                        addStudentToCourse(tmpSt, tmpCourse, year, semester);
+                        linkStudentToCourse(tmpSt, tmpCourse, year, semester);
                     }
                     //read score
                     fin>>tmpSt->pHeadCourseManager->scoreBoard.midTerm
                     >>tmpSt->pHeadCourseManager->scoreBoard.finalTerm
                     >>tmpSt->pHeadCourseManager->scoreBoard.lab
                     >>tmpSt->pHeadCourseManager->scoreBoard.bonus;
-                    fin.ignore(256,'\n');
                     //read check-in
+                    int numOfDays;
+                    fin>>numOfDays;                     // cout<<numOfDays<<" "<<tmpSt->id<<endl;
+                    for(int i=0; i<numOfDays; i++){        //
+                        CheckInCell *tmpCell = new CheckInCell;
+                        fin>>tmpCell->checked>>tmpCell->startTime>>tmpCell->endTime; 
+                        addCheckInCell(tmpSt->pHeadCourseManager->checkIn, tmpCell);
+                    }
+                    
+                    fin.ignore(256,'\n');
+                    
                 }
                 
                 if (tmpClass->pHeadStudent==NULL){
@@ -139,6 +152,13 @@ void saveToDataBase(string pathName, CoreData data){
                 //score
                 fout<<curCourse->scoreBoard.midTerm<<" "<<curCourse->scoreBoard.finalTerm<<" "<<curCourse->scoreBoard.lab<<" "<<curCourse->scoreBoard.bonus<<endl;
                 //check int
+                fout<<curCourse->checkIn.numOfDays<<endl;
+                CheckInCell *curCell = curCourse->checkIn.pHeadCell;
+                while (curCell != NULL){
+                    fout<<curCell->checked<<" "<<curCell->startTime<<" "<<curCell->endTime<<endl;
+                    curCell = curCell->next;
+                }
+                
                 //...
                 //
                 curCourse = curCourse->next;
@@ -167,6 +187,8 @@ void saveToDataBase(string pathName, CoreData data){
                 fout<<curCourse->lectureAccount<<endl;
                 fout<<curCourse->startDate<<endl;
                 fout<<curCourse->endDate<<endl;
+                fout<<curCourse->startHour<<endl;
+                fout<<curCourse->endHour<<endl;
                 fout<<curCourse->dayOfWeek<<endl;
                 fout<<curCourse->room<<endl;
                 curCourse = curCourse->next;
@@ -251,6 +273,7 @@ void deallocateStudent(Student *&st){
 //    delete st;
 }
 void addStudentToClass(Class *&pClass, Student *& tmpSt){
+    tmpSt->hashPassword = hashPass(to_string(tmpSt->id));
 //    cout<<"Add "<<tmpSt->lastName<<" "<<tmpSt->firstName<<" to class "<<pClass->name<<" successfully!"<<endl;
     if (pClass->pHeadStudent==NULL){    //CLASS IS EMPTY
         pClass->pHeadStudent = pClass->pTailStudent = tmpSt;
@@ -334,7 +357,7 @@ bool findYear(string yearName, Year *&foundYear, CoreData data){
         tmp = tmp->next;
     }
     //not found this year;
-    cout<<"The year "<<yearName<<" is not existing!"<<endl;
+    //cout<<"The year "<<yearName<<" is not existing!"<<endl;
     return false;
 }
 void createNewEmptyYear(string yearName, CoreData &data){
@@ -363,7 +386,7 @@ bool findSemester(string yearName, string semesterName, Semester *&foundSemester
             curSem = curSem->next;
         }
         //not found this semester
-        cout<<"The semester "<<semesterName<<" is not existing!"<<endl;
+        //cout<<"The semester "<<semesterName<<" is not existing!"<<endl;
         return false;
     }else{
         //this year is not existing
@@ -410,9 +433,9 @@ bool findCourse(string courseID, Semester *curSemester, Course *&foundCourse, Co
             return true;
         }
         curCourse = curCourse->next;
-    }
+    } 
     //not found
-    cout<<"The Course "<<courseID<<" could not be found in this semester of this year"<<endl;
+//    cout<<"The Course "<<courseID<<" could not be found in this semester of this year"<<endl;
     return false;
 }
 
@@ -445,6 +468,12 @@ void addStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear,
     curStudent->pHeadCourseManager = courseManager;
     curStudent->numOfCourse++;
     
+    //add CheckInBoard; 
+    if (courseManager->checkIn.numOfDays == 0){
+        CheckInBoard curCheckIn;
+        createCheckInBoard(curCourse->startDate, curCourse->endDate, curCourse->startHour, curCourse->endHour, getDayFromString(curCourse->dayOfWeek), curCheckIn);
+        courseManager->checkIn = curCheckIn;
+    }
     StudentManager *studentManager = new StudentManager;
     studentManager->pStudent = curStudent;
     studentManager->next = curCourse->pHeadStudentManager;
@@ -454,7 +483,31 @@ void addStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear,
     
     studentManager->pCourseManager = courseManager;
     courseManager->pStudentManager = studentManager;
+    
 }
+void linkStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear, string inSemester){
+    CourseManager *courseManager = new CourseManager;
+    courseManager->pCourse = curCourse;
+    courseManager->year = inYear;
+    courseManager->semester = inSemester;
+    courseManager->next = curStudent->pHeadCourseManager;
+    courseManager->pre = NULL;
+    if (curStudent->pHeadCourseManager!=NULL) curStudent->pHeadCourseManager->pre = courseManager;
+    curStudent->pHeadCourseManager = courseManager;
+    curStudent->numOfCourse++;
+        
+    StudentManager *studentManager = new StudentManager;
+    studentManager->pStudent = curStudent;
+    studentManager->next = curCourse->pHeadStudentManager;
+    studentManager->pre = NULL;
+    if (curCourse->pHeadStudentManager!=NULL) curCourse->pHeadStudentManager->pre = studentManager;
+    curCourse->pHeadStudentManager = studentManager;
+    
+    studentManager->pCourseManager = courseManager;
+    courseManager->pStudentManager = studentManager;
+    
+}
+
 bool findStudentInCourse(long long stId, StudentManager *&foundStudentManager, Course *curCourse){
     StudentManager *cur = curCourse->pHeadStudentManager;
     while (cur != NULL){
@@ -519,7 +572,7 @@ bool removeCourse(string yearName, string semesterName, string courseID, CoreDat
     
     return 0; // could not find the course
 }
-void removeStudentFromCourse(long long stID, Course *curCourse){
+void removeStudentFromCourse(long long stID, Course *curCourse){       
     StudentManager *curStudentManager;
     if (findStudentInCourse(stID, curStudentManager, curCourse)){
         removeCourseManager(curStudentManager);
@@ -576,4 +629,203 @@ void showCourse(CoreData data){
         }
         curYear = curYear->next;
     }
+}
+//Time
+int getDaysOfMonth(int month, int year){
+    int days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    if ((year%4==0 && year%100!=0) || year%400==0) days[1] = 29;
+    return days[month-1];
+}
+long long TimeInfo::toInt(string s){
+    long long tmp;
+    stringstream(s)>>tmp;
+    return tmp;
+}
+bool TimeInfo::setDate(string s){
+    int cntFlash = 0, tmpDate = -1, tmpMonth = -1, tmpYear = -1;
+    string tmp = "";
+    for(int i=0; i<s.length(); i++){
+        if (s[i] == '/'){
+            if (tmp != ""){
+                if (tmpDate == -1){
+                    tmpDate = (int)toInt(tmp);
+                }else if (tmpMonth == -1){
+                    tmpMonth = (int)toInt(tmp);
+                }
+                tmp = "";
+            }
+            cntFlash++;
+            continue;
+        }
+        if ('0'<=s[i] && s[i]<='9'){
+            tmp += s[i];
+            continue;
+        }
+        return false;
+    }                      
+    tmpYear = (int)toInt(tmp);
+    if (cntFlash==2 && 0<tmpMonth && tmpMonth<=12 && 0<tmpDate && tmpDate<=getDaysOfMonth(tmpMonth, tmpYear)){
+        date = tmpDate;
+        month = tmpMonth;
+        year = tmpYear;
+        return true;
+    }else
+        return false;
+}
+bool TimeInfo::setTime(string s){
+    int cntColon = 0, tmpHour = -1, tmpMinute = -1;
+    string tmp = "";
+    for(int i=0; i<s.length(); i++){
+        if (s[i] == ':'){
+            tmpHour = (int)toInt(tmp);
+            tmp = "";
+            cntColon++;
+            continue;
+        }
+        if ('0'<=s[i] && s[i]<='9'){
+            tmp += s[i];
+            continue;
+        }
+        return false;
+    }
+    tmpMinute = (int)toInt(tmp);
+    if (cntColon==1 && 0<=tmpHour && tmpHour<24 && 0<=tmpMinute && tmpMinute<60){
+        hour = tmpHour;
+        minnute = tmpMinute; 
+        return true;
+    }
+    return false;
+}
+//YYYYmmDDhhMMss -> long long
+long long TimeInfo::getTimeCode(){
+    long long tmp =(((((long long)year*100 + (long long)month)*100 + (long long)date)*100 + (long long)hour)*100 + (long long)minnute);
+    return tmp;
+}
+void TimeInfo::constructor(long long code){
+    minnute = code % 100;
+    code /= 100;
+    hour = code % 100;
+    code /= 100;
+    date = code % 100;
+    code /= 100;
+    month = code % 100;
+    code /= 100;
+    year = (int)code;
+}
+int getDayOfWeek(int date, int month, int year){
+    int deltaMonth[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+    year -= month < 3;
+    return (year + year/4 - year/100 + year/400 + deltaMonth[month-1] + date) % 7;
+}
+int getDayFromString(string s){
+    for(int i=0; i<s.length(); i++)
+        s[i] = toupper(s[i]);
+    if (s == "SUN") return 0;
+    if (s == "MON") return 1;
+    if (s == "TUE") return 2;
+    if (s == "WED") return 3;
+    if (s == "THU") return 4;
+    if (s == "FIE") return 5;
+    if (s == "SAT") return 6;
+    return -1;
+}
+int getMonthFromString(string s){
+    for(int i=0; i<s.length(); i++)
+        s[i] = toupper(s[i]);
+    if (s == "JAN") return 1;
+    if (s == "FEB") return 2;
+    if (s == "MAR") return 3;
+    if (s == "APR") return 4;
+    if (s == "MAY") return 5;
+    if (s == "JUN") return 6;
+    if (s == "JUL") return 7;
+    if (s == "AUG") return 8;
+    if (s == "SEP") return 9;
+    if (s == "OCT") return 10;
+    if (s == "NOV") return 11;
+    if (s == "DEC") return 12;
+    return -1;
+}
+TimeInfo nextDayOf(TimeInfo curDay){
+    TimeInfo tmp = curDay;
+    tmp.date++;
+    if (tmp.date > getDaysOfMonth(tmp.month, tmp.year)){
+        tmp.date = 1;
+        tmp.month++;
+        if (tmp.month > 12){
+            tmp.month = 1;
+            tmp.year++;
+        }
+    }
+    return tmp;
+}
+
+TimeInfo getFirstDay(TimeInfo startDate, int dayOfWeek){
+    while (getDayOfWeek(startDate.date, startDate.month, startDate.year) != dayOfWeek){
+        startDate = nextDayOf(startDate);
+    }
+    return startDate;
+}
+void addCheckInCell(CheckInBoard &checkIn, CheckInCell *tmpCell){
+    checkIn.numOfDays++;
+    if (checkIn.pHeadCell == NULL){
+        checkIn.pHeadCell = checkIn.pTailCell = tmpCell;
+    }else{
+        checkIn.pTailCell->next = tmpCell;
+        checkIn.pTailCell = tmpCell;
+    }
+}
+void createCheckInBoard(string startDate, string endDate, string startHour, string endHour, int dayOfWeek, CheckInBoard &checkIn){
+    TimeInfo date, finalDate;
+    finalDate.setDate(endDate);
+    finalDate.setTime(endHour);
+    date.setDate(startDate);
+    date.setTime(startHour);
+    date = getFirstDay(date, dayOfWeek);
+//    cout<<startDate<<" "<<endDate<<" "<<startHour<<" "<<endHour<<endl;
+    while (date.getTimeCode() <= finalDate.getTimeCode()){
+        CheckInCell *tmpCell = new CheckInCell;
+        tmpCell->startTime = date.getTimeCode();
+        date.setTime(endHour);
+        tmpCell->endTime = date.getTimeCode();
+        date.setTime(startHour);        //rollback
+        tmpCell->checked = false;
+        addCheckInCell(checkIn, tmpCell); 
+        for(int i=0; i<7; i++) date = nextDayOf(date);          //shift a week
+    }
+    
+} 
+TimeInfo getCurrentTime(){
+    TimeInfo curTime;
+    time_t my_time = time(NULL);
+    string s = ctime(&my_time);
+    string day, month, date, time, year;
+    stringstream(s)>>day>>month>>date>>time>>year;
+    curTime.setDate(date+"/"+to_string(getMonthFromString(month))+"/"+year);
+    string shortTime = "";
+    for(int i=0; i<5; i++) shortTime += time[i];
+    curTime.setTime(shortTime); 
+    return curTime;
+}
+bool findLecturer(string nameLec, CoreData data, Lecturer *foundLecturer){
+    Lecturer *curLec = data.pHeadLecturer;
+    while (curLec != NULL){
+        if (curLec->name == nameLec){
+            foundLecturer = curLec;
+            return true;
+        }
+        curLec = curLec->next;
+    }
+    return false;
+}
+bool findStaff(string nameStaff, CoreData data, Staff *foundStaff){
+    Staff *curStaff = data.pHeadStaff;
+    while (curStaff != NULL){
+        if (curStaff->name == nameStaff){
+            foundStaff = curStaff;
+            return true;
+        }
+        curStaff = curStaff->next;
+    }
+    return false;
 }

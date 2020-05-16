@@ -21,8 +21,10 @@ struct Year;
 struct Semester;
 struct CourseManager;
 struct StudentManager;
-struct CheckIn;
+struct CheckInCell;
+struct CheckInBoard;
 struct Lecturer;
+struct Time;
 //definition
 
 struct CoreData{
@@ -32,8 +34,17 @@ struct CoreData{
     Year *pHeadYear = NULL;    //pHead cua Year
     int numOfLecturers = 0;
     Lecturer *pHeadLecturer = NULL;
+    int numOfStaffs = 0;
+    Staff *pHeadStaff = NULL;
 };
-
+struct Lecturer{
+    string name;
+    Lecturer *next = NULL;
+};
+struct Staff{
+    string name;
+    Staff *next = NULL;
+}
 struct Class{
     string name;
     int numOfStudents = NULL;
@@ -49,13 +60,23 @@ struct Student{
 };
 struct ScoreBoard{
     double midTerm = -1, finalTerm = -1, lab = -1, bonus = -1;
+}; 
+struct CheckInCell{
+    CheckInCell *next = NULL;
+    bool checked = false;
+    long long startTime, endTime;
+};
+struct CheckInBoard{
+    int numOfDays = 0;
+    CheckInCell *pHeadCell = NULL, *pTailCell = NULL;
+
 };
 struct CourseManager{
     string year, semester;
     CourseManager *next = NULL, *pre = NULL;
     Course *pCourse = NULL;
     ScoreBoard scoreBoard;
-    CheckIn *checkin = NULL;
+    CheckInBoard checkIn;
     StudentManager *pStudentManager;
     
 };
@@ -81,10 +102,14 @@ struct Course{
     string id, name, lectureAccount, startDate, endDate, dayOfWeek, room, startHour, endHour; //hh:mm
     StudentManager *pHeadStudentManager = NULL;
 };
-//YYYYmmDDhhMMss -> long long
-struct CheckIn{
-    bool result;
-    long long start, end;
+struct TimeInfo{
+    int date, month, year, minnute, hour;
+    long long toInt(string s); 
+    bool setDate(string s);
+    bool setTime(string s);
+    long long getTimeCode();
+    void constructor(long long code);
+
 };
 void importDataBase(string pathName, CoreData &data);
 void saveToDataBase(string pathName, CoreData data);
@@ -110,6 +135,7 @@ bool findCourse(string courseID, Semester *curSemester, Course *&foundCourse, Co
 void addNewCourse(string inYear, string inSemester, Course *&newCourse, CoreData &data);
 void addNewCourse(Semester *curSem, Course *&newCourse);
 void addStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear, string inSemester);
+void linkStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear, string inSemester);
 bool findStudentInCourse(long long stId, StudentManager *&foundStudentManager, Course *curCourse);
 void removeCourse(Semester *curSem ,Course *curCourse);
 bool removeCourse(string yearName, string semesterName, string courseID, CoreData &data);
@@ -117,4 +143,18 @@ void deallocateCourse(Course *curCourse);
 void deallocateCourseManager(CourseManager *curCourseManager);
 void deallocateStudentManager(StudentManager *curStudentManager);
 void removeStudentFromCourse(long long stID, Course *curCourse);
+//Time  - checkIn
+int getDaysOfMonth(int month, int year);
+int getDayOfWeek(int date, int month, int year); //0 == Sun
+int getDayFromString(string s);  //"Sun" -> 0
+int getMonthFromString(string s);
+TimeInfo nextDayOf(TimeInfo curDay);
+TimeInfo getFirstDay(TimeInfo startDate, int dayOfWeek);
+void createCheckInBoard(string startDate, string endDate, string startHour, string endHour, int dayOfWeek, CheckInBoard &checkIn);
+void addCheckInCell(CheckInBoard &checkIn, CheckInCell *tmpCell); 
+TimeInfo getCurrentTime();
+//Lecturer - Staff;
+bool findLecturer(string nameLec, CoreData data, Lecturer *foundLecturer);
+bool findStaff(string nameStaff, CoreData data, Staff *foundStaff);
 #endif /* Data_hpp */
+///Users/lforestor/Dev/CS/162/Project/Project/Project/Courses.csv
