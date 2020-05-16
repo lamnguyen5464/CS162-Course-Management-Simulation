@@ -13,6 +13,7 @@ void clearScreen(){
 
 void upper(string &name){
     for (int i = 0;i < name.length();i++)
+        if (name[i] >= 'a' && name[i] <='z')
         name[i] = name[i] - 32;
 }
 void staffClassMenu (string pathname,CoreData &data){
@@ -93,8 +94,9 @@ void importStudentFromCsvFile (CoreData &data){
         cout << "can not open file"<<endl;
     }
     else{
-        string classname;
-        classname = linkOfFile; // t chua biet xu li ten lop sao
+        string classname = linkOfFile;
+
+       // t chua biet xu li ten lop sao
         createNewEmptyClass(classname,data);
         Class *tmpClass = NULL;
         if (!findClass(classname,data,tmpClass)) return;
