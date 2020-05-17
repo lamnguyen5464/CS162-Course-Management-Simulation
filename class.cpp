@@ -11,7 +11,7 @@ void clearScreen(){
     system("cls");
 }
 
-void upper(string &name){
+void toUpper(string &name){
     for (int i = 0;i < name.length();i++)
         if (name[i] >= 'a' && name[i] <='z')
         name[i] = name[i] - 32;
