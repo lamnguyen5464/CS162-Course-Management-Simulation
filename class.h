@@ -12,6 +12,7 @@ bool menuStudent(Class *&curClass,Student *&curSt,CoreData data);
 void creatClassToImport(CoreData &data);
 void inputStudentFromFile(Student *tmpSt,Class *&tmpClass,ifstream &fin,CoreData &data);
 void importStudentFromCsvFile (CoreData &data,string pathname);
+void getClassName(string &classname,string linkOfFile);
 
 void inputGender(string &gender);
 bool addAStudent(CoreData &data);

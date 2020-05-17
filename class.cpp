@@ -94,8 +94,13 @@ void importStudentFromCsvFile (CoreData &data,string pathname){
         cout << "can not open file"<<endl;
     }
     else{
-        string classname = linkOfFile;
-
+        string classname = "";
+        getClassName(classname,linkOfFile);
+        Class *curClass = NULL;
+        if (findClass(classname,data,curClass)){
+            cout << "Existing class!"<<endl;
+            return;
+        }
        // t chua biet xu li ten lop sao
         createNewEmptyClass(classname,data);
         Class *tmpClass = NULL;
@@ -104,6 +109,13 @@ void importStudentFromCsvFile (CoreData &data,string pathname){
         inputStudentFromFile(tmpSt,tmpClass,fin,data);
         cout << "Import successfully!";
         fin.close();
+    }
+}
+void getClassName(string &classname,string linkOfFile){
+    int i = 0;
+    while (linkOfFile[i]!= '.'){
+        classname += linkOfFile[i];
+        ++i;
     }
 }
 
