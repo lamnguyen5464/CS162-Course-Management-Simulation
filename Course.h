@@ -24,6 +24,7 @@ void activity16(CoreData data);
 void activity17(CoreData data);
 void activity18(CoreData data);
 void activity19(string pathName, CoreData& data);
+void activity20(CoreData data);
 void activity21(string pathName, CoreData& data);
 void returnMenu1Arg(void (*tmp)(CoreData), CoreData data);
 void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& data);
@@ -56,6 +57,8 @@ void viewListOfStudents(Course* curCourse);
 //SCOREBOARD
 void displayScoreboard(Course* curCourse);
 void editGrade(Course*& curCourse, StudentManager*& curStdMng);
+void importScoreboard(string address, Course*& curCourse);
+void exportScoreboard(Course* curCourse);
 
 void toUpper(string& str);
 void findMaxLengthOfStudentInfo(Student* curSt, int& last, int& first, int& dob);

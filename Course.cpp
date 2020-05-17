@@ -27,7 +27,7 @@ void displaySemInfo(Semester* curSem)
 	cout << "		Courses' details: " << endl;
 	Course* tmpCourse = tmpSem->pHeadCourse;
 	while (tmpCourse != NULL) {
-		cout << "			" << tmpCourse->name << endl;
+		cout << "			" << tmpCourse->id << endl;
 		tmpCourse = tmpCourse->next;
 	}
 }
@@ -49,7 +49,7 @@ void displayCoursesCurSem(Year* curYear, Semester* curSem)
 	Course* tmpCourse = curSem->pHeadCourse;
 	for (int i = 1; tmpCourse != NULL; ++i)
 	{
-		cout << "					" << i << ". " << tmpCourse->name << endl;
+		cout << "					" << i << ". " << tmpCourse->id << endl;
 		tmpCourse = tmpCourse->next;
 	}
 }
@@ -296,17 +296,25 @@ void createNewEmptyCourse(string yearName, string semesterName, string courseID,
 	Semester* curSem;
 	if (findSemester(yearName, semesterName, curSem, data)) {
 		Course* newCourse;
-		if (findCourse(yearName, semesterName, courseID, newCourse, data)) {
+		/*if (findCourse(yearName, semesterName, courseID, newCourse, data)) {
 			cout << "The course " << courseID << " of semester " << semesterName << " of year " << yearName << " is already existing!" << endl;
 			return;
-		}
+		}*/
 		curSem->numOfCourses++;
 		newCourse = new Course;
 		newCourse->id = courseID;
 		inputCourseDetail(yearName, semesterName, newCourse, data);
-		newCourse->pHeadStudentManager = NULL;
-		newCourse->next = curSem->pHeadCourse;
-		curSem->pHeadCourse = newCourse;
+		//newCourse->pHeadStudentManager = NULL;
+		if (newCourse != NULL)
+		{
+			newCourse->next = curSem->pHeadCourse;
+			curSem->pHeadCourse = newCourse;
+			cout << "Create course " << courseID << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
+		}
+		else
+		{
+			curSem->numOfCourses--;
+		}
 	}
 }
 void removeYear(Year*& curYear, CoreData& data)
@@ -524,9 +532,17 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 	getline(fin, newCourse->startHour, ',');
 	getline(fin, newCourse->endHour, ',');
 	getline(fin, newCourse->room, '\n');
+	newCourse->id += " - " + tmpClassName;
+	Course* tmpCourse = NULL;
+	if (findCourse(inYear, inSemester, newCourse->id, tmpCourse, data))
+	{
+		cout << "The course " << newCourse->id << " of semester " << inSemester << " of year " << inYear << " is already existing!" << endl;
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 	if (findClass(tmpClassName, data, tmpClass))
 	{
-		newCourse->id += " - " + tmpClassName;
 		if (tmpClass->pHeadStudent != NULL)
 		{
 			Student* tmpStd = tmpClass->pHeadStudent;
@@ -570,17 +586,12 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 				Semester* curSem;
 				if (findSemester(yearName, semesterName, curSem, data)) {
 					Course* newCourse;
-					if (findCourse(yearName, semesterName, courseID, newCourse, data)) {
-						cout << "The course " << courseID << " of semester " << semesterName << " of year " << yearName << " is already existing!" << endl;
-						return;
-					}
 					curSem->numOfCourses++;
 					newCourse = new Course;
 					newCourse->id = courseID;
 					importCourse(fin, yearName, semesterName, newCourse, data);
 					if (newCourse != NULL)
 					{
-						newCourse->pHeadStudentManager = NULL;
 						newCourse->next = curSem->pHeadCourse;
 						curSem->pHeadCourse = newCourse;
 						cout << "Import course " << courseID << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
@@ -592,7 +603,7 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 				}
 			}
 		}
-		
+		fin.close();
 	}
 }
 void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, CoreData data)
@@ -631,6 +642,15 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 	}
 
 	newCourse->id += " - " + tmpClassName;
+	Course* tmpCourse = NULL;
+	if (findCourse(inYear, inSemester, newCourse->id, tmpCourse, data))
+	{
+		cout << "The course " << newCourse->id << " of semester " << inSemester << " of year " << inYear << " is already existing!" << endl;
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
+
 	if (tmpClass->pHeadStudent != NULL)
 	{
 		Student* tmpStd = tmpClass->pHeadStudent;
@@ -689,7 +709,24 @@ void importScoreboard(string address, Course* &curCourse)
 				stdID = 0;
 			}
 		}
+		fin.close();
 	}
+}
+
+void exportScoreboard(Course* curCourse)
+{
+	ofstream fout(curCourse->id + "-Scoreboard.csv");
+	fout << "No,Student ID,Last name,First name,Midterm,Final,Lab,Bonus" << endl;
+	StudentManager* curStdMng = curCourse->pHeadStudentManager;
+	int i = 1;
+	while (curStdMng != NULL)
+	{
+		fout << i++ << "," <<curStdMng->pStudent->id<<","<<curStdMng->pStudent->lastName<<","<<curStdMng->pStudent->firstName << "," << curStdMng->pCourseManager->scoreBoard.midTerm 
+			<< "," << curStdMng->pCourseManager->scoreBoard.finalTerm << "," << curStdMng->pCourseManager->scoreBoard.lab << "," << curStdMng->pCourseManager->scoreBoard.bonus << endl;
+		curStdMng = curStdMng->next;
+	}
+	fout.close();
+	cout << "Export successfully" << endl;
 }
 
 //MENUS
@@ -737,6 +774,7 @@ void menuCourse(string pathName, CoreData& data)
 			cout << "________SCOREBOARD________" << endl;
 			cout << "18. View scoreboard of a course" << endl;
 			cout << "19. Import scoreboard from a .csv file" << endl;
+			cout << "20. Export scoreboard to a .csv file" << endl;
 			cout << "21. Edit grade of a student" << endl;
 			cout << endl;
 		}
@@ -809,6 +847,9 @@ void menuCourse(string pathName, CoreData& data)
 		break;
 	case 19:
 		activity19(pathName, data);
+		break;
+	case 20:
+		activity20(data);
 		break;
 	case 21:
 		activity21(pathName, data);
@@ -913,7 +954,7 @@ void courseMenu(Year*& curYear, Semester*& curSem, Course*& curCourse, CoreData 
 	Course* tmpCourse = curSem->pHeadCourse;
 	for (int i = 1; tmpCourse != NULL; ++i)
 	{
-		cout << "					" << i << ". " << tmpCourse->name << endl;
+		cout << "					" << i << ". " << tmpCourse->id << endl;
 		tmpCourse = tmpCourse->next;
 	}
 
@@ -1169,7 +1210,6 @@ void activity10(string pathName, CoreData& data)
 		cin.ignore();
 		getline(cin, curCourseID);
 		createNewEmptyCourse(curYear->name, curSem->name, curCourseID, data);
-		cout << "Create successfully!" << endl;
 		saveToDataBase(pathName, data);
 	}
 	returnMenu2Arg(&activity10, pathName, data);
@@ -1328,6 +1368,21 @@ void activity19(string pathName, CoreData& data)
 		saveToDataBase(pathName, data);
 	}
 	returnMenu2Arg(&activity19, pathName, data);
+}
+void activity20(CoreData data)
+{
+	cout << "_____________EXPORT SCOREBOARD_____________" << endl << endl;
+	cout << "Please input 1, 2, 3, 4, ... corresponding to your selection below: " << endl;
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	Course* curCourse = NULL;
+	courseMenu(curYear, curSem, curCourse, data);
+
+	if (curCourse != NULL)
+	{
+		exportScoreboard(curCourse);
+	}
+	returnMenu1Arg(&activity20, data);
 }
 void activity21(string pathName, CoreData& data)
 {
