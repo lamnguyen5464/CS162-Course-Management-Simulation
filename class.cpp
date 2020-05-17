@@ -271,7 +271,7 @@ bool viewListOfStudents(Class *curClass,CoreData data){
     }
     else{
         int last = 10,first = 10,dob = 0;
-        findMaxLength(tmpSt,last,first,dob);
+        findMaxLengthOfStudentInfo(tmpSt,last,first,dob);
         int k =(last+first+dob+30);
         tmpSt = curClass ->pHeadStudent;
         int i = 1;
@@ -286,7 +286,7 @@ bool viewListOfStudents(Class *curClass,CoreData data){
     return true;
 }
 
-void findMaxLength(Student *curSt,int &last,int &first,int &dob){
+void findMaxLengthOfStudentInfo(Student *curSt,int &last,int &first,int &dob){
     while(curSt != NULL){
         if ((curSt ->lastName).length() > last) last = (curSt ->lastName).length();
         if ((curSt ->firstName).length() > first) first = (curSt ->firstName).length();
@@ -310,7 +310,7 @@ bool menuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
         }
         else{
             int last = 10,first = 10,dob = 0;
-            findMaxLength(tmpSt,last,first,dob);
+            findMaxLengthOfStudentInfo(tmpSt,last,first,dob);
             int k =(last+first+dob+30);
             tmpSt = curClass ->pHeadStudent;
             int i = 1,choice;
