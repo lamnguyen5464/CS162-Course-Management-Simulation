@@ -29,10 +29,10 @@ void findMaxLength(Student *curSt,int &last,int &first,int &dob);
 bool viewListOfStudents(Class *curClass,CoreData data);
 
 //
-void activity1(string pathname, CoreData &data);
-void activity2(string pathname, CoreData &data);
-void activity3(string pathname, CoreData &data);
-void activity4(string pathname, CoreData &data);
-void activity5(string pathname, CoreData &data);
-void activity6(string pathname, CoreData &data);
+void activity2_1(string pathname, CoreData &data);
+void activity2_2(string pathname, CoreData &data);
+void activity2_3(string pathname, CoreData &data);
+void activity2_4(string pathname, CoreData &data);
+void activity2_5(string pathname, CoreData &data);
+void activity2_6(string pathname, CoreData &data);
 #endif // FUNCTION_QHUY_H_INCLUDED

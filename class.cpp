@@ -40,22 +40,22 @@ void staffClassMenu (string pathname,CoreData &data){
             case 0:
                 return;
             case 1:
-                activity1(pathname,data);
+                activity2_1(pathname,data);
                 break;
             case 2:
-                activity2(pathname,data);
+                activity2_2(pathname,data);
                 break;
             case 3:
-                activity3(pathname,data);
+                activity2_3(pathname,data);
                 break;
             case 4:
-                activity4(pathname,data);
+                activity2_4(pathname,data);
                 break;
             case 5:
-                 activity5(pathname,data);
+                 activity2_5(pathname,data);
                  break;
             case 6:{
-                activity6(pathname,data);
+                activity2_6(pathname,data);
                 break;
             }
             default:
@@ -72,7 +72,6 @@ void inputStudentFromFile(Student *tmpSt,Class *&tmpClass,ifstream &fin,CoreData
     while(!fin.eof()){
         getline(fin, no, ','); //ignore no
         tmpSt = new Student;
-        fin.ignore(1);
         fin >> tmpSt->id;
         fin.ignore(1);
         getline(fin,tmpSt->lastName,',');
@@ -103,6 +102,7 @@ void importStudentFromCsvFile (CoreData &data){
         if (!findClass(classname,data,tmpClass)) return;
         Student *tmpSt = NULL ;
         inputStudentFromFile(tmpSt,tmpClass,fin,data);
+        cout << "Import successfully!";
         fin.close();
     }
 }
@@ -364,12 +364,12 @@ bool addAStudent(CoreData &data){
         }
     }
     else{
-        cout << "    "<<"Last name:" ;
+        cout << "    "<<"Last name: " ;
         cin.ignore();
         getline(cin,tmpSt->lastName);
         cout << "    "<<"First name: " ;
         getline(cin,tmpSt->firstName);
-        cout <<"    "<< "DoB : " ;
+        cout <<"    "<< "DoB: " ;
         getline(cin,tmpSt->dOB);
         inputGender(tmpSt->gender);
         creatClassToImport(data);
@@ -440,17 +440,17 @@ void copyStudentInfor(Student *&dup,Student *tmpSt){
     dup->pHeadCourseManager = tmpSt ->pHeadCourseManager;
 }
 
-void activity6(string pathname, CoreData &data){
+void activity2_6(string pathname, CoreData &data){
     Class *curClass = NULL;
     if (!viewListOfStudents(curClass,data)) return;
     cout << "Input any integer to run again (0 to return): ";
     int choice;
     cin >> choice;
     if(choice == 0) return;
-    activity6(pathname,data);
+    activity2_6(pathname,data);
 }
 
-void activity3(string pathname, CoreData &data){
+void activity2_3(string pathname, CoreData &data){
     int choice;
     cout << "1.Input ID to edit." <<endl;
     cout << "2.View menu." <<endl;
@@ -461,20 +461,20 @@ void activity3(string pathname, CoreData &data){
             return;
         case 1:{
             if (!editAnExistingStudent(data)){
-                activity3(pathname,data);
+                activity2_3(pathname,data);
                 return;
             }
             break;
         }
         case 2:
             if (!editByMenu(data)){
-                activity3(pathname,data);
+                activity2_3(pathname,data);
                 return;
             }
             break;
         default:{
             cout << "Invalid choice,try again.";
-            activity3(pathname,data);
+            activity2_3(pathname,data);
             return;
         }
     }
@@ -482,10 +482,10 @@ void activity3(string pathname, CoreData &data){
     cout << "Input any integer to run again (0 to return): ";
     cin >> choice;
     if(choice == 0) return;
-    activity3(pathname,data);
+    activity2_3(pathname,data);
 }
 
-void activity5(string pathname, CoreData &data){
+void activity2_5(string pathname, CoreData &data){
     if (!moveStudentFromAToB(data)) return;
     saveToDataBase(pathname,data);
     cout << "Change successfully!" << endl;
@@ -493,10 +493,10 @@ void activity5(string pathname, CoreData &data){
     int choice;
     cin >> choice;
     if(choice == 0) return;
-    activity5(pathname,data);
+    activity2_5(pathname,data);
 }
 
-void activity2(string pathname, CoreData &data){
+void activity2_2(string pathname, CoreData &data){
     if (!addAStudent(data)) return;
     saveToDataBase(pathname,data);
     cout << "Add student successfully!"<<endl;
@@ -504,10 +504,10 @@ void activity2(string pathname, CoreData &data){
     int choice;
     cin >> choice;
     if(choice == 0) return;
-    activity5(pathname,data);
+    activity2_2(pathname,data);
 }
 
-void activity4(string pathname, CoreData &data){
+void activity2_4(string pathname, CoreData &data){
     if (!removeAStudent(data)) return;
     saveToDataBase(pathname,data);
     cout << "Remove student successfully!"<<endl;
@@ -515,15 +515,15 @@ void activity4(string pathname, CoreData &data){
     int choice;
     cin >> choice;
     if(choice == 0) return;
-    activity4(pathname,data);
+    activity2_4(pathname,data);
 }
 
-void activity1(string pathname, CoreData &data){
+void activity2_1(string pathname, CoreData &data){
     importStudentFromCsvFile(data);
-    cout << "Import successfully!"<<endl;
+    saveToDataBase(pathname,data);
     cout << "Input any integer to run again (0 to return): ";
     int choice;
     cin >> choice;
     if(choice == 0) return;
-    activity5(pathname,data);
+    activity2_1(pathname,data);
 }
