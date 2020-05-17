@@ -3,6 +3,7 @@
 #include <string>
 #include "Data.hpp"
 #include "Course.h"
+#include "class.h"
 #include <iomanip>
 
 //DISPLAYS
@@ -625,6 +626,8 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 	getline(cin, newCourse->endHour);
 	cout << "	Room: ";
 	getline(cin, newCourse->room);
+
+	cout << newCourse->startHour << " " << newCourse->endHour << endl;
 
 	string tmpClassName;
 	Class* tmpClass = NULL;
@@ -1426,21 +1429,4 @@ void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& d
 	cin >> yourChoice;
 	if (yourChoice != 1) return;
 	tmp(pathName, data);
-}
-
-void toUpper(string& name) {
-	for (int i = 0; i < name.length(); i++)
-		if (name[i] >= 'a' && name[i] <= 'z')
-			name[i] = name[i] - 32;
-}
-void findMaxLengthOfStudentInfo(Student* curSt, int& last, int& first, int& dob) {
-	while (curSt != NULL) {
-		if ((curSt->lastName).length() > last) last = (curSt->lastName).length();
-		if ((curSt->firstName).length() > first) first = (curSt->firstName).length();
-		if ((curSt->dOB).length() > dob) dob = (curSt->dOB).length();
-		curSt = curSt->next;
-	}
-}
-void clearScreen() {
-	system("cls");
 }
