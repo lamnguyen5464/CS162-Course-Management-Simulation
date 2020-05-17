@@ -1,7 +1,5 @@
 #ifndef Course_h
-#define Course_h
-
-#include "Course.h"
+#define Course_h 
 
 //MENU
 void menuCourse(string pathName, CoreData& data);
@@ -59,9 +57,5 @@ void displayScoreboard(Course* curCourse);
 void editGrade(Course*& curCourse, StudentManager*& curStdMng);
 void importScoreboard(string address, Course*& curCourse);
 void exportScoreboard(Course* curCourse);
-
-void toUpper(string& str);
-void findMaxLengthOfStudentInfo(Student* curSt, int& last, int& first, int& dob);
-void clearScreen();
 
 #endif
