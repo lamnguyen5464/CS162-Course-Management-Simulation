@@ -83,13 +83,13 @@ void inputStudentFromFile(Student *tmpSt,Class *&tmpClass,ifstream &fin,CoreData
     }
 }
 
-void importStudentFromCsvFile (CoreData &data){
+void importStudentFromCsvFile (CoreData &data,string pathname){
     ifstream fin;
     string linkOfFile;
     cout << "Csv file: ";
     cin.ignore();
     getline(cin, linkOfFile);
-    fin.open(linkOfFile);
+    fin.open(pathname + linkOfFile);
     if (!fin.is_open()){
         cout << "can not open file"<<endl;
     }
@@ -519,7 +519,7 @@ void activity2_4(string pathname, CoreData &data){
 }
 
 void activity2_1(string pathname, CoreData &data){
-    importStudentFromCsvFile(data);
+    importStudentFromCsvFile(data,pathname);
     saveToDataBase(pathname,data);
     cout << "Input any integer to run again (0 to return): ";
     int choice;
