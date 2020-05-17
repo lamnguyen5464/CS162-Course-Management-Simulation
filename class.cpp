@@ -79,6 +79,7 @@ void inputStudentFromFile(Student *tmpSt,Class *&tmpClass,ifstream &fin,CoreData
         getline(fin,tmpSt->firstName,',');
         getline(fin,tmpSt->gender,',');
         getline(fin,tmpSt->dOB,'\n');
+        tmpSt->hashPassword = hashPass(to_string(tmpSt->id));
         addStudentToClass(tmpClass->name,tmpSt,data);
     }
 }
@@ -376,6 +377,7 @@ bool addAStudent(CoreData &data){
         Class *tmpClass = NULL;
         menuClass(tmpClass,data);
         if (tmpClass == NULL) return addAStudent(data);
+        tmpSt ->hashPassword = hashPass(to_string(tmpSt->id));
         addStudentToClass(tmpClass->name,tmpSt,data);
         return true;
     }
