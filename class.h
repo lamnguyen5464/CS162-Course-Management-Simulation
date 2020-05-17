@@ -3,6 +3,7 @@
 
 // clear screen
 void clearScreen();
+void toUpper(string &name);
 //academic staff-class;
 void staffClassMenu (string pathname,CoreData &data);
 void menuClass(Class *&tmpClass,CoreData data);
