@@ -266,6 +266,37 @@ bool removeStudent(long long id, CoreData &data){
     }
     return false;
 }
+bool removeStudent(long long id, CoreData &data, Student *&removedStudent){
+    Class *curClass = data.pHeadClass;
+    while (curClass != NULL){
+        //check if class is empty
+        if (curClass->pHeadStudent == NULL || id < curClass->pHeadStudent->id || curClass->pTailStudent->id < id){
+            curClass = curClass->next;
+        }else{
+            Student *curStudent = curClass->pHeadStudent, *preStudent = NULL;
+            while (curStudent != NULL &&curStudent->id < id){
+                preStudent = curStudent;
+                curStudent = curStudent->next;
+            }
+            if (curStudent != NULL && curStudent->id == id){        //found!!
+                curClass->numOfStudents--;
+                if (preStudent == NULL){        //remove at phead
+                    preStudent = curClass->pHeadStudent;
+                    curClass->pHeadStudent = curClass->pHeadStudent->next;
+                }else{
+                    if (curStudent->next==NULL) curClass->pTailStudent = preStudent; //remove at ptail
+                    preStudent->next = curStudent->next;
+                }
+                //remove in course
+                removedStudent = curStudent;
+                return true;
+                //
+            }
+            curClass = curClass->next;
+        }
+    }
+    return false;
+}
 void deallocateStudent(Student *&st){
 //    while (st->numOfCourse--){
 //        //deallocate *year
@@ -273,7 +304,7 @@ void deallocateStudent(Student *&st){
 //    delete st;
 }
 void addStudentToClass(Class *&pClass, Student *& tmpSt){
-    tmpSt->hashPassword = hashPass(to_string(tmpSt->id));
+//    tmpSt->hashPassword = hashPass(to_string(tmpSt->id));
 //    cout<<"Add "<<tmpSt->lastName<<" "<<tmpSt->firstName<<" to class "<<pClass->name<<" successfully!"<<endl;
     if (pClass->pHeadStudent==NULL){    //CLASS IS EMPTY
         pClass->pHeadStudent = pClass->pTailStudent = tmpSt;
@@ -457,7 +488,7 @@ void addNewCourse(Semester *curSem, Course *&newCourse){
     curSem->pHeadCourse = newCourse; 
 }
 
-void addStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear, string inSemester){
+void addStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear, string inSemester){ 
     CourseManager *courseManager = new CourseManager;
     courseManager->pCourse = curCourse;
     courseManager->year = inYear;
@@ -595,6 +626,7 @@ void showDataStudent(CoreData data){
         while (curSt != NULL){
             cout<<"         Id: "<<curSt->id<<endl;
             cout<<"         Name: "<<curSt->firstName<<" "<<curSt->lastName<<endl;
+            cout<<"         DOB: "<<curSt->dOB<<" "<<endl;
             cout<<"         NumOfCourses: "<<curSt->numOfCourse<<endl;
             CourseManager *curCourse = curSt->pHeadCourseManager;
             while (curCourse != NULL){

@@ -65,7 +65,7 @@ struct ScoreBoard{
 struct CheckInCell{
     CheckInCell *next = NULL;
     bool checked = false;
-    long long startTime, endTime;
+    long long startTime = 9, endTime = 0;
 };
 struct CheckInBoard{
     int numOfDays = 0;
@@ -110,7 +110,6 @@ struct TimeInfo{
     bool setTime(string s);
     long long getTimeCode();
     void constructor(long long code);
-
 };
 void importDataBase(string pathName, CoreData &data);
 void saveToDataBase(string pathName, CoreData data);
@@ -121,6 +120,7 @@ long long hashPass(string s);
 //Class - Student
 bool findStudent(long long id, CoreData data, Student *&st, Class *&ofClass);
 bool removeStudent(long long id, CoreData &data);
+bool removeStudent(long long id, CoreData &data, Student *&removedStudent);
 bool findClass(string className, CoreData data, Class *&foundClass);
 void deallocateStudent(Student *&st);
 void createNewEmptyClass(string className, CoreData &data);
