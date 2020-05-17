@@ -22,6 +22,9 @@ void activity14(string pathName, CoreData& data);
 void activity15(CoreData data);
 void activity16(CoreData data);
 void activity17(CoreData data);
+void activity18(CoreData data);
+void activity19(string pathName, CoreData& data);
+void activity21(string pathName, CoreData& data);
 void returnMenu1Arg(void (*tmp)(CoreData), CoreData data);
 void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& data);
 
@@ -48,10 +51,14 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 void importCourse(string address, string yearName, string semesterName, CoreData& data);
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse);
-bool viewListOfStudents(Course* curCourse, CoreData data);
-void findMaxLength(Student* curSt, int& last, int& first, int& dob);
+void viewListOfStudents(Course* curCourse);
 
-void upper(string& str);
+//SCOREBOARD
+void displayScoreboard(Course* curCourse);
+void editGrade(Course*& curCourse, StudentManager*& curStdMng);
 
+void toUpper(string& str);
+void findMaxLengthOfStudentInfo(Student* curSt, int& last, int& first, int& dob);
+void clearScreen();
 
 #endif
