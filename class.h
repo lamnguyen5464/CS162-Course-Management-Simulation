@@ -1,5 +1,5 @@
-#ifndef FUNCTION_QHUY_H_INCLUDED
-#define FUNCTION_QHUY_H_INCLUDED
+#ifndef CLASS_H_INCLUDED
+#define CLASS_H_INCLUDED
 
 // clear screen
 void clearScreen();
