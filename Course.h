@@ -1,7 +1,7 @@
 #ifndef Course_h
 #define Course_h
 
-#include "Data.hpp"
+#include "Course.h"
 
 //MENU
 void menuCourse(string pathName, CoreData& data);
@@ -21,6 +21,13 @@ void activity13(string pathName, CoreData& data);
 void activity14(string pathName, CoreData& data);
 void activity15(CoreData data);
 void activity16(CoreData data);
+void activity17(CoreData data);
+void activity18(CoreData data);
+void activity19(string pathName, CoreData& data);
+void activity20(CoreData data);
+void activity21(string pathName, CoreData& data);
+void returnMenu1Arg(void (*tmp)(CoreData), CoreData data);
+void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& data);
 
 //ACADEMIC YEARS
 void yearMenu(Year*& curYear, CoreData data);
@@ -45,8 +52,16 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 void importCourse(string address, string yearName, string semesterName, CoreData& data);
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse);
+void viewListOfStudents(Course* curCourse);
 
-//LECTURERS
+//SCOREBOARD
+void displayScoreboard(Course* curCourse);
+void editGrade(Course*& curCourse, StudentManager*& curStdMng);
+void importScoreboard(string address, Course*& curCourse);
+void exportScoreboard(Course* curCourse);
 
+void toUpper(string& str);
+void findMaxLengthOfStudentInfo(Student* curSt, int& last, int& first, int& dob);
+void clearScreen();
 
 #endif
