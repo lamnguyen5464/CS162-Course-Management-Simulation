@@ -759,7 +759,7 @@ int getDayFromString(string s){
     if (s == "TUE") return 2;
     if (s == "WED") return 3;
     if (s == "THU") return 4;
-    if (s == "FIE") return 5;
+    if (s == "FRI") return 5;
     if (s == "SAT") return 6;
     return -1;
 }
