@@ -50,8 +50,8 @@ void importDataBase(string pathName, CoreData &data){
             newYear->next = data.pHeadYear;
             data.pHeadYear = newYear;
         }
-        fin.close();
     }
+    fin.close();
     //scan Students.txt
     fin.open(pathName + "Students.txt");
     if (!fin.is_open()){
@@ -122,8 +122,39 @@ void importDataBase(string pathName, CoreData &data){
             data.pHeadClass = tmpClass;
         }
         
-        fin.close();
     }
+    fin.close();
+    
+    //scan Staff.txt
+    fin.open(pathName + "Staff.txt");
+    if (!fin.is_open()){
+        ofstream fout;
+        fout.open(pathName+"Staff.txt");
+        data.numOfLecturers = 0;
+        data.numOfStaffs = 0;
+        addStaff(hashPass("123"), "admin", data);
+        fout.close();
+    }else{
+        fin>>data.numOfStaffs>>data.numOfLecturers;
+        fin.ignore(256,'\n');
+        for(int i = 0; i < data.numOfStaffs; i++){
+            long long tmpHash;
+            string tmpName;
+            getline(fin, tmpName);
+            fin>>tmpHash;
+            addStaff(tmpHash, tmpName, data);
+            fin.ignore(256, '\n');
+        }
+        for(int i = 0; i < data.numOfLecturers; i++){
+            long long tmpHash;
+            string tmpName;
+            getline(fin, tmpName);
+            fin>>tmpHash;
+            addLecturer(tmpHash, tmpName, data);
+            fin.ignore(256, '\n');
+        }
+    }
+    fin.close();
 }
 void saveToDataBase(string pathName, CoreData data){
     ofstream fout;
@@ -196,6 +227,20 @@ void saveToDataBase(string pathName, CoreData data){
             curSem = curSem->next;
         }
         curYear = curYear->next;
+    }
+    fout.close();
+    
+    fout.open(pathName+"Staff.txt");
+    fout<<data.numOfStaffs<<" "<<data.numOfLecturers<<endl;
+    Staff *curStaff = data.pHeadStaff;
+    while (curStaff != NULL){
+        fout<<curStaff->userName<<endl<<curStaff->hashPassword<<endl;
+        curStaff = curStaff->next;
+    }
+    Lecturer *curLec = data.pHeadLecturer;
+    while (curLec != NULL){
+        fout<<curLec->userName<<endl<<curLec->hashPassword<<endl;
+        curLec = curLec->next;
     }
     fout.close();
 }
@@ -762,6 +807,11 @@ int getDayFromString(string s){
     if (s == "FRI") return 5;
     if (s == "SAT") return 6;
     return -1;
+} 
+string getStringDayFromInt(int index){
+    if (index > 6) return "";
+    string day[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    return day[index];
 }
 int getMonthFromString(string s){
     for(int i=0; i<s.length(); i++)
@@ -780,6 +830,7 @@ int getMonthFromString(string s){
     if (s == "DEC") return 12;
     return -1;
 }
+
 TimeInfo nextDayOf(TimeInfo curDay){
     TimeInfo tmp = curDay;
     tmp.date++;
@@ -841,10 +892,25 @@ TimeInfo getCurrentTime(){
     curTime.setTime(shortTime); 
     return curTime;
 }
-bool findLecturer(string nameLec, CoreData data, Lecturer *foundLecturer){
+void addStaff(long long hash, string userName, CoreData &data){
+    Staff *tmp = new Staff;
+    tmp->userName = userName;
+    tmp->hashPassword = hash;
+    tmp->next = data.pHeadStaff;
+    data.pHeadStaff = tmp;
+}
+
+void addLecturer(long long hash, string userName, CoreData &data){
+    Lecturer *tmp = new Lecturer;
+    tmp->userName = userName;
+    tmp->hashPassword = hash;
+    tmp->next = data.pHeadLecturer;
+    data.pHeadLecturer = tmp;
+}
+bool findLecturer(string nameLec, CoreData data, Lecturer *&foundLecturer){
     Lecturer *curLec = data.pHeadLecturer;
     while (curLec != NULL){
-        if (curLec->name == nameLec){
+        if (curLec->userName == nameLec){
             foundLecturer = curLec;
             return true;
         }
@@ -852,10 +918,10 @@ bool findLecturer(string nameLec, CoreData data, Lecturer *foundLecturer){
     }
     return false;
 }
-bool findStaff(string nameStaff, CoreData data, Staff *foundStaff){
+bool findStaff(string nameStaff, CoreData data, Staff *&foundStaff){
     Staff *curStaff = data.pHeadStaff;
     while (curStaff != NULL){
-        if (curStaff->name == nameStaff){
+        if (curStaff->userName == nameStaff){
             foundStaff = curStaff;
             return true;
         }

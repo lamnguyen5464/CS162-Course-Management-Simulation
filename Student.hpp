@@ -11,7 +11,9 @@
 
 #include <stdio.h>
 #include "Data.hpp"
-void viewCheckInResult(Student *me);
 void menuStudent(Student *me, CoreData &data, string pathName);
+void viewCheckInResult(Student *me);
 void checkInt(Student *me);
+void viewSchedule(Student *me);
+void viewScore(Student *me);
 #endif /* Student_hpp */

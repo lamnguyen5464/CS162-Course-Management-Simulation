@@ -39,11 +39,13 @@ struct CoreData{
     Staff *pHeadStaff = NULL;
 };
 struct Lecturer{
-    string name;
+    string userName;
+    long long hashPassword;
     Lecturer *next = NULL;
 };
 struct Staff{
-    string name;
+    string userName;
+    long long hashPassword;
     Staff *next = NULL;
 };
 struct Class{
@@ -66,6 +68,8 @@ struct CheckInCell{
     CheckInCell *next = NULL;
     bool checked = false;
     long long startTime = 9, endTime = 0;
+    //extra
+    string idCourse;
 };
 struct CheckInBoard{
     int numOfDays = 0;
@@ -146,8 +150,9 @@ void deallocateStudentManager(StudentManager *curStudentManager);
 bool removeStudentFromCourse(long long stID, Course *curCourse);
 //Time  - checkIn
 int getDaysOfMonth(int month, int year);
-int getDayOfWeek(int date, int month, int year); //0 == Sun
+int getDayOfWeek(int date, int month, int year); //0 == Sun 
 int getDayFromString(string s);  //"Sun" -> 0
+string getStringDayFromInt(int index);
 int getMonthFromString(string s);
 TimeInfo nextDayOf(TimeInfo curDay);
 TimeInfo getFirstDay(TimeInfo startDate, int dayOfWeek);
@@ -155,7 +160,8 @@ void createCheckInBoard(string startDate, string endDate, string startHour, stri
 void addCheckInCell(CheckInBoard &checkIn, CheckInCell *tmpCell); 
 TimeInfo getCurrentTime();
 //Lecturer - Staff;
-bool findLecturer(string nameLec, CoreData data, Lecturer *foundLecturer);
-bool findStaff(string nameStaff, CoreData data, Staff *foundStaff);
-#endif /* Data_hpp */
-///Users/lforestor/Dev/CS/162/Project/Project/Project/Courses.csv
+void addStaff(long long hash, string userName, CoreData &data);
+void addLecturer(long long hash, string userName, CoreData &data);
+bool findLecturer(string nameLec, CoreData data, Lecturer *&foundLecturer);
+bool findStaff(string nameStaff, CoreData data, Staff *&foundStaff);
+#endif /* Data_hpp */ 

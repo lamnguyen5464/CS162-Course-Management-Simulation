@@ -150,6 +150,118 @@ void checkInt(Student *me){
     cin>>tmp;
     cout<<endl;
 }
+void viewScore(Student *me){
+    CourseManager *cur;
+    bool showOption = true;
+    int cnt = 0;
+    while (1){
+        if (showOption){
+            cout<<"     All your courses:"<<endl;
+            cur = me->pHeadCourseManager;
+            cnt = 0;
+            while (cur != NULL){
+                cout<<"     "<<++cnt<<") "<<cur->pCourse->name<<endl;
+                cur = cur->next;
+            }
+            cout<<"     "<<0<<") Return"<<endl;
+        }else{
+            cout<<"Invalid choice! Try again"<<endl;
+            showOption = true;
+        }
+        int yourChoice;
+        cout<<"     >Your choice: ";
+        cin>>yourChoice;
+        if (!yourChoice) return;
+        if (0 < yourChoice && yourChoice <= cnt){
+            cnt = yourChoice;
+            break;
+        }else
+            showOption = false;
+    }
+    cur = me->pHeadCourseManager;
+    cnt--;
+    while (cnt--)
+        cur = cur->next;
+    //show score
+    cout<<"         Mid  : ";
+    if (cur->scoreBoard.midTerm != -1){
+        cout<<setprecision(2)<<cur->scoreBoard.midTerm<<endl;
+    }else{
+        cout<<"is not existing!"<<endl;
+    }
+    cout<<"         Final: ";
+    if (cur->scoreBoard.finalTerm != -1){
+        cout<<setprecision(2)<<cur->scoreBoard.finalTerm<<endl;
+    }else{
+        cout<<"is not existing!"<<endl;
+    }
+    cout<<"         Lab  : ";
+    if (cur->scoreBoard.lab != -1){
+        cout<<setprecision(2)<<cur->scoreBoard.lab<<endl;
+    }else{
+        cout<<"is not existing!"<<endl;
+    }
+    cout<<"         Bonus: ";
+    if (cur->scoreBoard.bonus != -1){
+        cout<<setprecision(2)<<cur->scoreBoard.bonus<<endl;
+    }else{
+        cout<<"is not existing!"<<endl;
+    }
+    cout<<"         Enter any key to back: ";
+    string tmp;
+    cin>>tmp;
+
+}
+void viewSchedule(Student *me){
+    CourseManager *cur = me->pHeadCourseManager;
+    int cnt = 0;
+    //count total of day
+    while (cur != NULL){
+        cnt += cur->checkIn.numOfDays;
+        cur = cur->next;
+    }
+    CheckInCell *buffer = new CheckInCell[cnt+1];
+    cur = me->pHeadCourseManager;
+    cnt = 0;
+    while (cur != NULL){
+        CheckInCell *tmp = cur->checkIn.pHeadCell;
+        while (tmp != NULL){
+            buffer[cnt].idCourse = cur->pCourse->id;
+            buffer[cnt].startTime = tmp->startTime;
+            buffer[cnt].endTime = tmp->endTime;
+            cnt++;
+            tmp = tmp->next;
+        }
+        cur = cur->next;
+    }
+    //sort startTime increasing order
+    for(int i = 0; i < cnt; i++)
+        for(int j = i+1; j < cnt; j++)
+            if (buffer[i].startTime > buffer[j].startTime)
+                swap(buffer[i], buffer[j]);
+    //show schedule
+    TimeInfo curDay;
+    curDay.constructor(buffer[0].startTime);
+    curDay.setTime("23:59");
+    int index = 0;
+    cout<<"     Your schedule: "<<endl;
+    string date = to_string(curDay.date)+"/"+to_string(curDay.month)+"/"+to_string(curDay.year);
+    cout<<"     "<<getStringDayFromInt(getDayOfWeek(curDay.date, curDay.month, curDay.year))<<" - "<<date<<": "<<endl;
+    while (index < cnt){
+        if (buffer[index].startTime > curDay.getTimeCode()){
+            curDay.constructor(buffer[index].startTime);
+            curDay.setTime("23:59");
+            string date = to_string(curDay.date)+"/"+to_string(curDay.month)+"/"+to_string(curDay.year);
+            cout<<"     "<<getStringDayFromInt(getDayOfWeek(curDay.date, curDay.month, curDay.year))<<" - "<<date<<": "<<endl;
+        }
+        TimeInfo tmp;
+        tmp.constructor(buffer[index].startTime);
+        cout<<"                "<<tmp.hour<<":"<<tmp.minnute;
+        tmp.constructor(buffer[index].endTime);
+        cout<<" - "<<tmp.hour<<":"<<tmp.minnute<<" | "<<buffer[index].idCourse<<endl;
+        index++;
+    }
+}
 void menuStudent(Student *me, CoreData &data, string pathName){
     bool showOption = true;
     while (1){
@@ -158,7 +270,7 @@ void menuStudent(Student *me, CoreData &data, string pathName){
             cout<<"1) Check-in"<<endl;
             cout<<"2) View check-in result"<<endl;
             cout<<"3) View scheules"<<endl;
-            cout<<"4) View you score"<<endl;
+            cout<<"4) View your score"<<endl;
             cout<<"0) Return"<<endl;
 
         }else{
@@ -177,8 +289,10 @@ void menuStudent(Student *me, CoreData &data, string pathName){
                 viewCheckInResult(me);
                 break;
             case 3:
+                viewSchedule(me);
                 break;
             case 4:
+                viewScore(me);
                 break;
             case 0:
                 return;
