@@ -1,5 +1,6 @@
 #include <fstream>
 #include <cstring>
+#include <string>
 #include <iostream>
 #include <cstdlib>
 #include <iomanip>
@@ -68,18 +69,26 @@ void staffClassMenu (string pathname,CoreData &data){
 void inputStudentFromFile(Student *tmpSt,Class *&tmpClass,ifstream &fin,CoreData &data){
     string headers;
     string no;
+    long long tmp = 0;
     getline(fin,headers,'\n'); //ignore headers
     while(!fin.eof()){
         getline(fin, no, ','); //ignore no
         tmpSt = new Student;
-        fin >> tmpSt->id;
-        fin.ignore(1);
-        getline(fin,tmpSt->lastName,',');
-        getline(fin,tmpSt->firstName,',');
-        getline(fin,tmpSt->gender,',');
-        getline(fin,tmpSt->dOB,'\n');
-        tmpSt->hashPassword = hashPass(to_string(tmpSt->id));
-        addStudentToClass(tmpClass->name,tmpSt,data);
+        fin >> tmp;
+        if (tmp != 0){
+            tmpSt -> id = tmp;
+            fin.ignore(1);
+            getline(fin,tmpSt->lastName,',');
+            getline(fin,tmpSt->firstName,',');
+            getline(fin,tmpSt->gender,',');
+            getline(fin,tmpSt->dOB,'\n');
+            tmpSt->hashPassword = hashPass(to_string(tmpSt->id));
+            Student *curSt = NULL;
+            Class *curClass = NULL;
+            if (!findStudent(tmpSt->id,data,curSt,curClass))
+                addStudentToClass(tmpClass->name,tmpSt,data);
+            tmp = 0;
+        }
     }
 }
 
@@ -107,7 +116,7 @@ void importStudentFromCsvFile (CoreData &data,string pathname){
         if (!findClass(classname,data,tmpClass)) return;
         Student *tmpSt = NULL ;
         inputStudentFromFile(tmpSt,tmpClass,fin,data);
-        cout << "Import successfully!";
+        cout << "Import successfully!"<<endl;
         fin.close();
     }
 }
@@ -288,9 +297,9 @@ bool viewListOfStudents(Class *curClass,CoreData data){
         tmpSt = curClass ->pHeadStudent;
         int i = 1;
         cout <<"        "<<setw(k/2+7)<< right << "CLASS " << curClass->name<<endl;
-        cout << "       "<<"|"<<"No"<<" |" <<setw(8) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<endl;
+        cout << "       "<<"|"<<"No"<<" |" <<setw(8) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<endl;
         while(tmpSt != NULL){
-            cout <<"       "<< "|"<<i<<". |" <<setw(8) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<"  "<<setw(6)<<left<<tmpSt->gender<<"  |"<<endl;
+            cout <<"       "<< "|"<<i<<". |" <<setw(8) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(6)<< left <<tmpSt->gender<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<endl;
             tmpSt = tmpSt -> next;
             ++i;
         }
@@ -429,11 +438,10 @@ bool moveStudentFromAToB (CoreData &data){
     Class *tmpClass = NULL;
     if (!menuStudent(tmpClass,tmpSt,data)) return false;
     Class *curClass = NULL;
-    Student *curSt = new Student;
-    copyStudentInfor(curSt,tmpSt);
+    Student *curSt;
     menuClass(curClass,data);
     if (curClass != nullptr){
-        removeStudent(tmpSt ->id,data);
+        removeStudent(tmpSt ->id,data, curSt);
         addStudentToClass(curClass->name,curSt,data);
         return true;
     }
@@ -450,6 +458,7 @@ void copyStudentInfor(Student *&dup,Student *tmpSt){
     dup->next = NULL;
     dup->numOfCourse = tmpSt->numOfCourse;
     dup->pHeadCourseManager = tmpSt ->pHeadCourseManager;
+
 }
 
 void activity2_6(string pathname, CoreData &data){
