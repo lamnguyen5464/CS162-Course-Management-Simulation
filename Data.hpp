@@ -143,7 +143,7 @@ bool removeCourse(string yearName, string semesterName, string courseID, CoreDat
 void deallocateCourse(Course *curCourse);
 void deallocateCourseManager(CourseManager *curCourseManager);
 void deallocateStudentManager(StudentManager *curStudentManager);
-void removeStudentFromCourse(long long stID, Course *curCourse);
+bool removeStudentFromCourse(long long stID, Course *curCourse);
 //Time  - checkIn
 int getDaysOfMonth(int month, int year);
 int getDayOfWeek(int date, int month, int year); //0 == Sun

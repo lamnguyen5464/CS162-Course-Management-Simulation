@@ -603,19 +603,21 @@ bool removeCourse(string yearName, string semesterName, string courseID, CoreDat
     
     return 0; // could not find the course
 }
-void removeStudentFromCourse(long long stID, Course *curCourse){       
+bool removeStudentFromCourse(long long stID, Course *curCourse){
     StudentManager *curStudentManager;
     if (findStudentInCourse(stID, curStudentManager, curCourse)){
         removeCourseManager(curStudentManager);
-        //remove Student manager
+        //remove Student manager 
         if (curStudentManager->pre == NULL){
-            curCourse->pHeadStudentManager = curStudentManager;
+            curCourse->pHeadStudentManager = curStudentManager->next;
         }else{
             curStudentManager->pre->next = curStudentManager->next;
         }
         if (curStudentManager->next != NULL) curStudentManager->next->pre = curStudentManager->pre;
         deallocateStudentManager(curStudentManager);
+        return true;
     }
+    return false;
 }
 void showDataStudent(CoreData data){
     cout<<"Number of class: "<<data.numOfClasses<<endl;
