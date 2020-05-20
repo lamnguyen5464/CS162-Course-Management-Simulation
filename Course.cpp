@@ -310,7 +310,7 @@ void createNewEmptyCourse(string yearName, string semesterName, string courseID,
 		{
 			newCourse->next = curSem->pHeadCourse;
 			curSem->pHeadCourse = newCourse;
-			cout << "Create course " << courseID << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
+			cout << "Create course " << newCourse->id << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
 		}
 		else
 		{
@@ -607,7 +607,7 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 		fin.close();
 	}
 }
-void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, CoreData data)
+void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, CoreData& data)
 {
 	cout << "Please input your course details:" << endl;
 	cout << "	Course name: ";
@@ -627,21 +627,41 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 	cout << "	Room: ";
 	getline(cin, newCourse->room);
 
-	cout << newCourse->startHour << " " << newCourse->endHour << endl;
-
 	string tmpClassName;
 	Class* tmpClass = NULL;
 	cout << "	Class: ";
 	getline(cin, tmpClassName);
 	toUpper(tmpClassName);
 	
-
+	bool showOption = true;
 	while (!findClass(tmpClassName, data, tmpClass))
 	{
-		cout << "	Class " << tmpClassName << " does not exist! Try again." << endl;
-		cout << "	Class: ";
-		getline(cin, tmpClassName);
-		toUpper(tmpClassName);
+			if (!showOption)
+			{
+				cout << "Invalid choice. Try again." << endl;
+				showOption = true;
+			}
+			else
+				cout << "	Class " << tmpClassName << " does not exist! Create class " << tmpClassName << "? (1 - YES, 2 - INPUT AGAIN): " << endl;
+			int yourChoice;
+			cout << "Your choice: ";
+			cin >> yourChoice;
+			switch (yourChoice)
+			{
+			case 1:
+				createNewEmptyClass(tmpClassName, data);
+				cout << "Create class " << tmpClassName << " successfully!" << endl;
+				break;
+			case 2:
+				cin.ignore();
+				cout << "	Class: ";
+				getline(cin, tmpClassName);
+				toUpper(tmpClassName);
+				break;
+			default:
+				showOption = false;
+				break;
+			}
 	}
 
 	newCourse->id += " - " + tmpClassName;
@@ -1193,7 +1213,7 @@ void activity9(string pathName, CoreData& data)
 		string fileName;
 		cin.ignore();
 		getline(cin, fileName);
-		importCourse(pathName + "data/" + fileName, curYear->name, curSem->name, data);
+		importCourse(pathName + fileName, curYear->name, curSem->name, data);
 		saveToDataBase(pathName, data);
 	}
 	returnMenu2Arg(&activity9, pathName, data);
@@ -1208,7 +1228,7 @@ void activity10(string pathName, CoreData& data)
 
 	if (curSem != NULL)
 	{
-		cout << "Please input the ID of the course you want to create:";
+		cout << "Please input the ID of the course you want to create: ";
 		string curCourseID;
 		cin.ignore();
 		getline(cin, curCourseID);
@@ -1265,9 +1285,14 @@ void activity13(string pathName, CoreData& data)
 			cout << endl << "Please input the ID of the student you want to remove from this course: ";
 			long long stdID;
 			cin >> stdID;
-			removeStudentFromCourse(stdID, curCourse);
-			cout << "Remove successfully!" << endl;
-			saveToDataBase(pathName, data);
+			StudentManager* stdMng = NULL;
+			if (removeStudentFromCourse(stdID, curCourse))
+			{
+				cout << "Remove successfully!" << endl;
+				saveToDataBase(pathName, data);
+			}
+			else
+				cout << "There is no student with this ID in this course. Try again. " << endl;
 		}
 	}
 	returnMenu2Arg(&activity13, pathName, data);
@@ -1283,8 +1308,6 @@ void activity14(string pathName, CoreData& data)
 
 	if (curCourse != NULL)
 	{
-		cout << endl << "List of students attending in course " << curCourse->name << ": " << endl;
-		displayStdInCourse(curYear, curSem, curCourse);
 		cout << endl << "Please input the ID of the student you want to add to this course: ";
 		long long stdID;
 		Student* std;
@@ -1292,9 +1315,15 @@ void activity14(string pathName, CoreData& data)
 		cin >> stdID;
 		if (findStudent(stdID, data, std, stdClass))
 		{
-			addStudentToCourse(std, curCourse, curYear->name, curSem->name);
-			cout << "Add successfully!" << endl;
-			saveToDataBase(pathName, data);
+			StudentManager* stdMng = NULL;
+			if (!findStudentInCourse(stdID, stdMng, curCourse))
+			{
+				addStudentToCourse(std, curCourse, curYear->name, curSem->name);
+				cout << "Add successfully!" << endl;
+				saveToDataBase(pathName, data);
+			}
+			else
+				cout << "This student has already existed in this course." << endl;
 		}
 		else
 			cout << "There is no student with this ID. " << endl;
@@ -1367,7 +1396,7 @@ void activity19(string pathName, CoreData& data)
 		string fileName;
 		cin.ignore();
 		getline(cin, fileName);
-		importScoreboard(pathName + "data/" + fileName, curCourse);
+		importScoreboard(pathName + fileName, curCourse);
 		saveToDataBase(pathName, data);
 	}
 	returnMenu2Arg(&activity19, pathName, data);
