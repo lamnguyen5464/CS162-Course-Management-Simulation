@@ -72,12 +72,12 @@ void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse)
 void viewListOfStudents(Course* curCourse) {
 	StudentManager* tmpStMng = curCourse->pHeadStudentManager;
 	if (tmpStMng == NULL) {
-		cout << "	There is no student in this course" << endl;
+		cout << "	There is no student in this course." << endl;
 		return;
 	}
 	else {
 		int last = 10, first = 10, dob = 0;
-		findMaxLengthOfStudentInfo(tmpStMng->pStudent, last, first, dob);
+		findMaxLengthOfStudentInfo(tmpStMng, last, first, dob);
 		int k = (last + first + dob + 30);
 		tmpStMng = curCourse->pHeadStudentManager;
 		int i = 1;
@@ -196,12 +196,12 @@ void editYear(Year*& curYear, CoreData& data)
 void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& data)
 {
 	//Display the info one time before editing
-	cout << endl << "CHOSEN COURSE INFO: " << endl;
+	cout << endl << "						CHOSEN COURSE INFO: " << endl;
 	displayCourseInfo(curCourse);
-	cout << "What part do you want to edit? " << endl;
-	cout << "1.Name" << endl;
-	cout << "2.Lecturer account" << endl;
-	cout << "3.Room" << endl;
+	cout << endl << "						What part do you want to edit? " << endl;
+	cout << "							1.Name" << endl;
+	cout << "							2.Lecturer account" << endl;
+	cout << "							3.Room" << endl;
 	bool showOption = true;
 	while (1)
 	{
@@ -218,23 +218,44 @@ void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& d
 		case 0:
 			return;
 		case 1:
+		{
 			cin.ignore();
-			cout << "New course name: ";
-			getline(cin, curCourse->name);
-			cout << "Update successfully " << endl;
+			cout << "New course name (INPUT 0 TO CANCEL): ";
+			string tmpCourseName;
+			getline(cin, tmpCourseName);
+			if (tmpCourseName != "0")
+			{
+				curCourse->name = tmpCourseName;
+				cout << "Update successfully!" << endl;
+			}
 			break;
+		}
 		case 2:
+		{
 			cin.ignore();
-			cout << "New lecturer account: ";
-			getline(cin, curCourse->lectureAccount);
-			cout << "Update successfully " << endl;
+			cout << "New lecturer account (INPUT 0 TO CANCEL): ";
+			string tmpLecAcc;
+			getline(cin, tmpLecAcc);
+			if (tmpLecAcc != "0")
+			{
+				curCourse->lectureAccount = tmpLecAcc;
+				cout << "Update successfully!" << endl;
+			}
 			break;
+		}
 		case 3:
+		{
 			cin.ignore();
-			cout << "New room: ";
-			getline(cin, curCourse->room);
-			cout << "Update successfully " << endl;
+			cout << "New room (INPUT 0 TO CANCEL): ";
+			string tmpRoom;
+			getline(cin, tmpRoom);
+			if (tmpRoom != "0")
+			{
+				curCourse->room = tmpRoom;
+				cout << "Update successfully!" << endl;
+			}
 			break;
+		}
 		default:
 			showOption = false;
 			break;
@@ -245,15 +266,10 @@ void createNewEmptyCourse(string yearName, string semesterName, string courseID,
 	Semester* curSem;
 	if (findSemester(yearName, semesterName, curSem, data)) {
 		Course* newCourse;
-		/*if (findCourse(yearName, semesterName, courseID, newCourse, data)) {
-			cout << "The course " << courseID << " of semester " << semesterName << " of year " << yearName << " is already existing!" << endl;
-			return;
-		}*/
 		curSem->numOfCourses++;
 		newCourse = new Course;
 		newCourse->id = courseID;
 		inputCourseDetail(yearName, semesterName, newCourse, data);
-		//newCourse->pHeadStudentManager = NULL;
 		if (newCourse != NULL)
 		{
 			newCourse->next = curSem->pHeadCourse;
@@ -411,15 +427,15 @@ void removeSemIndirect(Year*& curYear, Semester*& curSem, CoreData& data)
 }
 void editGrade(Course*& curCourse, StudentManager*& curStdMng)
 {
-	cout << endl << "CHOSEN STUDENT'S INFO: " << endl;
-	cout << "	STUDENT " << curStdMng->pStudent->id << " - " << curStdMng->pStudent->lastName << " " << curStdMng->pStudent->firstName << endl;
-	cout << "	Midterm: " << curStdMng->pCourseManager->scoreBoard.midTerm << " | Final: " << curStdMng->pCourseManager->scoreBoard.finalTerm
+	cout << endl << "	CHOSEN STUDENT'S INFO: " << endl;
+	cout << "		STUDENT " << curStdMng->pStudent->id << " - " << curStdMng->pStudent->lastName << " " << curStdMng->pStudent->firstName << ":" << endl;
+	cout << "		Midterm: " << curStdMng->pCourseManager->scoreBoard.midTerm << " | Final: " << curStdMng->pCourseManager->scoreBoard.finalTerm
 		<< " | Lab: " << curStdMng->pCourseManager->scoreBoard.lab << " | Bonus: " << curStdMng->pCourseManager->scoreBoard.bonus << endl;
-	cout << "		What part do you want to edit?: " << endl;
-	cout << "			1.Midterm" << endl;
-	cout << "			2.Final" << endl;
-	cout << "			3.Lab" << endl;
-	cout << "			4.Bonus" << endl;
+	cout << "			What part do you want to edit?: " << endl;
+	cout << "				1.Midterm" << endl;
+	cout << "				2.Final" << endl;
+	cout << "				3.Lab" << endl;
+	cout << "				4.Bonus" << endl;
 	bool showOption = true;
 	while (1)
 	{
@@ -429,36 +445,64 @@ void editGrade(Course*& curCourse, StudentManager*& curStdMng)
 			showOption = true;
 		}
 		int yourChoice;
-		cout << "			Your choice (0 to return): ";
+		cout << "				Your choice (0 to return): ";
 		cin >> yourChoice;
 		switch (yourChoice)
 		{
 		case 0:
 			return;
 		case 1:
+		{
 			cin.ignore();
-			cout << "New midterm grade: ";
-			cin >> curStdMng->pCourseManager->scoreBoard.midTerm;
-			cout << "Update successfully " << endl;
+			cout << "New midterm grade (INPUT -1 TO CANCEL): ";
+			double tmpMidterm;
+			cin >> tmpMidterm;
+			if (tmpMidterm != -1)
+			{
+				curStdMng->pCourseManager->scoreBoard.midTerm = tmpMidterm;
+				cout << "Update successfully!" << endl;
+			}
 			break;
+		}
 		case 2:
+		{
 			cin.ignore();
-			cout << "New final grade: ";
-			cin >> curStdMng->pCourseManager->scoreBoard.finalTerm;
-			cout << "Update successfully " << endl;
+			cout << "New final grade (INPUT -1 TO CANCEL): ";
+			double tmpFinal;
+			cin >> tmpFinal;
+			if (tmpFinal != -1)
+			{
+				curStdMng->pCourseManager->scoreBoard.finalTerm = tmpFinal;
+				cout << "Update successfully!" << endl;
+			}
 			break;
+		}
 		case 3:
+		{
 			cin.ignore();
-			cout << "New lab grade: ";
-			cin >> curStdMng->pCourseManager->scoreBoard.lab;
-			cout << "Update successfully " << endl;
+			cout << "New lab grade (INPUT -1 TO CANCEL): ";
+			double tmpLab;
+			cin >> tmpLab;
+			if (tmpLab != -1)
+			{
+				curStdMng->pCourseManager->scoreBoard.lab = tmpLab;
+				cout << "Update successfully!" << endl;
+			}
 			break;
+		}
 		case 4:
+		{
 			cin.ignore();
-			cout << "New bonus grade: ";
-			cin >> curStdMng->pCourseManager->scoreBoard.bonus;
-			cout << "Update successfully " << endl;
+			cout << "New bonus grade (INPUT -1 TO CANCEL): ";
+			double tmpBonus;
+			cin >> tmpBonus;
+			if (tmpBonus != -1)
+			{
+				curStdMng->pCourseManager->scoreBoard.bonus = tmpBonus;
+				cout << "Update successfully!" << endl;
+			}
 			break;
+		}
 		default:
 			showOption = false;
 			break;
@@ -543,7 +587,7 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 					{
 						newCourse->next = curSem->pHeadCourse;
 						curSem->pHeadCourse = newCourse;
-						cout << "Import course " << courseID << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
+						cout << "Import course " << newCourse->id << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
 					}
 					else
 					{
@@ -1073,12 +1117,15 @@ void activity8(string pathName, CoreData& data)
 
 	if (curSem != NULL)
 	{
-		cout << "Please input the ID of the course you want to create: ";
+		cout << "Input ID of the course you want to create (INPUT 0 TO CANCEL): ";
 		string curCourseID;
 		cin.ignore();
 		getline(cin, curCourseID);
-		createNewEmptyCourse(curYear->name, curSem->name, curCourseID, data);
-		saveToDataBase(pathName, data);
+		if (curCourseID != "0")
+		{
+			createNewEmptyCourse(curYear->name, curSem->name, curCourseID, data);
+			saveToDataBase(pathName, data);
+		}
 	}
 	returnMenu2Arg(&activity8, pathName, data);
 }
@@ -1127,7 +1174,7 @@ void activity11(string pathName, CoreData& data)
 		viewListOfStudents(curCourse);
 		if (curCourse->pHeadStudentManager != NULL)
 		{
-			cout << endl << "Input ID of the student you want to remove from " << curCourse->id << " (INPUT 0 TO CANCEL) : ";
+			cout << endl << "Input ID of the student you want to remove from " << curCourse->id << " (INPUT 0 TO CANCEL): ";
 			long long stdID;
 			cin >> stdID;
 			if (stdID != 0)
@@ -1136,7 +1183,7 @@ void activity11(string pathName, CoreData& data)
 				if (removeStudentFromCourse(stdID, curCourse))
 				{
 					cout << "Remove successfully!" << endl;
-					saveToDataBase(pathName, data);
+					//saveToDataBase(pathName, data);
 				}
 				else
 					cout << "There is no student with this ID in this course. Try again. " << endl;
@@ -1145,7 +1192,6 @@ void activity11(string pathName, CoreData& data)
 	}
 	returnMenu2Arg(&activity11, pathName, data);
 }
-//update .txt file and check again
 void activity12(string pathName, CoreData& data) 
 {
 	cout << endl << "_____________ADD A STUDENT TO A COURSE_____________" << endl << endl;
@@ -1267,10 +1313,10 @@ void activity21(string pathName, CoreData& data)
 			StudentManager* curStdMng = NULL;
 			while (!findStudentInCourse(stdID, curStdMng, curCourse))
 			{
-				cout << "There is no student with this ID in this course. Try again." << endl;
+				cout << "There is no student with this ID in " << curCourse->id << ". Try again." << endl;
 				cout << "Input the ID of the student you want to edit grade (INPUT 0 TO CANCEL): ";
 				cin >> stdID;
-				if (stdID != 0)
+				if (stdID == 0)
 				{
 					curStdMng = NULL;
 					break;
@@ -1300,4 +1346,13 @@ void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& d
 	cin >> yourChoice;
 	if (yourChoice != 1) return;
 	tmp(pathName, data);
+}
+
+void findMaxLengthOfStudentInfo(StudentManager* curStMng, int& last, int& first, int& dob) {
+	while (curStMng != NULL) {
+		if ((curStMng->pStudent->lastName).length() > last) last = (curStMng->pStudent->lastName).length();
+		if ((curStMng->pStudent->firstName).length() > first) first = (curStMng->pStudent->firstName).length();
+		if ((curStMng->pStudent->dOB).length() > dob) dob = (curStMng->pStudent->dOB).length();
+		curStMng = curStMng->next;
+	}
 }
