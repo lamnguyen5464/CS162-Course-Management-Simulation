@@ -3,23 +3,20 @@
 
 //MENU
 void menuCourse(string pathName, CoreData& data);
-void activity1(string pathName, CoreData& data);
+void activity1(CoreData data);
 void activity2(string pathName, CoreData& data);
 void activity3(string pathName, CoreData& data);
-void activity4(CoreData data);
+void activity4(string pathName, CoreData& data);
 void activity5(string pathName, CoreData& data);
 void activity6(string pathName, CoreData& data);
 void activity7(string pathName, CoreData& data);
-void activity8(CoreData data);
+void activity8(string pathName, CoreData& data);
 void activity9(string pathName, CoreData& data);
 void activity10(string pathName, CoreData& data);
 void activity11(string pathName, CoreData& data);
 void activity12(string pathName, CoreData& data);
-void activity13(string pathName, CoreData& data);
-void activity14(string pathName, CoreData& data);
-void activity15(CoreData data);
-void activity16(CoreData data);
-void activity17(CoreData data);
+void activity13(CoreData data);
+
 void activity18(CoreData data);
 void activity19(string pathName, CoreData& data);
 void activity20(CoreData data);
@@ -36,7 +33,6 @@ void removeYear(Year*& curYear, CoreData& data);
 //SEMESTERS
 void semesterMenu(Year*& curYear, Semester*& curSem, CoreData data);
 void displaySemInfo(Semester* curSem);
-void editSem(Year*& curYear, Semester*& curSem, CoreData& data);
 void removeSemDirect(Year*& curYear, Semester*& curSem, CoreData& data);
 void removeSemIndirect(Year*& curYear, Semester*& curSem, CoreData& data);
 
