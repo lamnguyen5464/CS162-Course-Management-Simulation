@@ -579,6 +579,7 @@ void login(CoreData &data,string pathName){
         Staff *curStaff = NULL;
         Class *tmpClass = NULL;
         int check = checkUser(userName,password,curSt,curLec,curStaff,tmpClass,data);
+        password = "";
         if (check == 0){
             showoption = false;
         }
@@ -586,6 +587,7 @@ void login(CoreData &data,string pathName){
             showFunctions(check,data,pathName,curSt,curLec,curStaff,tmpClass);
         }
     cin.ignore();
+    clearScreen();
     }
 }
 
@@ -606,7 +608,6 @@ void inputPassword(string &password){
 
 int checkUser(string Username,string password,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,Class *&tmpClass,CoreData data){
     long long tmpHash = hashPass(password);
-    cout << tmpHash << endl;
     bool isSt = true;
     for (int i = 0;i < Username.length();i++){
         if (!(Username[i] >= '0' && Username[i] <= '9' )){
