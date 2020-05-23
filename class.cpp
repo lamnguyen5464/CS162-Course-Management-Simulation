@@ -1,11 +1,14 @@
 #include <fstream>
 #include <cstring>
 #include <string>
+#include <conio.h>
 #include <iostream>
 #include <cstdlib>
 #include <iomanip>
 #include "Data.hpp"
 #include "class.h"
+#include "Student.hpp"
+#include "Course.h"
 using namespace std;
 
 void clearScreen(){
@@ -18,6 +21,7 @@ void toUpper(string &name){
         name[i] = name[i] - 32;
 }
 void staffClassMenu (string pathname,CoreData &data){
+    clearScreen();
     bool showOption = true;
     while (1){
         if (showOption){
@@ -63,6 +67,7 @@ void staffClassMenu (string pathname,CoreData &data){
                 showOption = false;
                 break;
         }
+        clearScreen();
     }
 }
 
@@ -128,11 +133,14 @@ void getClassName(string &classname,string linkOfFile){
     }
 }
 
-void creatClassToImport(CoreData &data){
+void createClassToImport(CoreData &data){
     bool k = true;
     string classname;
     while(1){
-        if (!k) cout << "Invalid choice. Try again.";
+        if (!k) {
+            cout << "Invalid choice. Try again.";
+            k = true;
+        }
         int choice;
         cout << "Do you want to create a new class(0.No)&(1.Yes): ";
         cin >> choice;
@@ -253,7 +261,10 @@ bool editByMenu (CoreData &data){
 void menuClass(Class *&curClass,CoreData data){
     bool checkChoice = true;
     while(1){
-        if (checkChoice == false) cout << "Invalid choice. Try again. "<<endl;
+        if (checkChoice == false) {
+            cout << "Invalid choice. Try again. "<<endl;
+            checkChoice = true;
+        }
         if (data.numOfClasses == 0) {
             cout << "There is no class"<<endl;
             return;
@@ -284,7 +295,7 @@ void menuClass(Class *&curClass,CoreData data){
 
 bool viewListOfStudents(Class *curClass,CoreData data){
     menuClass(curClass,data);
-    if (curClass == NULL) return false;
+    if (curClass == NULL) return true;
     Student *tmpSt = curClass ->pHeadStudent;
     if (tmpSt == NULL){
         cout << "       There is no student in this class"<<endl;
@@ -323,7 +334,7 @@ bool menuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
             option = true;
         }
         menuClass(curClass,data);
-        if (curClass == NULL) return false;
+        if (curClass == NULL) return true;
         tmpSt = curClass ->pHeadStudent;
         if (tmpSt == NULL){
             cout << "There is no student in this class"<<endl;
@@ -365,7 +376,7 @@ bool addAStudent(CoreData &data){
     Student *curSt;
     Class *curClass;
     string classname;
-    cout << "Input: "<<endl;
+    cout << "Input(0 to return): "<<endl;
     cout <<"    "<<"ID:" ;
     cin >> tmpSt->id;
     if(findStudent(tmpSt->id,data,curSt,curClass)){
@@ -376,12 +387,13 @@ bool addAStudent(CoreData &data){
         cout << "       >Your choice: ";
         cin >> choice;
         switch(choice){
-        case 1:
-            return addAStudent(data);
+            case 1:
+                return addAStudent(data);
             case 2:
                 return false;
             default:
-                break;
+                cout << "Invalid choice!" <<endl;
+                return addAStudent(data);
         }
     }
     else{
@@ -393,7 +405,7 @@ bool addAStudent(CoreData &data){
         cout <<"    "<< "DoB: " ;
         getline(cin,tmpSt->dOB);
         inputGender(tmpSt->gender);
-        creatClassToImport(data);
+        createClassToImport(data);
         cout <<"    "<< "Class: ";
         Class *tmpClass = NULL;
         menuClass(tmpClass,data);
@@ -464,12 +476,13 @@ void copyStudentInfor(Student *&dup,Student *tmpSt){
 void activity2_6(string pathname, CoreData &data){
     Class *curClass = NULL;
     if (!viewListOfStudents(curClass,data)) return;
-    cout << "Input any integer to run again (0 to return): ";
+    cout << "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
-    if(choice == 0) return;
+    if(choice != 1) return;
     activity2_6(pathname,data);
 }
+
 
 void activity2_3(string pathname, CoreData &data){
     int choice;
@@ -500,9 +513,9 @@ void activity2_3(string pathname, CoreData &data){
         }
     }
     saveToDataBase(pathname,data);
-    cout << "Input any integer to run again (0 to return): ";
+    cout << "Input any number to back and save (1 to run again): ";
     cin >> choice;
-    if(choice == 0) return;
+    if(choice != 1) return;
     activity2_3(pathname,data);
 }
 
@@ -510,10 +523,10 @@ void activity2_5(string pathname, CoreData &data){
     if (!moveStudentFromAToB(data)) return;
     saveToDataBase(pathname,data);
     cout << "Change successfully!" << endl;
-    cout << "Input any integer to run again (0 to return): ";
+    cout << "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
-    if(choice == 0) return;
+    if(choice != 1) return;
     activity2_5(pathname,data);
 }
 
@@ -521,10 +534,10 @@ void activity2_2(string pathname, CoreData &data){
     if (!addAStudent(data)) return;
     saveToDataBase(pathname,data);
     cout << "Add student successfully!"<<endl;
-    cout << "Input any integer to run again (0 to return): ";
+    cout << "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
-    if(choice == 0) return;
+    if(choice != 1) return;
     activity2_2(pathname,data);
 }
 
@@ -532,19 +545,240 @@ void activity2_4(string pathname, CoreData &data){
     if (!removeAStudent(data)) return;
     saveToDataBase(pathname,data);
     cout << "Remove student successfully!"<<endl;
-     cout << "Input any integer to run again (0 to return): ";
+    cout << "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
-    if(choice == 0) return;
+    if(choice != 1) return;
     activity2_4(pathname,data);
 }
 
 void activity2_1(string pathname, CoreData &data){
     importStudentFromCsvFile(data,pathname);
     saveToDataBase(pathname,data);
-    cout << "Input any integer to run again (0 to return): ";
+    cout << "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
-    if(choice == 0) return;
+    if(choice != 1) return;
     activity2_1(pathname,data);
+}
+
+void login(CoreData &data,string pathName){
+    bool showoption = true;
+    string userName;
+    string password = "";
+    int type = 0;
+    while(1){
+        if (showoption == false)
+            cout << "UserName or password is incorrect. Please try again!"<< endl;
+        cout << "UserName: ";
+        getline(cin,userName);
+        cout << "Password: ";
+        inputPassword(password);
+        Student *curSt = NULL;
+        Lecturer *curLec = NULL;
+        Staff *curStaff = NULL;
+        Class *tmpClass = NULL;
+        int check = checkUser(userName,password,curSt,curLec,curStaff,tmpClass,data);
+        if (check == 0){
+            showoption = false;
+        }
+        else{
+            showFunctions(check,data,pathName,curSt,curLec,curStaff,tmpClass);
+        }
+    cin.ignore();
+    }
+}
+
+void inputPassword(string &password){
+    char ch;
+    while((ch=getch()) != 13){
+        if ((ch >= 'a' && ch <= 'z')||(ch >= 'A' && ch <= 'Z')||(ch >= '0' && ch <= '9')){
+            cout << "*";
+            password += ch;
+        }
+        else if (ch == 8)
+            if (!password.empty()){
+                cout << "\b" <<" "<<"\b";
+                password.pop_back();
+            }
+    }
+}
+
+int checkUser(string Username,string password,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,Class *&tmpClass,CoreData data){
+    long long tmpHash = hashPass(password);
+    cout << tmpHash << endl;
+    bool isSt = true;
+    for (int i = 0;i < Username.length();i++){
+        if (!(Username[i] >= '0' && Username[i] <= '9' )){
+            isSt = false;
+            break;
+        }
+    }
+    if (isSt == true){
+        long long tmpID = 0;
+        convertStringToId(Username,tmpID);
+        if (findStudent(tmpID,data,curSt,tmpClass) && tmpHash == curSt->hashPassword){
+            return 1;
+        }
+    }
+    else{
+        if (findLecturer(Username,data,curLec) && tmpHash == curLec->hashPassword)
+            return 2;
+        else if (findStaff(Username,data,curStaff) && tmpHash == curStaff->hashPassword)
+            return 3;
+    }
+    return 0;
+
+}
+
+void convertStringToId (string Username,long long &ID){
+    for (int i = 0;i < Username.length();i++){
+        ID = ID*10  + (Username[i] - 48);
+    }
+}
+
+void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,Class *&tmpClass){
+    bool showoption = true;
+    while(1){
+        if (!showoption) {
+            cout << "Invalid choice. Try again."<<endl;
+            showoption = true;
+        }
+        cout << endl;
+        cout << "1.Show menu."<<endl;
+        cout << "2.View profile info."<<endl;
+        cout << "3.Change password."<<endl;
+        cout << "4.Logout."<<endl;
+        cout << ">Your choice: ";
+        int choice;
+        cin >> choice;
+        switch(choice){
+            case 1:
+                staffClassMenu(pathName,data);
+                break;
+            case 2:
+                showProfile(check,curSt,curLec,curStaff,tmpClass);
+                break;
+            case 3:
+                changePassword(check,curSt,curLec,curStaff,pathName,data);
+                break;
+            case 4:
+                return;
+            default:
+                showoption = false;
+                break;
+        }
+    }
+}
+
+void showProfile (int check,Student *curSt,Lecturer *curLec,Staff *curStaff,Class *tmpClass){
+    switch (check){
+        case 1:{
+            cout << "User: " <<  curSt->id << endl;
+            cout << "   " << "ID: " << curSt->id <<endl;
+            cout << "   " << "Name: " << curSt->lastName <<" "<<curSt->firstName <<endl;
+            cout << "   " << "DOB: " << curSt->dOB <<endl;
+            cout << "   " << "Gender: " << curSt->gender <<endl;
+            cout << "   " << "Class: " << tmpClass->name <<endl;
+            break;
+        }
+        case 2:{
+            cout <<"User: " << curLec->userName<<endl;
+            break;
+        }
+        case 3:{
+            cout <<"User: " << curStaff->userName<<endl;
+            break;
+        }
+        default:
+            break;
+    }
+    cout << "Input any number to return: ";
+    int tmp;
+    cin >> tmp;
+    return;
+}
+
+void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,string pathName,CoreData &data){
+    string oldPass = "";
+    string newPass = "";
+    string reNewPass = "";
+    cout << "Recent password: ";
+    inputPassword(oldPass);
+    cout << endl;
+    long long tmpHash = hashPass(oldPass);
+    switch (check){
+        case 1:{
+            if (tmpHash != curSt->hashPassword){
+                cout << "Your password is incorrect!"<<endl;
+            }
+            else{
+                cout << "New password: ";
+                inputPassword(newPass);
+                cout << endl;
+                cout << "Confirm password: ";
+                inputPassword(reNewPass);
+                cout << endl;
+                if (newPass == reNewPass){
+                    curSt->hashPassword=hashPass(newPass);
+                    cout << "Change successfully"<<endl;
+                }
+                else{
+                    cout << "Incorrect new pass!"<<endl;
+                }
+            }
+            break;
+
+        }
+        case 2:{
+            if (tmpHash != curLec->hashPassword){
+                cout << "Your password is incorrect!"<<endl;
+            }
+            else{
+                cout << "New password: ";
+                inputPassword(newPass);
+                cout << endl;
+                cout << "Confirm password: ";
+                inputPassword(reNewPass);
+                cout << endl;
+                if (newPass == reNewPass){
+                    curLec->hashPassword=hashPass(newPass);
+                    cout << "Change successfully"<<endl;
+                }
+                else{
+                    cout << "Incorrect new pass!"<<endl;
+                }
+            }
+            break;
+
+        }
+        case 3:{
+            if (tmpHash != curStaff->hashPassword){
+                cout << "Your password is incorrect!"<<endl;
+            }
+            else{
+                cout << "New password: ";
+                inputPassword(newPass);
+                cout << endl;
+                cout << "Confirm password: ";
+                inputPassword(reNewPass);
+                cout << endl;
+                if (newPass == reNewPass){
+                    curStaff->hashPassword=hashPass(newPass);
+                    cout << "Change successfully"<<endl;
+                }
+                else{
+                    cout << "Incorrect new pass!"<<endl;
+                }
+            }
+            break;
+
+        }
+        default:
+            break;
+    }
+    saveToDataBase(pathName,data);
+    cout << "Input any number to return: ";
+    int tmp;
+    cin >> tmp;
 }

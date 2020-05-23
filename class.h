@@ -1,6 +1,13 @@
 #ifndef CLASS_H_INCLUDED
 #define CLASS_H_INCLUDED
-
+//login
+void convertStringToId (string username,long long &ID);
+void login(CoreData &data,string pathName);
+void inputPassword(string &password);
+int checkUser(string Username,string password,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,Class *&tmpClass,CoreData data);
+void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,Class *&tmpClass);
+void showProfile (int check,Student *curSt,Lecturer *curLec,Staff *curStaff,Class *tmpClass);
+void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,string pathName,CoreData &data);
 // clear screen
 void clearScreen();
 void toUpper(string &name);
@@ -10,7 +17,7 @@ void menuClass(Class *&tmpClass,CoreData data);
 bool menuStudent(Class *&curClass,Student *&curSt,CoreData data);
 //
 
-void creatClassToImport(CoreData &data);
+void createClassToImport(CoreData &data);
 void inputStudentFromFile(Student *tmpSt,Class *&tmpClass,ifstream &fin,CoreData &data);
 void importStudentFromCsvFile (CoreData &data,string pathname);
 void getClassName(string &classname,string linkOfFile);
