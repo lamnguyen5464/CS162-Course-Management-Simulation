@@ -2,8 +2,11 @@
 #define Course_h 
 
 //MENU
-void menuCourse(string pathName, CoreData& data);
-void activity1(CoreData data);
+void menuStaffCourse(string pathName, CoreData& data);
+void menuStaffScoreboard(string pathName, CoreData& data);
+void menuStaffAttendance(string pathName, CoreData& data);
+
+void activity1_L1(CoreData data);
 void activity2(string pathName, CoreData& data);
 void activity3(string pathName, CoreData& data);
 void activity4(string pathName, CoreData& data);
@@ -15,16 +18,20 @@ void activity9(string pathName, CoreData& data);
 void activity10(string pathName, CoreData& data);
 void activity11(string pathName, CoreData& data);
 void activity12(string pathName, CoreData& data);
-void activity13(CoreData data);
-void activity14(CoreData data);
+void activity13_L2(CoreData data);
+void activity14_AT1_L3(CoreData data);
 void activity15(string pathName, CoreData& data);
-void activity16(string pathName, CoreData& data);
-void activity17(CoreData data);
-void activity18(CoreData data);
-void activity19(string pathName, CoreData& data);
-void activity20(string pathName, CoreData& data);
-void activity21(string pathName, CoreData& data);
-void activity22(string pathName, CoreData& data);
+void activity16(CoreData data);
+
+void activityAT2(string pathName, CoreData& data);
+
+void activitySC1_L7(CoreData data);
+void activitySC2(string pathName, CoreData& data);
+
+void activityL4(string pathName, CoreData& data);
+void activityL5(string pathName, CoreData& data);
+void activityL6(string pathName, CoreData& data);
+
 void returnMenu1Arg(void (*tmp)(CoreData), CoreData data);
 void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& data);
 
@@ -49,7 +56,6 @@ void inputCourseDetail(string inYear, string inSemester, Course*& newCourse, Cor
 void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newCourse, CoreData& data);
 void importCourse(string address, string yearName, string semesterName, CoreData& data);
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
-void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse);
 void viewListOfStudents(Course* curCourse, CoreData data);
 
 //LECTURERS
