@@ -553,6 +553,34 @@ void editGrade(Course*& curCourse, StudentManager*& curStdMng)
 		}
 	}
 }
+void editAttendance(Course*& curCourse, StudentManager*& curStdMng)
+{
+	cout << endl << "Input number of the week you want to edit attendance." << endl;
+	bool showOption = true;
+	while (1)
+	{
+		if (!showOption)
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "	Your choice (0 to return): ";
+		cin >> yourChoice;
+		if (yourChoice == 0)
+			return;
+		else if (yourChoice > 0 && yourChoice <= curStdMng->pCourseManager->checkIn.numOfDays)
+		{
+			CheckInCell* tmpCheckIn = curStdMng->pCourseManager->checkIn.pHeadCell;
+			for (int i = 1; i < yourChoice; ++i)
+				tmpCheckIn = tmpCheckIn->next;
+			tmpCheckIn->checked = !tmpCheckIn->checked;
+			cout << "Update successfully!" << endl;
+		}
+		else
+			showOption = false;
+	}
+}
 
 //INPUT
 void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newCourse, CoreData& data)
@@ -1464,7 +1492,41 @@ void activity21(string pathName, CoreData& data)
 }
 void activity22(string pathName, CoreData& data)
 {
+	cout << endl << "_____________EDIT AN ATTENDANCE_____________" << endl << endl;
+	cout << "Please input 1, 2, 3, 4, ... corresponding to your selection below: " << endl;
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	Course* curCourse = NULL;
+	courseMenu(curYear, curSem, curCourse, data);
 
+	if (curCourse != NULL)
+	{
+		viewAttendanceList(curCourse, data);
+		cout << endl << "Input the ID of the student you want to edit attendance (INPUT 0 TO CANCEL): ";
+		long long stdID;
+		cin >> stdID;
+		if (stdID != 0)
+		{
+			StudentManager* curStdMng = NULL;
+			while (!findStudentInCourse(stdID, curStdMng, curCourse))
+			{
+				cout << "There is no student with this ID in " << curCourse->id << ". Try again." << endl;
+				cout << "Input the ID of the student you want to edit attendance (INPUT 0 TO CANCEL): ";
+				cin >> stdID;
+				if (stdID == 0)
+				{
+					curStdMng = NULL;
+					break;
+				}
+			}
+			if (curStdMng != NULL)
+			{
+				editAttendance(curCourse, curStdMng);
+				saveToDataBase(pathName, data);
+			}
+		}
+	}
+	returnMenu2Arg(&activity22, pathName, data);
 }
 void returnMenu1Arg(void (*tmp)(CoreData), CoreData data)
 {

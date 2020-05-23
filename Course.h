@@ -59,4 +59,6 @@ void exportScoreboard(Course* curCourse);
 
 void findMaxLengthOfStudentInfo(StudentManager* curStMng, int& last, int& first, int& dob);
 
+void editAttendance(Course*& curCourse, StudentManager*& curStdMng);
+
 #endif
