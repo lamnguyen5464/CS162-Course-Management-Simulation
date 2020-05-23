@@ -17,7 +17,8 @@ void activity11(string pathName, CoreData& data);
 void activity12(string pathName, CoreData& data);
 void activity13(CoreData data);
 void activity14(CoreData data);
-
+void activity15(string pathName, CoreData& data);
+void activity16(CoreData data);
 void activity18(CoreData data);
 void activity19(string pathName, CoreData& data);
 void activity20(CoreData data);
@@ -50,6 +51,12 @@ void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse);
 void viewListOfStudents(Course* curCourse, CoreData data);
 void viewAttendanceList(Course* curCourse, CoreData data);
+
+
+//LECTURERS
+void viewLecturerList(CoreData data);
+void lecturerMenu(Lecturer*& curLec, CoreData data);
+void removeLecturer(Lecturer*& curLec, CoreData& data);
 
 //SCOREBOARD
 void displayScoreboard(Course* curCourse);

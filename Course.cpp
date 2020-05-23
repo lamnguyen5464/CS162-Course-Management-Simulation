@@ -160,6 +160,14 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 	}
 	return;
 }
+void viewLecturerList(CoreData data)
+{
+	cout << "Number of lecturers: " << data.numOfLecturers << endl;
+	Lecturer* tmpLec = data.pHeadLecturer;
+	int i = 1;
+	for (tmpLec; tmpLec != NULL; tmpLec = tmpLec->next)
+		cout << "	" << i++ << ". " << tmpLec->userName << endl;
+}
 
 //EDITS
 void editYear(Year*& curYear, CoreData& data)
@@ -283,6 +291,11 @@ void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& d
 			if (tmpLecAcc != "0")
 			{
 				curCourse->lectureAccount = tmpLecAcc;
+				Lecturer* tmpLec = NULL;
+				if (!findLecturer(curCourse->lectureAccount, data, tmpLec))
+				{
+					addLecturer(hashPass(curCourse->lectureAccount), curCourse->lectureAccount, data);
+				}
 				cout << "Update successfully!" << endl;
 			}
 			break;
@@ -365,7 +378,8 @@ void removeYear(Year*& curYear, CoreData& data)
 			{
 				data.pHeadYear = curYear->next;
 			}
-			else {
+			else 
+			{
 				Year* tmpYear = data.pHeadYear;
 				while (tmpYear->next != curYear)
 				{
@@ -581,6 +595,50 @@ void editAttendance(Course*& curCourse, StudentManager*& curStdMng)
 			showOption = false;
 	}
 }
+void removeLecturer(Lecturer*& curLec, CoreData& data)
+{
+	cout << endl << "DELETE LECTURER " << curLec->userName << "? (0 - NO, 1 - YES)" << endl;
+	bool showOption = true;
+	while (1)
+	{
+		if (!showOption)
+		{
+			cout << "Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "Your choice: ";
+		cin >> yourChoice;
+		switch (yourChoice)
+		{
+		case 0:
+			return;
+		case 1:
+		{
+			data.numOfLecturers--;
+			if (curLec == data.pHeadLecturer)
+			{
+				data.pHeadLecturer = curLec->next;
+			}
+			else 
+			{
+				Lecturer* tmpLec = data.pHeadLecturer;
+				while (tmpLec->next != curLec)
+				{
+					tmpLec = tmpLec->next;
+				}
+				tmpLec->next = curLec->next;
+			}
+
+			cout << "Delete successfully!" << endl;
+			return;
+		}
+		default:
+			showOption = false;
+			break;
+		}
+	}
+}
 
 //INPUT
 void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newCourse, CoreData& data)
@@ -608,6 +666,12 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 	}
 	if (findClass(tmpClassName, data, tmpClass))
 	{
+		Lecturer* tmpLec = NULL;
+		if (!findLecturer(newCourse->lectureAccount, data, tmpLec))
+		{
+			addLecturer(hashPass(newCourse->lectureAccount), newCourse->lectureAccount, data);
+		}
+
 		if (tmpClass->pHeadStudent != NULL)
 		{
 			Student* tmpStd = tmpClass->pHeadStudent;
@@ -802,6 +866,12 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 		return;
 	}
 
+	Lecturer* tmpLec = NULL;
+	if (!findLecturer(newCourse->lectureAccount, data, tmpLec))
+	{
+		addLecturer(hashPass(newCourse->lectureAccount), newCourse->lectureAccount, data);
+	}
+
 	if (tmpClass->pHeadStudent != NULL)
 	{
 		Student* tmpStd = tmpClass->pHeadStudent;
@@ -920,6 +990,11 @@ void menuCourse(string pathName, CoreData& data)
 			cout << "14. View attendance list of a course" << endl;
 			cout << endl;
 
+			cout << "________LECTURERS________" << endl;
+			cout << "15. Delete a lecturer" << endl;
+			cout << "16. View all lecturers" << endl;
+			cout << endl;
+
 			cout << "________SCOREBOARD________" << endl;
 			cout << "18. View scoreboard of a course" << endl;
 			cout << "19. Import scoreboard from a .csv file" << endl;
@@ -982,6 +1057,12 @@ void menuCourse(string pathName, CoreData& data)
 		break;
 	case 14:
 		activity14(data);
+		break;
+	case 15:
+		activity15(pathName, data);
+		break;
+	case 16:
+		activity16(data);
 		break;
 	case 18:
 		activity18(data);
@@ -1135,6 +1216,40 @@ void courseMenu(Year*& curYear, Semester*& curSem, Course*& curCourse, CoreData 
 			showOption = false;
 	}
 }
+void lecturerMenu(Lecturer*& curLec, CoreData data)
+{
+	viewLecturerList(data);
+	bool showOption = true;
+	while (1)
+	{
+		if (!showOption)
+		{
+			cout << "	Invalid choice. Try again." << endl;
+			showOption = true;
+		}
+		int yourChoice;
+		cout << "	Your choice (INPUT 0 TO GO BACK): ";
+		cin >> yourChoice;
+
+		if (yourChoice > 0 && yourChoice <= data.numOfLecturers)
+		{
+			Lecturer* tmpLec = data.pHeadLecturer;
+			for (int j = 1; j < yourChoice; ++j)
+			{
+				tmpLec = tmpLec->next;
+			}
+			curLec = tmpLec;
+			break;
+		}
+		else if (yourChoice == 0)
+		{
+			curLec = NULL;
+			break;
+		}
+		else
+			showOption = false;
+	}
+}
 void activity1(CoreData data)
 {
 	cout << endl << "_____________VIEW ACADEMIC YEARS, SEMESTERS, COURSES_____________" << endl << endl;
@@ -1153,7 +1268,7 @@ void activity1(CoreData data)
 void activity2(string pathName, CoreData& data)
 {
 	cout << endl << "_____________CREATE AN ACADEMIC YEAR_____________" << endl << endl;
-	cout << "Year name (INPUT 0 TO CANCEL): ";
+	cout << "Year name you want to add (INPUT 0 TO CANCEL): ";
 	string curYearName;
 	cin.ignore();
 	getline(cin, curYearName);
@@ -1262,7 +1377,7 @@ void activity8(string pathName, CoreData& data)
 
 	if (curSem != NULL)
 	{
-		cout << "Input ID of the course you want to create (INPUT 0 TO CANCEL): ";
+		cout << "Course ID you want to add (INPUT 0 TO CANCEL): ";
 		string curCourseID;
 		cin.ignore();
 		getline(cin, curCourseID);
@@ -1401,7 +1516,25 @@ void activity14(CoreData data)
 	}
 	returnMenu1Arg(&activity14, data);
 }
-
+void activity15(string pathName, CoreData& data)
+{
+	cout << endl << "_____________REMOVE A LECTURER_____________" << endl << endl;
+	cout << "Please input 1, 2, 3, 4, ... corresponding to your selection below: " << endl;
+	Lecturer* curLec = NULL;
+	lecturerMenu(curLec, data);
+	if (curLec != NULL)
+	{
+		removeLecturer(curLec, data);
+		saveToDataBase(pathName, data);
+	}
+	returnMenu2Arg(&activity15, pathName, data);
+}
+void activity16(CoreData data)
+{
+	cout << endl << "_____________VIEW ALL LECTURERS_____________" << endl << endl;
+	viewLecturerList(data);
+	returnMenu1Arg(&activity16, data);
+}
 void activity18(CoreData data)
 {
 	cout << endl << "_____________VIEW SCOREBOARD_____________" << endl << endl;
