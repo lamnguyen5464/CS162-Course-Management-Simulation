@@ -25,7 +25,7 @@ void staffClassMenu (string pathname,CoreData &data){
     bool showOption = true;
     while (1){
         if (showOption){
-            cout << "__________________STAFF-CLASS__________________" << endl;
+            cout << "____________________MENU_STAFF_CLASS____________________" << endl;
             cout << "1.Import students of a class from the csv file." << endl;
             cout << "2.Manually add a student to a class." << endl;
             cout << "3.Edit an existing student" << endl;
@@ -567,8 +567,10 @@ void login(CoreData &data,string pathName){
     string userName;
     string password = "";
     while(1){
-        if (showoption == false)
+        if (showoption == false){
             cout << "UserName or password is incorrect. Please try again!"<< endl;
+            showoption = true;
+        }
         cout << "UserName: ";
         getline(cin,userName);
         cout << "Password: ";
@@ -645,10 +647,11 @@ void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lec
             showoption = true;
         }
         cout << endl;
+        cout << "____________________OPTIONS____________________"<<endl;
+        cout << "0.Logout."<<endl;
         cout << "1.Show menu."<<endl;
         cout << "2.View profile info."<<endl;
         cout << "3.Change password."<<endl;
-        cout << "4.Logout."<<endl;
         cout << ">Your choice: ";
         int choice;
         cin >> choice;
@@ -662,8 +665,9 @@ void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lec
             case 3:
                 changePassword(check,curSt,curLec,curStaff,pathName,data);
                 break;
-            case 4:
+            case 0:
                 return;
+                break;
             default:
                 showoption = false;
                 break;
@@ -809,7 +813,7 @@ void menuStaff (CoreData &data,string pathName){
         cout << "0.Return."<<endl;
         cout << "1.Class."<<endl;
         cout << "2.Course."<<endl;
-        cout << ">Your choice: "<<endl;
+        cout << ">Your choice: ";
         int choice;
         cin >> choice;
         switch(choice){
