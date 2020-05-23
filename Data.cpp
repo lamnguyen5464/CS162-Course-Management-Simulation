@@ -893,6 +893,7 @@ TimeInfo getCurrentTime(){
     return curTime;
 }
 void addStaff(long long hash, string userName, CoreData &data){
+    data.numOfStaffs++;
     Staff *tmp = new Staff;
     tmp->userName = userName;
     tmp->hashPassword = hash;
@@ -901,6 +902,7 @@ void addStaff(long long hash, string userName, CoreData &data){
 }
 
 void addLecturer(long long hash, string userName, CoreData &data){
+    data.numOfLecturers++;
     Lecturer *tmp = new Lecturer;
     tmp->userName = userName;
     tmp->hashPassword = hash;
