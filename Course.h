@@ -16,11 +16,13 @@ void activity10(string pathName, CoreData& data);
 void activity11(string pathName, CoreData& data);
 void activity12(string pathName, CoreData& data);
 void activity13(CoreData data);
+void activity14(CoreData data);
 
 void activity18(CoreData data);
 void activity19(string pathName, CoreData& data);
 void activity20(CoreData data);
 void activity21(string pathName, CoreData& data);
+void activity22(string pathName, CoreData& data);
 void returnMenu1Arg(void (*tmp)(CoreData), CoreData data);
 void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& data);
 
@@ -46,7 +48,8 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 void importCourse(string address, string yearName, string semesterName, CoreData& data);
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse);
-void viewListOfStudents(Course* curCourse);
+void viewListOfStudents(Course* curCourse, CoreData data);
+void viewAttendanceList(Course* curCourse, CoreData data);
 
 //SCOREBOARD
 void displayScoreboard(Course* curCourse);

@@ -69,7 +69,7 @@ void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse)
 		cur = cur->next;
 	}
 }
-void viewListOfStudents(Course* curCourse) {
+void viewListOfStudents(Course* curCourse, CoreData data) {
 	StudentManager* tmpStMng = curCourse->pHeadStudentManager;
 	if (tmpStMng == NULL) {
 		cout << "	There is no student in this course." << endl;
@@ -82,9 +82,12 @@ void viewListOfStudents(Course* curCourse) {
 		tmpStMng = curCourse->pHeadStudentManager;
 		int i = 1;
 		cout << endl << "        " << setw(k / 2 + 7) << right << "STUDENTS IN COURSE " << curCourse->name << endl;
-		cout << "       " << "|" << "No" << " |" << setw(8) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(6) << left << "Gender" << "  |" << endl;
+		cout << "       " << "|" << "No" << " |" << setw(8) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(6) << left << "Gender" << "  |" << "  " << setw(6) << left << "Class" << "  |" << endl;
 		while (tmpStMng != NULL) {
-			cout << "       " << "|" << i << ". |" << setw(8) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(6) << left << tmpStMng->pStudent->gender << "  |" << endl;
+			Student* tmpSt;
+			Class* ofClass;
+			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
+			cout << "       " << "|" << i << ". |" << setw(8) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(6) << left << tmpStMng->pStudent->gender << "  |" << "  " << setw(6) << left << ofClass->name << "  |" << endl;
 			tmpStMng = tmpStMng->next;
 			++i;
 		}
@@ -110,6 +113,47 @@ void displayScoreboard(Course* curCourse)
 		while (tmpStMng != NULL) {
 			cout << "       " << "|" << i << ". |" << setw(8) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" 
 				<< "  " << setw(8) << left << tmpStMng->pCourseManager->scoreBoard.midTerm << "  |" << "  " << setw(8) << left << tmpStMng->pCourseManager->scoreBoard.finalTerm << "  |" << "  " << setw(8) << left << tmpStMng->pCourseManager->scoreBoard.lab << "  |" << "  " << setw(8) << left << tmpStMng->pCourseManager->scoreBoard.bonus << "  |" << endl;
+			tmpStMng = tmpStMng->next;
+			++i;
+		}
+	}
+	return;
+}
+void viewAttendanceList(Course* curCourse, CoreData data)
+{
+	StudentManager* tmpStMng = curCourse->pHeadStudentManager;
+	if (tmpStMng == NULL) {
+		cout << "	There is no student in this course." << endl;
+		return;
+	}
+	else {
+		int last = 10, first = 10, dob = 0;
+		findMaxLengthOfStudentInfo(tmpStMng, last, first, dob);
+		int k = (last + first + dob + 30);
+		tmpStMng = curCourse->pHeadStudentManager;
+		int i = 1;
+		cout << endl << "        " << setw(k / 2 + 7) << right << "ATTENDANCE LIST OF " << curCourse->id << endl;
+		cout << "	Lecturer: " << curCourse->lectureAccount << setw(8) << left << "  Number of students: " << setw(8) << left << "  Duration: " << curCourse->startDate << " - " << curCourse->endDate << setw(8) << left << "  Time: " << curCourse->startHour << " - " << curCourse->endHour << endl;
+		cout << "|" << "No" << " |" << setw(8) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(6) << left << "Class" << "  |";
+		for (int i = 1; i <= tmpStMng->pCourseManager->checkIn.numOfDays; ++i)
+		{
+			cout << " W" << setw(2) << left << i << " |";
+		}
+		cout << endl;
+		while (tmpStMng != NULL) {
+			Student* tmpSt;
+			Class* ofClass;
+			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
+			cout << "|" << i << ". |" << setw(8) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(6) << left << ofClass->name << "  |";
+			for (CheckInCell* tmpCheckIn = tmpStMng->pCourseManager->checkIn.pHeadCell; tmpCheckIn != NULL; tmpCheckIn = tmpCheckIn->next)
+			{
+				if (tmpCheckIn->checked == true)
+					cout << setw(4) << left << "  x";
+				else
+					cout << setw(4) << left << "   ";
+				cout << " |";
+			}
+			cout << endl;
 			tmpStMng = tmpStMng->next;
 			++i;
 		}
@@ -601,28 +645,82 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 }
 void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, CoreData& data)
 {
-	cout << "Please input your course details:" << endl;
+	cout << "Please input your course details (INPUT 0 ANYWHERE TO CANCEL):" << endl;
 	cout << "	Course name: ";
 	getline(cin, newCourse->name);
+	if (newCourse->name == "0")
+	{
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 	cout << "	Account of the lecturer: ";
 	getline(cin, newCourse->lectureAccount);
+	if (newCourse->lectureAccount == "0")
+	{
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 	cout << "	Start date: ";
 	getline(cin, newCourse->startDate);
+	if (newCourse->startDate == "0")
+	{
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 	cout << "	End date: ";
 	getline(cin, newCourse->endDate);
+	if (newCourse->endDate == "0")
+	{
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 	cout << "	Day of the week: ";
 	getline(cin, newCourse->dayOfWeek);
+	if (newCourse->dayOfWeek == "0")
+	{
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 	cout << "	Start hour: ";
 	getline(cin, newCourse->startHour);
+	if (newCourse->startHour == "0")
+	{
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 	cout << "	End hour: ";
 	getline(cin, newCourse->endHour);
+	if (newCourse->endHour == "0")
+	{
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 	cout << "	Room: ";
 	getline(cin, newCourse->room);
+	if (newCourse->room == "0")
+	{
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 
 	string tmpClassName;
 	Class* tmpClass = NULL;
 	cout << "	Class: ";
 	getline(cin, tmpClassName);
+	if (tmpClassName == "0")
+	{
+		delete newCourse;
+		newCourse = NULL;
+		return;
+	}
 	toUpper(tmpClassName);
 	
 	bool showOption = true;
@@ -634,12 +732,16 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 				showOption = true;
 			}
 			else
-				cout << "	Class " << tmpClassName << " does not exist! Create class " << tmpClassName << "? (1 - YES, 2 - INPUT AGAIN): " << endl;
+				cout << "	Class " << tmpClassName << " does not exist! Create class " << tmpClassName << "? (0 - RETURN, 1 - YES, 2 - INPUT AGAIN): " << endl;
 			int yourChoice;
 			cout << "Your choice: ";
 			cin >> yourChoice;
 			switch (yourChoice)
 			{
+			case 0:
+				delete newCourse;
+				newCourse = NULL;
+				return;
 			case 1:
 				createNewEmptyClass(tmpClassName, data);
 				cout << "Create class " << tmpClassName << " successfully!" << endl;
@@ -648,6 +750,12 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 				cin.ignore();
 				cout << "	Class: ";
 				getline(cin, tmpClassName);
+				if (tmpClassName == "0")
+				{
+					delete newCourse;
+					newCourse = NULL;
+					return;
+				}
 				toUpper(tmpClassName);
 				break;
 			default:
@@ -753,7 +861,7 @@ void menuCourse(string pathName, CoreData& data)
 		clearScreen();
 		if (showOption) 
 		{
-			cout << "__________________MENU__________________" << endl << endl;
+			cout << "__________________ACADEMIC STAFF-COURSE__________________" << endl << endl;
 
 			cout << "0. Exit" << endl;
 			cout << endl;
@@ -781,6 +889,7 @@ void menuCourse(string pathName, CoreData& data)
 			cout << "11. Remove a specific student from a course" << endl;
 			cout << "12. Add a specific student to a course" << endl;
 			cout << "13. View list of students of a course" << endl;
+			cout << "14. View attendance list of a course" << endl;
 			cout << endl;
 
 			cout << "________SCOREBOARD________" << endl;
@@ -789,6 +898,8 @@ void menuCourse(string pathName, CoreData& data)
 			cout << "20. Export scoreboard to a .csv file" << endl;
 			cout << "21. Edit grade of a student" << endl;
 			cout << endl;
+
+			cout << "22. Edit an attendance" << endl;
 		}
 		else 
 		{
@@ -841,6 +952,9 @@ void menuCourse(string pathName, CoreData& data)
 	case 13:
 		activity13(data);
 		break;
+	case 14:
+		activity14(data);
+		break;
 	case 18:
 		activity18(data);
 		break;
@@ -852,6 +966,9 @@ void menuCourse(string pathName, CoreData& data)
 		break;
 	case 21:
 		activity21(pathName, data);
+		break;
+	case 22:
+		activity22(pathName, data);
 		break;
 	default:
 		showOption = false;
@@ -1171,7 +1288,7 @@ void activity11(string pathName, CoreData& data)
 
 	if (curCourse != NULL)
 	{
-		viewListOfStudents(curCourse);
+		viewListOfStudents(curCourse, data);
 		if (curCourse->pHeadStudentManager != NULL)
 		{
 			cout << endl << "Input ID of the student you want to remove from " << curCourse->id << " (INPUT 0 TO CANCEL): ";
@@ -1216,7 +1333,7 @@ void activity12(string pathName, CoreData& data)
 				if (!findStudentInCourse(stdID, stdMng, curCourse))
 				{
 					addStudentToCourse(std, curCourse, curYear->name, curSem->name);
-					cout << "Add successfully!" << endl;
+					cout << "Add student " << stdMng->pStudent->id << " - " << stdMng->pStudent->lastName << " " << stdMng->pStudent->lastName << "to " << curCourse->id << " successfully!" << endl;
 					saveToDataBase(pathName, data);
 				}
 				else
@@ -1238,9 +1355,23 @@ void activity13(CoreData data)
 	courseMenu(curYear, curSem, curCourse, data);
 	if (curCourse != NULL)
 	{
-		viewListOfStudents(curCourse);
+		viewListOfStudents(curCourse, data);
 	}
 	returnMenu1Arg(&activity13, data);
+}
+void activity14(CoreData data)
+{
+	cout << endl << "_____________ATTENDANCE LIST OF A COURSE_____________" << endl << endl;
+	cout << "Please input 1, 2, 3, 4, ... corresponding to your selection below: " << endl;
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	Course* curCourse = NULL;
+	courseMenu(curYear, curSem, curCourse, data);
+	if (curCourse != NULL)
+	{
+		viewAttendanceList(curCourse, data);
+	}
+	returnMenu1Arg(&activity14, data);
 }
 
 void activity18(CoreData data)
@@ -1330,6 +1461,10 @@ void activity21(string pathName, CoreData& data)
 		}
 	}
 	returnMenu2Arg(&activity21, pathName, data);
+}
+void activity22(string pathName, CoreData& data)
+{
+
 }
 void returnMenu1Arg(void (*tmp)(CoreData), CoreData data)
 {
