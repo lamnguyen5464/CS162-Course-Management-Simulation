@@ -135,9 +135,10 @@ void importDataBase(string pathName, CoreData &data){
         addStaff(hashPass("123"), "admin", data);
         fout.close();
     }else{
-        fin>>data.numOfStaffs>>data.numOfLecturers;
+        int numOfStaffs, numOfLecturers;
+        fin>>numOfStaffs>>numOfLecturers;
         fin.ignore(256,'\n');
-        for(int i = 0; i < data.numOfStaffs; i++){
+        for(int i = 0; i < numOfStaffs; i++){
             long long tmpHash;
             string tmpName;
             getline(fin, tmpName);
@@ -145,7 +146,7 @@ void importDataBase(string pathName, CoreData &data){
             addStaff(tmpHash, tmpName, data);
             fin.ignore(256, '\n');
         }
-        for(int i = 0; i < data.numOfLecturers; i++){
+        for(int i = 0; i < numOfLecturers; i++){
             long long tmpHash;
             string tmpName;
             getline(fin, tmpName);
