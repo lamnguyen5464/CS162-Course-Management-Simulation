@@ -8,13 +8,15 @@ int checkUser(string Username,string password,Student *&curSt,Lecturer *&curLec,
 void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,Class *&tmpClass);
 void showProfile (int check,Student *curSt,Lecturer *curLec,Staff *curStaff,Class *tmpClass);
 void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,string pathName,CoreData &data);
+void showMenu (int check,CoreData &data,string pathName,Student*&curSt);
+void menuStaff (CoreData &data,string pathName);
 // clear screen
 void clearScreen();
 void toUpper(string &name);
 //academic staff-class;
 void staffClassMenu (string pathname,CoreData &data);
 void menuClass(Class *&tmpClass,CoreData data);
-bool menuStudent(Class *&curClass,Student *&curSt,CoreData data);
+bool showMenuStudent(Class *&curClass,Student *&curSt,CoreData data);
 //
 
 void createClassToImport(CoreData &data);

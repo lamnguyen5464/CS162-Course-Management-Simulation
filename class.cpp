@@ -243,7 +243,7 @@ bool editByMenu (CoreData &data){
     Class *curClass = NULL;
     bool checkChoice = true;
     int choice;
-    if (!menuStudent(curClass,curSt,data)) return false;
+    if (!showMenuStudent(curClass,curSt,data)) return false;
     cout << endl;
     cout << "What part do you want to edit? "<<endl;
     cout << "1.Last name: " << curSt->lastName<< endl;
@@ -326,7 +326,7 @@ void findMaxLengthOfStudentInfo(Student *curSt,int &last,int &first,int &dob){
         curSt = curSt ->next;
     }
 }
-bool menuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
+bool showMenuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
     bool option = true;
     while(1){
         if (!option){
@@ -356,7 +356,7 @@ bool menuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
             cout << endl;
             cout << ">Choose student: (0 to return): ";
             cin >> choice;
-            if (choice == 0) return menuStudent(curClass,tmpSt,data);
+            if (choice == 0) return showMenuStudent(curClass,tmpSt,data);
             else if (choice <= curClass ->numOfStudents){
                 tmpSt = curClass ->pHeadStudent;
                 int i = 1;
@@ -440,7 +440,7 @@ void inputGender(string &gender){
 bool removeAStudent(CoreData &data){
         Class *curClass = NULL;
         Student *curSt = NULL;
-        if (!menuStudent(curClass,curSt,data)) return false;
+        if (!showMenuStudent(curClass,curSt,data)) return false;
         removeStudent(curSt->id,data);
         return true;
 }
@@ -448,7 +448,7 @@ bool removeAStudent(CoreData &data){
 bool moveStudentFromAToB (CoreData &data){
     Student *tmpSt = NULL;
     Class *tmpClass = NULL;
-    if (!menuStudent(tmpClass,tmpSt,data)) return false;
+    if (!showMenuStudent(tmpClass,tmpSt,data)) return false;
     Class *curClass = NULL;
     Student *curSt;
     menuClass(curClass,data);
@@ -566,7 +566,6 @@ void login(CoreData &data,string pathName){
     bool showoption = true;
     string userName;
     string password = "";
-    int type = 0;
     while(1){
         if (showoption == false)
             cout << "UserName or password is incorrect. Please try again!"<< endl;
@@ -586,8 +585,8 @@ void login(CoreData &data,string pathName){
         else{
             showFunctions(check,data,pathName,curSt,curLec,curStaff,tmpClass);
         }
-    cin.ignore();
-    clearScreen();
+        cin.ignore();
+        clearScreen();
     }
 }
 
@@ -655,7 +654,7 @@ void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lec
         cin >> choice;
         switch(choice){
             case 1:
-                staffClassMenu(pathName,data);
+                showMenu(check,data,pathName,curSt);
                 break;
             case 2:
                 showProfile(check,curSt,curLec,curStaff,tmpClass);
@@ -782,4 +781,49 @@ void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff
     cout << "Input any number to return: ";
     int tmp;
     cin >> tmp;
+}
+
+void showMenu (int check,CoreData &data,string pathName,Student *&curSt){
+    switch(check){
+        case 1:
+            menuStudent(curSt,data,pathName);
+            break;
+        case 2:
+            //show menu lecturer
+        case 3:
+            menuStaff(data,pathName);
+            break;
+        default:
+            break;
+    }
+}
+
+void menuStaff (CoreData &data,string pathName){
+    bool option = true;
+    while(1){
+        clearScreen();
+        if (!option){
+            cout << "Invalid choice. Try again."<<endl;
+            option = true;
+        }
+        cout << "0.Return."<<endl;
+        cout << "1.Class."<<endl;
+        cout << "2.Course."<<endl;
+        cout << ">Your choice: "<<endl;
+        int choice;
+        cin >> choice;
+        switch(choice){
+            case 0:
+                return;
+            case 1:
+                staffClassMenu(pathName,data);
+                break;
+            case 2:
+                menuCourse(pathName,data);
+                break;
+            default:
+                option = false;
+                break;
+        }
+    }
 }
