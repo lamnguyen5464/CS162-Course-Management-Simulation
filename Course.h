@@ -18,10 +18,11 @@ void activity12(string pathName, CoreData& data);
 void activity13(CoreData data);
 void activity14(CoreData data);
 void activity15(string pathName, CoreData& data);
-void activity16(CoreData data);
+void activity16(string pathName, CoreData& data);
+void activity17(CoreData data);
 void activity18(CoreData data);
 void activity19(string pathName, CoreData& data);
-void activity20(CoreData data);
+void activity20(string pathName, CoreData& data);
 void activity21(string pathName, CoreData& data);
 void activity22(string pathName, CoreData& data);
 void returnMenu1Arg(void (*tmp)(CoreData), CoreData data);
@@ -50,8 +51,6 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void displayStdInCourse(Year* curYear, Semester* curSemester, Course* curCourse);
 void viewListOfStudents(Course* curCourse, CoreData data);
-void viewAttendanceList(Course* curCourse, CoreData data);
-
 
 //LECTURERS
 void viewLecturerList(CoreData data);
@@ -62,10 +61,13 @@ void removeLecturer(Lecturer*& curLec, CoreData& data);
 void displayScoreboard(Course* curCourse);
 void editGrade(Course*& curCourse, StudentManager*& curStdMng);
 void importScoreboard(string address, Course*& curCourse);
-void exportScoreboard(Course* curCourse);
+void exportScoreboard(string pathName, Course* curCourse);
 
 void findMaxLengthOfStudentInfo(StudentManager* curStMng, int& last, int& first, int& dob);
 
+//ATTENDANCE
 void editAttendance(Course*& curCourse, StudentManager*& curStdMng);
+void exportAttendance(string pathName, Course* curCourse, CoreData data);
+void viewAttendanceList(Course* curCourse, CoreData data);
 
 #endif

@@ -934,9 +934,9 @@ void importScoreboard(string address, Course* &curCourse)
 	}
 }
 
-void exportScoreboard(Course* curCourse)
+void exportScoreboard(string pathName, Course* curCourse)
 {
-	ofstream fout(curCourse->id + "-Scoreboard.csv");
+	ofstream fout(pathName + curCourse->id + "- Scoreboard.csv");
 	fout << "No,Student ID,Last name,First name,Midterm,Final,Lab,Bonus" << endl;
 	StudentManager* curStdMng = curCourse->pHeadStudentManager;
 	int i = 1;
@@ -945,6 +945,37 @@ void exportScoreboard(Course* curCourse)
 		fout << i++ << "," <<curStdMng->pStudent->id<<","<<curStdMng->pStudent->lastName<<","<<curStdMng->pStudent->firstName << "," << curStdMng->pCourseManager->scoreBoard.midTerm 
 			<< "," << curStdMng->pCourseManager->scoreBoard.finalTerm << "," << curStdMng->pCourseManager->scoreBoard.lab << "," << curStdMng->pCourseManager->scoreBoard.bonus << endl;
 		curStdMng = curStdMng->next;
+	}
+	fout.close();
+	cout << "Export successfully!" << endl;
+}
+void exportAttendance(string pathName, Course* curCourse, CoreData data)
+{
+	StudentManager* tmpStMng = curCourse->pHeadStudentManager;
+	ofstream fout(pathName + curCourse->id + "- Attendance.csv");
+	fout << "No,Student ID,Last name,First name,DOB,Class";
+	for (int j = 1; j <= tmpStMng->pCourseManager->checkIn.numOfDays; ++j)
+	{
+		fout << ",W" << j;
+	}
+	fout << endl;
+	int i = 1;
+	while (tmpStMng != NULL)
+	{
+		Student* tmpSt;
+		Class* ofClass;
+		findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
+		fout << i++ << "," << tmpStMng->pStudent->id << "," << tmpStMng->pStudent->lastName << "," << tmpStMng->pStudent->firstName << "," << tmpStMng->pStudent->dOB
+			<< "," << ofClass->name;
+		for (CheckInCell* tmpCheckIn = tmpStMng->pCourseManager->checkIn.pHeadCell; tmpCheckIn != NULL; tmpCheckIn = tmpCheckIn->next)
+		{
+			if (tmpCheckIn->checked == true)
+				fout << ",x";
+			else
+				fout << ", ";
+		}
+		fout << endl;
+		tmpStMng = tmpStMng->next;
 	}
 	fout.close();
 	cout << "Export successfully!" << endl;
@@ -988,11 +1019,12 @@ void menuCourse(string pathName, CoreData& data)
 			cout << "12. Add a specific student to a course" << endl;
 			cout << "13. View list of students of a course" << endl;
 			cout << "14. View attendance list of a course" << endl;
+			cout << "15. Export attendance list to a .csv file" << endl;
 			cout << endl;
 
 			cout << "________LECTURERS________" << endl;
-			cout << "15. Delete a lecturer" << endl;
-			cout << "16. View all lecturers" << endl;
+			cout << "16. Delete a lecturer" << endl;
+			cout << "17. View all lecturers" << endl;
 			cout << endl;
 
 			cout << "________SCOREBOARD________" << endl;
@@ -1062,7 +1094,10 @@ void menuCourse(string pathName, CoreData& data)
 		activity15(pathName, data);
 		break;
 	case 16:
-		activity16(data);
+		activity16(pathName, data);
+		break;
+	case 17:
+		activity17(data);
 		break;
 	case 18:
 		activity18(data);
@@ -1071,7 +1106,7 @@ void menuCourse(string pathName, CoreData& data)
 		activity19(pathName, data);
 		break;
 	case 20:
-		activity20(data);
+		activity20(pathName, data);
 		break;
 	case 21:
 		activity21(pathName, data);
@@ -1476,7 +1511,8 @@ void activity12(string pathName, CoreData& data)
 				if (!findStudentInCourse(stdID, stdMng, curCourse))
 				{
 					addStudentToCourse(std, curCourse, curYear->name, curSem->name);
-					cout << "Add student " << stdMng->pStudent->id << " - " << stdMng->pStudent->lastName << " " << stdMng->pStudent->lastName << "to " << curCourse->id << " successfully!" << endl;
+
+					cout << "Add student " << std->id << " - " << std->lastName << " " << std->lastName << " to " << curCourse->id << " successfully!" << endl;
 					saveToDataBase(pathName, data);
 				}
 				else
@@ -1518,6 +1554,19 @@ void activity14(CoreData data)
 }
 void activity15(string pathName, CoreData& data)
 {
+	cout << endl << "_____________EXPORT ATTENDANCE_____________" << endl << endl;
+	cout << "Please input 1, 2, 3, 4, ... corresponding to your selection below: " << endl;
+	Year* curYear = NULL;
+	Semester* curSem = NULL;
+	Course* curCourse = NULL;
+	courseMenu(curYear, curSem, curCourse, data);
+
+	if (curCourse != NULL)
+		exportAttendance(pathName, curCourse, data);
+	returnMenu2Arg(&activity15, pathName, data);
+}
+void activity16(string pathName, CoreData& data)
+{
 	cout << endl << "_____________REMOVE A LECTURER_____________" << endl << endl;
 	cout << "Please input 1, 2, 3, 4, ... corresponding to your selection below: " << endl;
 	Lecturer* curLec = NULL;
@@ -1527,13 +1576,13 @@ void activity15(string pathName, CoreData& data)
 		removeLecturer(curLec, data);
 		saveToDataBase(pathName, data);
 	}
-	returnMenu2Arg(&activity15, pathName, data);
+	returnMenu2Arg(&activity16, pathName, data);
 }
-void activity16(CoreData data)
+void activity17(CoreData data)
 {
 	cout << endl << "_____________VIEW ALL LECTURERS_____________" << endl << endl;
 	viewLecturerList(data);
-	returnMenu1Arg(&activity16, data);
+	returnMenu1Arg(&activity17, data);
 }
 void activity18(CoreData data)
 {
@@ -1570,7 +1619,7 @@ void activity19(string pathName, CoreData& data)
 	}
 	returnMenu2Arg(&activity19, pathName, data);
 }
-void activity20(CoreData data)
+void activity20(string pathName, CoreData& data)
 {
 	cout << endl << "_____________EXPORT SCOREBOARD_____________" << endl << endl;
 	cout << "Please input 1, 2, 3, 4, ... corresponding to your selection below: " << endl;
@@ -1580,10 +1629,8 @@ void activity20(CoreData data)
 	courseMenu(curYear, curSem, curCourse, data);
 
 	if (curCourse != NULL)
-	{
-		exportScoreboard(curCourse);
-	}
-	returnMenu1Arg(&activity20, data);
+		exportScoreboard(pathName ,curCourse);
+	returnMenu2Arg(&activity20, pathName, data);
 }
 void activity21(string pathName, CoreData& data)
 {
