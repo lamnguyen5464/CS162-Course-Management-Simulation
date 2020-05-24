@@ -138,7 +138,7 @@ void createClassToImport(CoreData &data){
     string classname;
     while(1){
         if (!k) {
-            cout << "Invalid choice. Try again.";
+            cout << "Invalid choice. Try again."<<endl;
             k = true;
         }
         int choice;
@@ -420,7 +420,10 @@ bool addAStudent(CoreData &data){
 void inputGender(string &gender){
     bool k = true;
     while (1){
-        if (k == false) cout <<"    "<< "Invalid choice,try again"<<endl;
+        if (k == false){
+            cout <<"    "<< "Invalid choice,try again"<<endl;
+            k = true;
+        }
         cout << "    " <<"Gender(0.male)& (1.female): " ;
         int choice;
         cin >> choice;
@@ -657,7 +660,7 @@ void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lec
         cin >> choice;
         switch(choice){
             case 1:
-                showMenu(check,data,pathName,curSt);
+                showMenu(check,data,pathName,curSt,curLec);
                 break;
             case 2:
                 showProfile(check,curSt,curLec,curStaff,tmpClass);
@@ -787,13 +790,13 @@ void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff
     cin >> tmp;
 }
 
-void showMenu (int check,CoreData &data,string pathName,Student *&curSt){
+void showMenu (int check,CoreData &data,string pathName,Student *&curSt,Lecturer *&curLec){
     switch(check){
         case 1:
             menuStudent(curSt,data,pathName);
             break;
         case 2:
-            //show menu lecturer
+            menuLecturer(pathName,data,curLec);
         case 3:
             menuStaff(data,pathName);
             break;
@@ -813,6 +816,8 @@ void menuStaff (CoreData &data,string pathName){
         cout << "0.Return."<<endl;
         cout << "1.Class."<<endl;
         cout << "2.Course."<<endl;
+        cout << "3.Scoreboard."<<endl;
+        cout << "4.Attendance."<<endl;
         cout << ">Your choice: ";
         int choice;
         cin >> choice;
@@ -823,7 +828,13 @@ void menuStaff (CoreData &data,string pathName){
                 staffClassMenu(pathName,data);
                 break;
             case 2:
-                menuCourse(pathName,data);
+                menuStaffCourse(pathName,data);
+                break;
+            case 3:
+                menuStaffScoreboard(pathName,data);
+                break;
+            case 4:
+                menuStaffAttendance(pathName,data);
                 break;
             default:
                 option = false;
