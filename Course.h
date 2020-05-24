@@ -5,6 +5,7 @@
 void menuStaffCourse(string pathName, CoreData& data);
 void menuStaffScoreboard(string pathName, CoreData& data);
 void menuStaffAttendance(string pathName, CoreData& data);
+void menuLecturer(string pathName, CoreData& data, Lecturer* curLec);
 
 void activity1_L1(CoreData data);
 void activity2(string pathName, CoreData& data);
@@ -57,6 +58,7 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 void importCourse(string address, string yearName, string semesterName, CoreData& data);
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void viewListOfStudents(Course* curCourse, CoreData data);
+int countNumOfStdInCourse(Course* curCourse);
 
 //LECTURERS
 void viewLecturerList(CoreData data);

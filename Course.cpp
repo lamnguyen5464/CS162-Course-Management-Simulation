@@ -92,12 +92,34 @@ void displayScoreboard(Course* curCourse)
 		int k = (last + first + 70);
 		tmpStMng = curCourse->pHeadStudentManager;
 		int i = 1;
-		cout << endl << "        " << setw(k / 2 + 7) << right << "SCOREBOARD FOR " << curCourse->name << endl;
+		cout << endl << "        " << setw(k / 2 + 7) << right << "SCOREBOARD FOR " << curCourse->id << endl;
+		cout << "	Lecturer: " << curCourse->lectureAccount << setw(8) << left << "  Number of students: " << countNumOfStdInCourse(curCourse) << setw(8) << left << "  Duration: " << curCourse->startDate << " - " << curCourse->endDate << endl;
 		cout << "       " << "|" << "No" << " |" << setw(8) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |"
-			<< "  " << setw(8) << left << "Midterm" << "  |" << "  " << setw(8) << left << "Final" << "  |" << "  " << setw(8) << left << "Lab" << "  |" << "  " << setw(8) << left << "Bonus" << "  |" << endl;
+			<< "  " << setw(8) << left << "Midterm" << " |" << "  " << setw(8) << left << "Final" << " |" << "  " << setw(8) << left << "Lab" << " |" << "  " << setw(8) << left << "Bonus" << " |" << endl;
 		while (tmpStMng != NULL) {
-			cout << "       " << "|" << i << ". |" << setw(8) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" 
-				<< "  " << setw(8) << left << tmpStMng->pCourseManager->scoreBoard.midTerm << "  |" << "  " << setw(8) << left << tmpStMng->pCourseManager->scoreBoard.finalTerm << "  |" << "  " << setw(8) << left << tmpStMng->pCourseManager->scoreBoard.lab << "  |" << "  " << setw(8) << left << tmpStMng->pCourseManager->scoreBoard.bonus << "  |" << endl;
+			cout << "       " << "|" << i << ". |" << setw(8) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |";
+				
+			//if scores are still -1, display nothing
+			if (tmpStMng->pCourseManager->scoreBoard.midTerm != -1)
+				cout << "  " << setw(8) << left << fixed << setprecision(1) << tmpStMng->pCourseManager->scoreBoard.midTerm << " |";
+			else
+				cout << "  " << setw(8) << left << " " << " |";
+
+			if (tmpStMng->pCourseManager->scoreBoard.finalTerm != -1)
+				cout << "  " << setw(8) << left << fixed << setprecision(1) << tmpStMng->pCourseManager->scoreBoard.finalTerm << " |";
+			else
+				cout << "  " << setw(8) << left << " " << " |";
+
+			if (tmpStMng->pCourseManager->scoreBoard.lab != -1)
+				cout << "  " << setw(8) << left << fixed << setprecision(1) << tmpStMng->pCourseManager->scoreBoard.lab << " |";
+			else
+				cout << "  " << setw(8) << left << " " << " |";
+
+			if (tmpStMng->pCourseManager->scoreBoard.bonus != -1)
+				cout << "  " << setw(8) << left << fixed << setprecision(1) << tmpStMng->pCourseManager->scoreBoard.bonus << " |" << endl;
+			else
+				cout << "  " << setw(8) << left << " " << " |" << endl;
+
 			tmpStMng = tmpStMng->next;
 			++i;
 		}
@@ -118,7 +140,7 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 		tmpStMng = curCourse->pHeadStudentManager;
 		int i = 1;
 		cout << endl << "        " << setw(k / 2 + 7) << right << "ATTENDANCE LIST OF " << curCourse->id << endl;
-		cout << "	Lecturer: " << curCourse->lectureAccount << setw(8) << left << "  Number of students: " << setw(8) << left << "  Duration: " << curCourse->startDate << " - " << curCourse->endDate << setw(8) << left << "  Time: " << curCourse->startHour << " - " << curCourse->endHour << endl;
+		cout << "	Lecturer: " << curCourse->lectureAccount << setw(8) << left << "  Number of students: " << countNumOfStdInCourse(curCourse) << setw(8) << left << "  Duration: " << curCourse->startDate << " - " << curCourse->endDate << setw(8) << left << "  Time: " << curCourse->startHour << " - " << curCourse->endHour << setw(8) << left << "  Day of Week: " << curCourse->dayOfWeek << endl;
 		cout << "|" << "No" << " |" << setw(8) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(6) << left << "Class" << "  |";
 		for (int i = 1; i <= tmpStMng->pCourseManager->checkIn.numOfDays; ++i)
 		{
@@ -961,7 +983,7 @@ void exportAttendance(string pathName, Course* curCourse, CoreData data)
 }
 
 //MENUS
-void menuLecturer(string pathName, CoreData& data)
+void menuLecturer(string pathName, CoreData& data, Lecturer* curLec)
 {
 	bool showOption = true;
 	while (1)
@@ -1610,7 +1632,7 @@ void activity12(string pathName, CoreData& data)
 				{
 					addStudentToCourse(std, curCourse, curYear->name, curSem->name);
 
-					cout << "Add student " << std->id << " - " << std->lastName << " " << std->lastName << " to " << curCourse->id << " successfully!" << endl;
+					cout << "Add student " << std->id << " - " << std->lastName << " " << std->firstName << " to " << curCourse->id << " successfully!" << endl;
 					saveToDataBase(pathName, data);
 				}
 				else
@@ -1827,6 +1849,7 @@ void returnMenu2Arg(void (*tmp)(string, CoreData&), string pathName, CoreData& d
 	tmp(pathName, data);
 }
 
+//add findLength ID and Class
 void findMaxLengthOfStudentInfo(StudentManager* curStMng, int& last, int& first, int& dob) {
 	while (curStMng != NULL) {
 		if ((curStMng->pStudent->lastName).length() > last) last = (curStMng->pStudent->lastName).length();
@@ -1834,4 +1857,15 @@ void findMaxLengthOfStudentInfo(StudentManager* curStMng, int& last, int& first,
 		if ((curStMng->pStudent->dOB).length() > dob) dob = (curStMng->pStudent->dOB).length();
 		curStMng = curStMng->next;
 	}
+}
+int countNumOfStdInCourse(Course* curCourse)
+{
+	int count = 0;
+	StudentManager* curStdMng = curCourse->pHeadStudentManager;
+	while (curStdMng != NULL)
+	{
+		curStdMng = curStdMng->next;
+		count++;
+	}
+	return count;
 }
