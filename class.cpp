@@ -97,12 +97,13 @@ void inputStudentFromFile(Student *tmpSt,Class *&tmpClass,ifstream &fin,CoreData
     }
 }
 
-void importStudentFromCsvFile (CoreData &data,string pathname){
+bool importStudentFromCsvFile (CoreData &data,string pathname){
     ifstream fin;
     string linkOfFile;
-    cout << "Csv file: ";
+    cout << "Csv file(0 to return): ";
     cin.ignore();
     getline(cin, linkOfFile);
+    if (linkOfFile == "0") return false;
     fin.open(pathname + linkOfFile);
     if (!fin.is_open()){
         cout << "can not open file"<<endl;
@@ -113,17 +114,18 @@ void importStudentFromCsvFile (CoreData &data,string pathname){
         Class *curClass = NULL;
         if (findClass(classname,data,curClass)){
             cout << "Existing class!"<<endl;
-            return;
+            return true;
         }
        // t chua biet xu li ten lop sao
         createNewEmptyClass(classname,data);
         Class *tmpClass = NULL;
-        if (!findClass(classname,data,tmpClass)) return;
+        findClass(classname,data,tmpClass);
         Student *tmpSt = NULL ;
         inputStudentFromFile(tmpSt,tmpClass,fin,data);
         cout << "Import successfully!"<<endl;
         fin.close();
     }
+    return true;
 }
 void getClassName(string &classname,string linkOfFile){
     int i = 0;
@@ -204,19 +206,20 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
 bool editAnExistingStudent(CoreData &data){
     bool checkChoice = true;
     long long ID;
-    cout << "Please input id of the student you want to edit: ";
+    cout << "Please input id of the student you want to edit(0 to return): ";
     cin >> ID;
+    if (ID == 0) return false;
     Student *tmpSt=NULL;
     Class *tmpClass=NULL;
     int choice;
     if (findStudent(ID,data,tmpSt,tmpClass)){
         cout << "What part do you want to edit? "<<endl;
-        cout << "1.ID: " << tmpSt->id << endl;
-        cout << "2.Last name: " << tmpSt->lastName<< endl;
-        cout << "3.First name: " << tmpSt->firstName << endl;
-        cout << "4.DoB: " << tmpSt->dOB << endl;
-        cout << "5.Gender: " << tmpSt->id << endl;
-        cout << "Your choice (0 to return): ";
+        cout << "What part do you want to edit? "<<endl;
+        cout << "1.Last name: " << tmpSt->lastName<< endl;
+        cout << "2.First name: " << tmpSt->firstName << endl;
+        cout << "3.DoB: " << tmpSt->dOB << endl;
+        cout << "4.Gender: " << tmpSt->id << endl;
+        cout << ">Your choice (0 to return): ";
         cin >> choice;
         if (choice == 0) return false;
         edit(tmpSt,choice,checkChoice);
@@ -295,11 +298,21 @@ void menuClass(Class *&curClass,CoreData data){
 
 bool viewListOfStudents(Class *curClass,CoreData data){
     menuClass(curClass,data);
-    if (curClass == NULL) return true;
+    if (curClass == NULL){
+        if (data.numOfClasses == 0){
+            cout << "Input any number to return: ";
+            int tmp;
+            cin >> tmp;
+            return false;
+        }
+        else return false;
+    }
     Student *tmpSt = curClass ->pHeadStudent;
     if (tmpSt == NULL){
-        cout << "       There is no student in this class"<<endl;
-        return true;
+        cout << "There is no student. Input any number to return: ";
+        int tmp;
+        cin >> tmp;
+        return false;
     }
     else{
         int last = 10,first = 10,dob = 0;
@@ -334,7 +347,15 @@ bool showMenuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
             option = true;
         }
         menuClass(curClass,data);
-        if (curClass == NULL) return true;
+        if (curClass == NULL){
+            if (data.numOfClasses == 0){
+                cout << "Input any number to return: ";
+                int tmp;
+                cin >> tmp;
+                return false;
+            }
+            else return false;
+        }
         tmpSt = curClass ->pHeadStudent;
         if (tmpSt == NULL){
             cout << "There is no student in this class"<<endl;
@@ -379,6 +400,7 @@ bool addAStudent(CoreData &data){
     cout << "Input(0 to return): "<<endl;
     cout <<"    "<<"ID:" ;
     cin >> tmpSt->id;
+    if (tmpSt->id == 0) return false;
     if(findStudent(tmpSt->id,data,curSt,curClass)){
         cout << "Existing student!"<<endl;
         cout << "       1.Input again."<<endl;
@@ -400,11 +422,15 @@ bool addAStudent(CoreData &data){
         cout << "    "<<"Last name: " ;
         cin.ignore();
         getline(cin,tmpSt->lastName);
+        if (tmpSt->lastName == "0") return false;
         cout << "    "<<"First name: " ;
         getline(cin,tmpSt->firstName);
+        if (tmpSt->firstName == "0") return false;
         cout <<"    "<< "DoB: " ;
         getline(cin,tmpSt->dOB);
+        if (tmpSt->dOB == "0") return false;
         inputGender(tmpSt->gender);
+        if (tmpSt->gender == "0") return false;
         createClassToImport(data);
         cout <<"    "<< "Class: ";
         Class *tmpClass = NULL;
@@ -424,14 +450,17 @@ void inputGender(string &gender){
             cout <<"    "<< "Invalid choice,try again"<<endl;
             k = true;
         }
-        cout << "    " <<"Gender(0.male)& (1.female): " ;
+        cout << "    " <<"Gender(1.male)& (2.female): " ;
         int choice;
         cin >> choice;
         switch(choice){
             case 0:
-                gender = "male";
+                gender = "0";
                 return;
             case 1:
+                gender = "male";
+                return;
+            case 2:
                 gender = "female";
                 return;
             default:
@@ -556,7 +585,7 @@ void activity2_4(string pathname, CoreData &data){
 }
 
 void activity2_1(string pathname, CoreData &data){
-    importStudentFromCsvFile(data,pathname);
+    if (!importStudentFromCsvFile(data,pathname)) return;
     saveToDataBase(pathname,data);
     cout << "Input any number to back and save (1 to run again): ";
     int choice;
@@ -797,6 +826,7 @@ void showMenu (int check,CoreData &data,string pathName,Student *&curSt,Lecturer
             break;
         case 2:
             menuLecturer(pathName,data,curLec);
+            break;
         case 3:
             menuStaff(data,pathName);
             break;
