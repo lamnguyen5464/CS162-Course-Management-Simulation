@@ -61,7 +61,7 @@ void viewListOfStudents(Course* curCourse, CoreData data) {
 		return;
 	}
 	else {
-		int last = 10, first = 10, dob = 0, stdID = 8, className = 0;
+		int last = 10, first = 10, dob = 3, stdID = 8, className = 5;
 		findMaxLengthOfStudentInfo(data, tmpStMng, last, first, dob, stdID, className);
 		//6 + 3 + 5 + 5 + 5 + 6 + 5 + 3 = 38
 		int k = 38 + stdID + last + first + dob + className;
@@ -98,15 +98,15 @@ void displayScoreboard(Course* curCourse, CoreData data)
 		return;
 	}
 	else {
-		int last = 10, first = 10, dob = 0, stdID = 8, className = 0;
+		int last = 10, first = 10, dob = 3, stdID = 8, className = 5;
 		findMaxLengthOfStudentInfo(data, tmpStMng, last, first, dob, stdID, className);
 		int k = 70 + stdID + last + first + className;
 		tmpStMng = curCourse->pHeadStudentManager;
 		int i = 1;
 
-		cout << endl << "        " << setw((k + 15 + curCourse->id.length())/2) << right << "SCOREBOARD FOR " + curCourse->id << endl;
+		cout << endl << "       " << setw((k + 15 + curCourse->id.length())/2) << right << "SCOREBOARD FOR " + curCourse->id << endl;
 
-		cout << "        " << setw((k + 49 + curCourse->lectureAccount.length() + to_string(countNumOfStdInCourse(curCourse)).length() + curCourse->startDate.length() + curCourse->endDate.length()) / 2) << right
+		cout << "       " << setw((k + 49 + curCourse->lectureAccount.length() + to_string(countNumOfStdInCourse(curCourse)).length() + curCourse->startDate.length() + curCourse->endDate.length()) / 2) << right
 			<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(countNumOfStdInCourse(curCourse)) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate << endl;
 		
 		cout << "       " << "|" << "No" << "  |" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(className) << left << "Class" << "  |"
@@ -154,7 +154,7 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 		return;
 	}
 	else {
-		int last = 10, first = 10, dob = 0, stdID = 8, className = 0;
+		int last = 10, first = 10, dob = 3, stdID = 8, className = 5;
 		findMaxLengthOfStudentInfo(data, tmpStMng, last, first, dob, stdID, className);
 		tmpStMng = curCourse->pHeadStudentManager;
 		int k = 27 + stdID + last + first + dob + className + 6*(tmpStMng->pCourseManager->checkIn.numOfDays);
@@ -175,7 +175,7 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 			Student* tmpSt;
 			Class* ofClass;
 			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
-			cout << "|" << i << ".  |" << setw(8) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
+			cout << "|" << i << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
 			for (CheckInCell* tmpCheckIn = tmpStMng->pCourseManager->checkIn.pHeadCell; tmpCheckIn != NULL; tmpCheckIn = tmpCheckIn->next)
 			{
 				if (tmpCheckIn->checked == true)
