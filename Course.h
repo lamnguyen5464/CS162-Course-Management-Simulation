@@ -66,12 +66,12 @@ void lecturerMenu(Lecturer*& curLec, CoreData data);
 void removeLecturer(Lecturer*& curLec, CoreData& data);
 
 //SCOREBOARD
-void displayScoreboard(Course* curCourse);
+void displayScoreboard(Course* curCourse, CoreData data);
 void editGrade(Course*& curCourse, StudentManager*& curStdMng);
 void importScoreboard(string address, Course*& curCourse);
 void exportScoreboard(string pathName, Course* curCourse);
 
-void findMaxLengthOfStudentInfo(StudentManager* curStMng, int& last, int& first, int& dob);
+void findMaxLengthOfStudentInfo(CoreData data, StudentManager* curStMng, int& last, int& first, int& dob, int& id, int& className);
 
 //ATTENDANCE
 void editAttendance(Course*& curCourse, StudentManager*& curStdMng);
