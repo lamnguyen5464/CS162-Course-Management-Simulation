@@ -590,7 +590,6 @@ void login(CoreData &data,string pathName){
         else{
             showFunctions(check,data,pathName,curSt,curLec,curStaff,tmpClass);
         }
-        cin.ignore();
         clearScreen();
     }
 }
@@ -669,6 +668,7 @@ void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lec
                 changePassword(check,curSt,curLec,curStaff,pathName,data);
                 break;
             case 0:
+                cin.ignore();
                 return;
                 break;
             default:
