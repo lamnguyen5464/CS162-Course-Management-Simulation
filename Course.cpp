@@ -1015,27 +1015,26 @@ void menuLecturer(string pathName, CoreData& data, Lecturer* curLec)
 		if (showOption)
 		{
 			clearScreen();
-			cout << "__________________LECTURER__________________" << endl << endl;
-
-			cout << "0. Return to previous menu" << endl;
-			cout << endl;
-
-			cout << "1. View academic years, semesters, courses" << endl;
-			cout << "2. View list of students in a course" << endl;
-			cout << "3. View attendance list of a course" << endl;
-			cout << "4. Edit an attendance" << endl;
-			cout << "5. Import scoreboard from a .csv file" << endl;
-			cout << "6. Edit grade of a student" << endl;
-			cout << "7. View a scoreboard" << endl;
-			cout << endl;
+			cout << "    " << " ______________________________________________________________" << endl;
+			cout << "    " << "|" << "_________________________MENU_LECTURER________________________" << "|" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "0. Return to previous menu." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "1. View academic years, semesters, courses." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "2. View list of students in a course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "3. View attendance list of a course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "4. Edit an attendance." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "5. Import scoreboard from a .csv file." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "6. Edit grade of a student." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "7. View a scoreboard." << "   |" << endl;
+			cout << "    " << "|______________________________________________________________|" << endl;
 		}
 		else
 		{
-			cout << "Invalid choice! Please try again." << endl;
+			cout << "	Invalid choice! Please try again." << endl;
 			showOption = true;
 		}
 		int yourChoice;
-		cout << "Your choice (0-7): ";
+		cout << "    " << ">Your choice (0-7): ";
 		cin >> yourChoice;
 		switch (yourChoice)
 		{
@@ -1076,22 +1075,21 @@ void menuStaffScoreboard(string pathName, CoreData& data)
 		if (showOption)
 		{
 			clearScreen();
-			cout << "__________________ACADEMIC STAFF-SCOREBOARD__________________" << endl << endl;
-
-			cout << "0. Return to previous menu" << endl;
-			cout << endl;
-
-			cout << "1. Search and view scoreboard of a course" << endl;
-			cout << "2. Export scoreboard to a .csv file" << endl;
-			cout << endl;
+			cout << "    " << " ______________________________________________________________" << endl;
+			cout << "    " << "|" << "_____________________MENU_STAFF_SCOREBOARD____________________" << "|" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "0. Return to previous menu." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "1. Search and view scoreboard of a course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "2. Export scoreboard to a .csv file." << "   |" << endl;
+			cout << "    " << "|______________________________________________________________|" << endl;
 		}
 		else
 		{
-			cout << "Invalid choice! Please try again." << endl;
+			cout << "	Invalid choice! Please try again." << endl;
 			showOption = true;
 		}
 		int yourChoice;
-		cout << "Your choice (0-2): ";
+		cout << "    " << ">Your choice (0-2): ";
 		cin >> yourChoice;
 		switch (yourChoice)
 		{
@@ -1118,22 +1116,21 @@ void menuStaffAttendance(string pathName, CoreData& data)
 		if (showOption)
 		{
 			clearScreen();
-			cout << "__________________ACADEMIC STAFF-ATTENDANCE__________________" << endl << endl;
-
-			cout << "0. Return to previous menu" << endl;
-			cout << endl;
-
-			cout << "1. Search and view attendance list of a course" << endl;
-			cout << "2. Export attendance list to a .csv file" << endl;
-			cout << endl;
+			cout << "    " << " ______________________________________________________________" << endl;
+			cout << "    " << "|" << "_____________________MENU_STAFF_ATTENDANCE____________________" << "|" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "0. Return to previous menu." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "1. Search and view attendance list of a course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "2. Export attendance list to a .csv file." << "   |" << endl;
+			cout << "    " << "|______________________________________________________________|" << endl;
 		}
 		else
 		{
-			cout << "Invalid choice! Please try again." << endl;
+			cout << "	Invalid choice! Please try again." << endl;
 			showOption = true;
 		}
 		int yourChoice;
-		cout << "Your choice (0-2): ";
+		cout << "    " << ">Your choice (0-2): ";
 		cin >> yourChoice;
 		switch (yourChoice)
 		{
@@ -1161,49 +1158,47 @@ void menuStaffCourse(string pathName, CoreData& data)
 		if (showOption) 
 		{
 			clearScreen();
-			cout << "__________________ACADEMIC STAFF-COURSE__________________" << endl << endl;
-
-			cout << "0. Return to previous menu" << endl;
-			cout << endl;
-
-			cout << "1. View academic years, semesters, courses" << endl;
-			cout << endl;
-
-			cout << "________ACADEMIC YEARS________" << endl;
-			cout << "2. Create an academic year" << endl;
-			cout << "3. Update an academic year" << endl;
-			cout << "4. Delete an academic year" << endl;
-
-			cout << endl;
-
-			cout << "________SEMESTERS________" << endl;
-			cout << "5. Create a semester for an academic year" << endl;
-			cout << "6. Delete a semester for an academic year" << endl;
-			cout << endl;
-
-			cout << "________COURSES________" << endl;
-			cout << "7. Import a course from a .csv file" << endl;
-			cout << "8. Add a course manually" << endl;
-			cout << "9. Edit an existing course" << endl;
-			cout << "10. Remove a course" << endl;
-			cout << "11. Remove a specific student from a course" << endl;
-			cout << "12. Add a specific student to a course" << endl;
-			cout << "13. View list of students of a course" << endl;
-			cout << "14. View attendance list of a course" << endl;
-			cout << endl;
-
-			cout << "________LECTURERS________" << endl;
-			cout << "15. Delete a lecturer" << endl;
-			cout << "16. View all lecturers" << endl;
-			cout << endl;
+			cout << "    " << " ______________________________________________________________" << endl;
+			cout << "    " << "|" << "_______________________MENU_STAFF_COURSE______________________" << "|" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "0. Return to previous menu." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "1. View academic years, semesters, courses." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|" << "_____________________________YEAR_____________________________" << "|" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "2. Create an academic year." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "3. Update an academic year." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "4. Delete an academic year." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|" << "___________________________SEMESTER___________________________" << "|" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "5. Create a semester for an academic year." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "6. Delete a semester for an academic year." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|" << "____________________________COURSE____________________________" << "|" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "7. Import a course from a .csv file." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "8. Add a course manually." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "9. Edit an existing course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "10. Remove a course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "11. Remove a specific student from a course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "12. Add a specific student to a course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "13. View list of students of a course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "14. View attendance list of a course." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|" << "___________________________LECTURER___________________________" << "|" << endl;
+			cout << "    " << "|   " << setw(56) << left << "" << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "15. Delete a lecturer." << "   |" << endl;
+			cout << "    " << "|   " << setw(56) << left << "16. View all lecturers." << "   |" << endl;
+			cout << "    " << "|______________________________________________________________|" << endl;
 		}
 		else 
 		{
-			cout << "Invalid choice! Please try again." << endl;
+			cout << "	Invalid choice! Please try again." << endl;
 			showOption = true;
 		}
 	int yourChoice;
-	cout << "Your choice (0-16): ";
+	cout << "    " << ">Your choice (0-16): ";
 	cin >> yourChoice;
 	switch (yourChoice)
 	{
