@@ -25,21 +25,23 @@ void staffClassMenu (string pathname,CoreData &data){
     bool showOption = true;
     while (1){
         if (showOption){
-            cout << "____________________MENU_STAFF_CLASS____________________" << endl;
-            cout << "1.Import students of a class from the csv file." << endl;
-            cout << "2.Manually add a student to a class." << endl;
-            cout << "3.Edit an existing student" << endl;
-            cout << "4.Remove a student" << endl;
-            cout << "5.Change a student from class A to class B." << endl;
-            cout << "6.View list of classes and list of students in a class." << endl;
-            cout << "0.Return to previous menu." << endl;
+            cout <<"    "<<" ______________________________________________________________" << endl;
+            cout <<"    "<<"|"<<"_______________________MENU_STAFF_CLASS_______________________"<<"|" << endl;
+            cout <<"    "<<"|   "<<setw(56)<<left<< "0.Return to previous menu." <<"   |"<< endl;
+            cout <<"    "<<"|   "<<setw(56)<<left<< "1.Import students of a class from the csv file." <<"   |"<< endl;
+            cout <<"    "<<"|   "<<setw(56)<<left<< "2.Manually add a student to a class." <<"   |"<< endl;
+            cout <<"    "<<"|   "<<setw(56)<<left<< "3.Edit an existing student" <<"   |"<< endl;
+            cout <<"    "<<"|   "<<setw(56)<<left<< "4.Remove a student"<<"   |" << endl;
+            cout <<"    "<<"|   "<<setw(56)<<left<< "5.Change a student from class A to class B." <<"   |"<< endl;
+            cout <<"    "<<"|   "<<setw(56)<<left<< "6.View list of classes and list of students in a class." <<"   |"<< endl;
+            cout <<"    "<<"|______________________________________________________________|" << endl;
         }
         else{
-            cout << "Invalid choice!Try again!"<< endl;
+            cout <<"    "<< "Invalid choice!Try again!"<< endl;
             showOption = true;
         }
         int yourChoice;
-        cout << ">Your choice: ";
+        cout <<"    "<< ">Your choice: ";
         cin >> yourChoice;
         switch (yourChoice){
             case 0:
@@ -67,7 +69,7 @@ void staffClassMenu (string pathname,CoreData &data){
                 showOption = false;
                 break;
         }
-        clearScreen();
+        if(showOption) clearScreen();
     }
 }
 
@@ -506,6 +508,8 @@ void copyStudentInfor(Student *&dup,Student *tmpSt){
 }
 
 void activity2_6(string pathname, CoreData &data){
+    clearScreen();
+    cout << "_____________VIEW LIST OF CLASSES AND STUDENTS_____________" << endl;
     Class *curClass = NULL;
     if (!viewListOfStudents(curClass,data)) return;
     cout << "Input any number to back and save (1 to run again): ";
@@ -517,6 +521,8 @@ void activity2_6(string pathname, CoreData &data){
 
 
 void activity2_3(string pathname, CoreData &data){
+    clearScreen();
+    cout << "_____________EDIT AN EXISTING STUDENT_____________" << endl;
     int choice;
     cout << "1.Input ID to edit." <<endl;
     cout << "2.View menu." <<endl;
@@ -552,6 +558,8 @@ void activity2_3(string pathname, CoreData &data){
 }
 
 void activity2_5(string pathname, CoreData &data){
+    clearScreen();
+    cout << "_____________CHANGE CLASS OF A STUDENT_____________" << endl;
     if (!moveStudentFromAToB(data)) return;
     saveToDataBase(pathname,data);
     cout << "Change successfully!" << endl;
@@ -563,6 +571,8 @@ void activity2_5(string pathname, CoreData &data){
 }
 
 void activity2_2(string pathname, CoreData &data){
+    clearScreen();
+    cout << "_____________MANUALLY ADD A STUDENT_____________" << endl;
     if (!addAStudent(data)) return;
     saveToDataBase(pathname,data);
     cout << "Add student successfully!"<<endl;
@@ -574,6 +584,8 @@ void activity2_2(string pathname, CoreData &data){
 }
 
 void activity2_4(string pathname, CoreData &data){
+    clearScreen();
+    cout << "_____________REMOVE A STUDENT_____________" << endl;
     if (!removeAStudent(data)) return;
     saveToDataBase(pathname,data);
     cout << "Remove student successfully!"<<endl;
@@ -585,6 +597,8 @@ void activity2_4(string pathname, CoreData &data){
 }
 
 void activity2_1(string pathname, CoreData &data){
+    clearScreen();
+    cout << "_____________IMPORT STUDENTS FROM A CSV FILE_____________" << endl;
     if (!importStudentFromCsvFile(data,pathname)) return;
     saveToDataBase(pathname,data);
     cout << "Input any number to back and save (1 to run again): ";
@@ -672,6 +686,7 @@ void convertStringToId (string Username,long long &ID){
 
 void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,Class *&tmpClass){
     bool showoption = true;
+    clearScreen();
     while(1){
         if (!showoption) {
             cout << "Invalid choice. Try again."<<endl;
@@ -704,10 +719,13 @@ void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lec
                 showoption = false;
                 break;
         }
+        if (showoption) clearScreen();
     }
 }
 
 void showProfile (int check,Student *curSt,Lecturer *curLec,Staff *curStaff,Class *tmpClass){
+    clearScreen();
+    cout << "_____________PROFILE_____________" << endl;
     switch (check){
         case 1:{
             cout << "User: " <<  curSt->id << endl;
@@ -736,6 +754,8 @@ void showProfile (int check,Student *curSt,Lecturer *curLec,Staff *curStaff,Clas
 }
 
 void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,string pathName,CoreData &data){
+    clearScreen();
+    cout << "_____________CHANGE PASSWORD_____________" << endl;
     string oldPass = "";
     string newPass = "";
     string reNewPass = "";
@@ -836,9 +856,10 @@ void showMenu (int check,CoreData &data,string pathName,Student *&curSt,Lecturer
 }
 
 void menuStaff (CoreData &data,string pathName){
-    bool option = true;
+    clearScreen();
     while(1){
-        clearScreen();
+        cout << "_____________MENU FOR STAFF_____________" << endl;
+        bool option = true;
         if (!option){
             cout << "Invalid choice. Try again."<<endl;
             option = true;
@@ -870,5 +891,6 @@ void menuStaff (CoreData &data,string pathName){
                 option = false;
                 break;
         }
+        if (option) clearScreen();
     }
 }
