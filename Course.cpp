@@ -79,7 +79,7 @@ void viewListOfStudents(Course* curCourse, CoreData data) {
 			"  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(6) << left << "Gender" << "  |" << "  " << setw(className) << left << "Class" << "  |" << endl;
 		
 		StudentPosition* curStdPos = NULL;
-		sortStdInCourse(curCourse, curStdPos);
+		sortStdInCourse(curCourse, curStdPos, numOfStdInCourse);
 		for (int i = 0; i < numOfStdInCourse; ++i)
 		{
 			for (int j = 0; j < curStdPos[i].position; ++j)
@@ -120,7 +120,7 @@ void displayScoreboard(Course* curCourse, CoreData data)
 			<< "  " << setw(7) << left << "Midterm" << "  |" << "  " << setw(7) << left << "Final" << "  |" << "  " << setw(7) << left << "Lab" << "  |" << "  " << setw(7) << left << "Bonus" << "  |" << endl;
 		
 		StudentPosition* curStdPos = NULL;
-		sortStdInCourse(curCourse, curStdPos);
+		sortStdInCourse(curCourse, curStdPos, numOfStdInCourse);
 		for (int i = 0; i < numOfStdInCourse; ++i)
 		{
 			for (int j = 0; j < curStdPos[i].position; ++j)
@@ -186,7 +186,7 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 		cout << endl;
 
 		StudentPosition* curStdPos = NULL;
-		sortStdInCourse(curCourse, curStdPos);
+		sortStdInCourse(curCourse, curStdPos, numOfStdInCourse);
 		for (int i = 0; i < numOfStdInCourse; ++i)
 		{
 			for (int j = 0; j < curStdPos[i].position; ++j)
@@ -1936,10 +1936,8 @@ int countNumOfStdInCourse(Course* curCourse)
 	}
 	return count;
 }
-
-void sortStdInCourse(Course* curCourse, StudentPosition*& curStdPos)
+void sortStdInCourse(Course* curCourse, StudentPosition*& curStdPos, int numOfStdCourse)
 {
-	int numOfStdCourse = countNumOfStdInCourse(curCourse);
 	curStdPos = new StudentPosition[numOfStdCourse + 1];
 	StudentManager* curStdMng = curCourse->pHeadStudentManager;
 	//initialize the array

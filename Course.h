@@ -64,7 +64,7 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 void importCourse(string address, string yearName, string semesterName, CoreData& data);
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void viewListOfStudents(Course* curCourse, CoreData data);
-int countNumOfStdInCourse(Course* curCourse);
+
 
 //LECTURERS
 void viewLecturerList(CoreData data);
@@ -77,13 +77,13 @@ void editGrade(Course*& curCourse, StudentManager*& curStdMng);
 void importScoreboard(string address, Course*& curCourse);
 void exportScoreboard(string pathName, Course* curCourse);
 
-void findMaxLengthOfStudentInfo(CoreData data, StudentManager* curStMng, int& last, int& first, int& dob, int& id, int& className);
-
 //ATTENDANCE
 void editAttendance(Course*& curCourse, StudentManager*& curStdMng);
 void exportAttendance(string pathName, Course* curCourse, CoreData data);
 void viewAttendanceList(Course* curCourse, CoreData data);
 
-void sortStdInCourse(Course* curCourse, StudentPosition*& curStdPos);
+void findMaxLengthOfStudentInfo(CoreData data, StudentManager* curStMng, int& last, int& first, int& dob, int& id, int& className);
+int countNumOfStdInCourse(Course* curCourse);
+void sortStdInCourse(Course* curCourse, StudentPosition*& curStdPos, int numOfStdCourse);
 
 #endif
