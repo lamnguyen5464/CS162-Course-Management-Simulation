@@ -66,27 +66,34 @@ void viewListOfStudents(Course* curCourse, CoreData data) {
 		//6 + 3 + 5 + 5 + 5 + 6 + 5 + 3 = 38
 		int k = 38 + stdID + last + first + dob + className;
 		tmpStMng = curCourse->pHeadStudentManager;
-		int i = 1;
+		int numOfStdInCourse = countNumOfStdInCourse(curCourse);
 
 		//(whole table width + string length)/2 
 		cout << endl << "       " << setw((k + 19 + curCourse->id.length()) / 2) << right << "STUDENTS IN COURSE " + curCourse->id << endl;
 
 		// 10 + 22 + 12 + 3 = 47
-		cout << "       " << setw((k + 49 + curCourse->lectureAccount.length() + to_string(countNumOfStdInCourse(curCourse)).length() + curCourse->startDate.length() + curCourse->endDate.length())/2) << right
-			<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(countNumOfStdInCourse(curCourse)) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate << endl;
+		cout << "       " << setw((k + 49 + curCourse->lectureAccount.length() + to_string(numOfStdInCourse).length() + curCourse->startDate.length() + curCourse->endDate.length())/2) << right
+			<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(numOfStdInCourse) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate << endl;
 
 		cout << "       " << "|" << "No" << "  |" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << 
 			"  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(6) << left << "Gender" << "  |" << "  " << setw(className) << left << "Class" << "  |" << endl;
 		
-		while (tmpStMng != NULL) {
+		StudentPosition* curStdPos = NULL;
+		sortStdInCourse(curCourse, curStdPos);
+		for (int i = 0; i < numOfStdInCourse; ++i)
+		{
+			for (int j = 0; j < curStdPos[i].position; ++j)
+			{
+				tmpStMng = tmpStMng->next;
+			}
 			Student* tmpSt;
 			Class* ofClass;
 			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
-			cout << "       " << "|" << i << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << 
+			cout << "       " << "|" << i + 1 << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << 
 				"  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(6) << left << tmpStMng->pStudent->gender << "  |" << "  " << setw(className) << left << ofClass->name << "  |" << endl;
-			tmpStMng = tmpStMng->next;
-			++i;
+			tmpStMng = curCourse->pHeadStudentManager;
 		}
+		delete[] curStdPos;
 	}
 	return;
 }
@@ -102,22 +109,29 @@ void displayScoreboard(Course* curCourse, CoreData data)
 		findMaxLengthOfStudentInfo(data, tmpStMng, last, first, dob, stdID, className);
 		int k = 70 + stdID + last + first + className;
 		tmpStMng = curCourse->pHeadStudentManager;
-		int i = 1;
+		int numOfStdInCourse = countNumOfStdInCourse(curCourse);
 
 		cout << endl << "       " << setw((k + 15 + curCourse->id.length())/2) << right << "SCOREBOARD FOR " + curCourse->id << endl;
 
-		cout << "       " << setw((k + 49 + curCourse->lectureAccount.length() + to_string(countNumOfStdInCourse(curCourse)).length() + curCourse->startDate.length() + curCourse->endDate.length()) / 2) << right
-			<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(countNumOfStdInCourse(curCourse)) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate << endl;
+		cout << "       " << setw((k + 49 + curCourse->lectureAccount.length() + to_string(numOfStdInCourse).length() + curCourse->startDate.length() + curCourse->endDate.length()) / 2) << right
+			<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(numOfStdInCourse) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate << endl;
 		
 		cout << "       " << "|" << "No" << "  |" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(className) << left << "Class" << "  |"
 			<< "  " << setw(7) << left << "Midterm" << "  |" << "  " << setw(7) << left << "Final" << "  |" << "  " << setw(7) << left << "Lab" << "  |" << "  " << setw(7) << left << "Bonus" << "  |" << endl;
 		
-		while (tmpStMng != NULL) {
+		StudentPosition* curStdPos = NULL;
+		sortStdInCourse(curCourse, curStdPos);
+		for (int i = 0; i < numOfStdInCourse; ++i)
+		{
+			for (int j = 0; j < curStdPos[i].position; ++j)
+			{
+				tmpStMng = tmpStMng->next;
+			}
 			Student* tmpSt;
 			Class* ofClass;
 			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
 
-			cout << "       " << "|" << i << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
+			cout << "       " << "|" << i + 1 << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
 				
 			//if scores are still -1, display nothing
 			if (tmpStMng->pCourseManager->scoreBoard.midTerm != -1)
@@ -139,10 +153,9 @@ void displayScoreboard(Course* curCourse, CoreData data)
 				cout << "  " << setw(7) << left << fixed << setprecision(1) << tmpStMng->pCourseManager->scoreBoard.bonus << "  |" << endl;
 			else
 				cout << "  " << setw(7) << left << " " << "  |" << endl;
-
-			tmpStMng = tmpStMng->next;
-			++i;
+			tmpStMng = curCourse->pHeadStudentManager;
 		}
+		delete[] curStdPos;
 	}
 	return;
 }
@@ -158,12 +171,12 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 		findMaxLengthOfStudentInfo(data, tmpStMng, last, first, dob, stdID, className);
 		tmpStMng = curCourse->pHeadStudentManager;
 		int k = 27 + stdID + last + first + dob + className + 6*(tmpStMng->pCourseManager->checkIn.numOfDays);
-		int i = 1;
+		int numOfStdInCourse = countNumOfStdInCourse(curCourse);
 
 		cout << endl << setw((k + 19 + curCourse->id.length()) / 2) << right <<  "ATTENDANCE LIST OF " + curCourse->id << endl;
 
-		cout << setw((k + 77 + curCourse->lectureAccount.length() + to_string(countNumOfStdInCourse(curCourse)).length() + curCourse->startDate.length() + curCourse->endDate.length() + curCourse->startHour.length() + curCourse->endHour.length() + curCourse->dayOfWeek.length()) / 2) << right
-		<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(countNumOfStdInCourse(curCourse)) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate + "   Time: " + curCourse->startHour + " - " + curCourse->endHour + "   Day of Week: " + curCourse->dayOfWeek << endl;
+		cout << setw((k + 77 + curCourse->lectureAccount.length() + to_string(numOfStdInCourse).length() + curCourse->startDate.length() + curCourse->endDate.length() + curCourse->startHour.length() + curCourse->endHour.length() + curCourse->dayOfWeek.length()) / 2) << right
+		<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(numOfStdInCourse) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate + "   Time: " + curCourse->startHour + " - " + curCourse->endHour + "   Day of Week: " + curCourse->dayOfWeek << endl;
 		
 		cout << "|" << "No" << "  |" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(className) << left << "Class" << "  |";
 		for (int i = 1; i <= tmpStMng->pCourseManager->checkIn.numOfDays; ++i)
@@ -171,7 +184,15 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 			cout << " W" << setw(2) << left << i << " |";
 		}
 		cout << endl;
-		while (tmpStMng != NULL) {
+
+		StudentPosition* curStdPos = NULL;
+		sortStdInCourse(curCourse, curStdPos);
+		for (int i = 0; i < numOfStdInCourse; ++i)
+		{
+			for (int j = 0; j < curStdPos[i].position; ++j)
+			{
+				tmpStMng = tmpStMng->next;
+			}
 			Student* tmpSt;
 			Class* ofClass;
 			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
@@ -185,9 +206,9 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 				cout << " |";
 			}
 			cout << endl;
-			tmpStMng = tmpStMng->next;
-			++i;
+			tmpStMng = curCourse->pHeadStudentManager;
 		}
+		delete[] curStdPos;
 	}
 	return;
 }
@@ -1914,4 +1935,32 @@ int countNumOfStdInCourse(Course* curCourse)
 		count++;
 	}
 	return count;
+}
+
+void sortStdInCourse(Course* curCourse, StudentPosition*& curStdPos)
+{
+	int numOfStdCourse = countNumOfStdInCourse(curCourse);
+	curStdPos = new StudentPosition[numOfStdCourse + 1];
+	StudentManager* curStdMng = curCourse->pHeadStudentManager;
+	//initialize the array
+	for (int i = 0; i < numOfStdCourse; ++i)
+	{
+		curStdPos[i].pStudentManager = curStdMng;
+		curStdPos[i].position = i;
+		curStdMng = curStdMng->next;
+	}
+
+	//sort
+	for (int i = 0; i < numOfStdCourse - 1; ++i)
+	{
+		for (int j = i + 1; j < numOfStdCourse; ++j)
+		{
+			if (curStdPos[i].pStudentManager->pStudent->id > curStdPos[j].pStudentManager->pStudent->id)
+			{
+				StudentPosition tmp = curStdPos[j];
+				curStdPos[j] = curStdPos[i];
+				curStdPos[i] = tmp;
+			}
+		}
+	}
 }

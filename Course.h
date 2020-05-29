@@ -1,6 +1,12 @@
 #ifndef Course_h
 #define Course_h 
 
+struct StudentPosition
+{
+	StudentManager* pStudentManager;
+	int position;
+};
+
 //MENU
 void menuStaffCourse(string pathName, CoreData& data);
 void menuStaffScoreboard(string pathName, CoreData& data);
@@ -77,5 +83,7 @@ void findMaxLengthOfStudentInfo(CoreData data, StudentManager* curStMng, int& la
 void editAttendance(Course*& curCourse, StudentManager*& curStdMng);
 void exportAttendance(string pathName, Course* curCourse, CoreData data);
 void viewAttendanceList(Course* curCourse, CoreData data);
+
+void sortStdInCourse(Course* curCourse, StudentPosition*& curStdPos);
 
 #endif
