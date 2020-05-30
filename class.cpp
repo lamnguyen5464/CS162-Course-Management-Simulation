@@ -614,9 +614,11 @@ void login(CoreData &data,string pathName){
     string password = "";
     while(1){
         if (showoption == false){
+            cout << endl;
             cout << "UserName or password is incorrect. Please try again!"<< endl;
             showoption = true;
         }
+        cout << "_________________STUDENT_MANAGEMENT_SYSTEM_________________" << endl;
         cout << "UserName: ";
         getline(cin,userName);
         cout << "Password: ";
@@ -689,16 +691,18 @@ void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lec
     clearScreen();
     while(1){
         if (!showoption) {
-            cout << "Invalid choice. Try again."<<endl;
+            cout << "   "<< "Invalid choice. Try again."<<endl;
             showoption = true;
         }
         cout << endl;
-        cout << "____________________OPTIONS____________________"<<endl;
-        cout << "0.Logout."<<endl;
-        cout << "1.Show menu."<<endl;
-        cout << "2.View profile info."<<endl;
-        cout << "3.Change password."<<endl;
-        cout << ">Your choice: ";
+        cout << "   " <<" _______________________________________________ "<<endl;
+        cout << "   "<< "|"<< "____________________OPTIONS____________________"<<"|"<<endl;
+        cout << "   "<<"| "<<setw(46)<<left<< "0.Logout."<< "|"<<endl;
+        cout << "   "<<"| "<<setw(46)<<left<< "1.Show menu."<<"|"<<endl;
+        cout << "   "<<"| "<<setw(46)<<left<< "2.View profile info."<<"|"<<endl;
+        cout << "   "<<"| "<<setw(46)<<left<< "3.Change password."<<"|"<<endl;
+        cout << "   "<<"|_______________________________________________|"<<endl;
+        cout << "   "<< ">Your choice: ";
         int choice;
         cin >> choice;
         switch(choice){
@@ -725,29 +729,29 @@ void showFunctions (int check,CoreData &data,string pathName,Student *&curSt,Lec
 
 void showProfile (int check,Student *curSt,Lecturer *curLec,Staff *curStaff,Class *tmpClass){
     clearScreen();
-    cout << "_____________PROFILE_____________" << endl;
+    cout<<"        " << "_____________PROFILE_____________" << endl;
     switch (check){
         case 1:{
-            cout << "User: " <<  curSt->id << endl;
-            cout << "   " << "ID: " << curSt->id <<endl;
-            cout << "   " << "Name: " << curSt->lastName <<" "<<curSt->firstName <<endl;
-            cout << "   " << "DOB: " << curSt->dOB <<endl;
-            cout << "   " << "Gender: " << curSt->gender <<endl;
-            cout << "   " << "Class: " << tmpClass->name <<endl;
+            cout <<"        "<< "User: " <<  curSt->id << endl;
+            cout <<"        "<< "   " << "ID: " << curSt->id <<endl;
+            cout <<"        "<< "   " << "Name: " << curSt->lastName <<" "<<curSt->firstName <<endl;
+            cout <<"        "<< "   " << "DOB: " << curSt->dOB <<endl;
+            cout <<"        "<< "   " << "Gender: " << curSt->gender <<endl;
+            cout <<"        "<< "   " << "Class: " << tmpClass->name <<endl;
             break;
         }
         case 2:{
-            cout <<"User: " << curLec->userName<<endl;
+            cout <<"        "<<"User: " << curLec->userName<<endl;
             break;
         }
         case 3:{
-            cout <<"User: " << curStaff->userName<<endl;
+            cout <<"        "<<"User: " << curStaff->userName<<endl;
             break;
         }
         default:
             break;
     }
-    cout << "Input any number to return: ";
+    cout <<"        "<< "Input any number to return: ";
     int tmp;
     cin >> tmp;
     return;
@@ -755,32 +759,32 @@ void showProfile (int check,Student *curSt,Lecturer *curLec,Staff *curStaff,Clas
 
 void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,string pathName,CoreData &data){
     clearScreen();
-    cout << "_____________CHANGE PASSWORD_____________" << endl;
+    cout <<"        "<< "_____________CHANGE PASSWORD_____________" << endl;
     string oldPass = "";
     string newPass = "";
     string reNewPass = "";
-    cout << "Recent password: ";
+    cout <<"        "<< "Recent password: ";
     inputPassword(oldPass);
     cout << endl;
     long long tmpHash = hashPass(oldPass);
     switch (check){
         case 1:{
             if (tmpHash != curSt->hashPassword){
-                cout << "Your password is incorrect!"<<endl;
+                cout <<"        "<< "Your password is incorrect!"<<endl;
             }
             else{
-                cout << "New password: ";
+                cout <<"        "<< "New password: ";
                 inputPassword(newPass);
                 cout << endl;
-                cout << "Confirm password: ";
+                cout <<"        "<< "Confirm password: ";
                 inputPassword(reNewPass);
                 cout << endl;
                 if (newPass == reNewPass){
                     curSt->hashPassword=hashPass(newPass);
-                    cout << "Change successfully"<<endl;
+                    cout <<"        "<< "Change successfully"<<endl;
                 }
                 else{
-                    cout << "Incorrect new pass!"<<endl;
+                    cout <<"        "<< "Incorrect new pass!"<<endl;
                 }
             }
             break;
@@ -788,21 +792,21 @@ void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff
         }
         case 2:{
             if (tmpHash != curLec->hashPassword){
-                cout << "Your password is incorrect!"<<endl;
+                cout <<"        "<< "Your password is incorrect!"<<endl;
             }
             else{
-                cout << "New password: ";
+                cout <<"        "<< "New password: ";
                 inputPassword(newPass);
                 cout << endl;
-                cout << "Confirm password: ";
+                cout <<"        "<< "Confirm password: ";
                 inputPassword(reNewPass);
                 cout << endl;
                 if (newPass == reNewPass){
                     curLec->hashPassword=hashPass(newPass);
-                    cout << "Change successfully"<<endl;
+                    cout <<"        "<< "Change successfully!"<<endl;
                 }
                 else{
-                    cout << "Incorrect new pass!"<<endl;
+                    cout <<"        "<< "Incorrect new pass!"<<endl;
                 }
             }
             break;
@@ -858,18 +862,18 @@ void showMenu (int check,CoreData &data,string pathName,Student *&curSt,Lecturer
 void menuStaff (CoreData &data,string pathName){
     clearScreen();
     while(1){
-        cout << "_____________MENU FOR STAFF_____________" << endl;
+        cout <<"        "<< "_____________MENU FOR STAFF_____________" << endl;
         bool option = true;
         if (!option){
-            cout << "Invalid choice. Try again."<<endl;
+            cout<<"        "<< "Invalid choice. Try again."<<endl;
             option = true;
         }
-        cout << "0.Return."<<endl;
-        cout << "1.Class."<<endl;
-        cout << "2.Course."<<endl;
-        cout << "3.Scoreboard."<<endl;
-        cout << "4.Attendance."<<endl;
-        cout << ">Your choice: ";
+        cout <<"        "<< "0.Return."<<endl;
+        cout <<"        "<< "1.Class."<<endl;
+        cout <<"        "<< "2.Course."<<endl;
+        cout <<"        "<< "3.Scoreboard."<<endl;
+        cout <<"        "<< "4.Attendance."<<endl;
+        cout <<"        "<< ">Your choice: ";
         int choice;
         cin >> choice;
         switch(choice){
