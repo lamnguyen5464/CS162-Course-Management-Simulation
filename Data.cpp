@@ -472,13 +472,13 @@ bool findSemester(string yearName, string semesterName, Semester *&foundSemester
     }
     
 }
-void createNewEmptySemester(string yearName, string semesterName, CoreData &data){
+bool createNewEmptySemester(string yearName, string semesterName, CoreData &data){
     Year *curYear;
     if (findYear(yearName, curYear, data)){
         Semester *newSemester;
         if (findSemester(yearName, semesterName, newSemester, data)){
             cout<<"The semester "<<semesterName<<" of year "<< yearName<<" is already existing!"<<endl;
-            return;
+            return 0;
         }
         curYear->numOfSems++;
         newSemester = new Semester;
@@ -487,9 +487,8 @@ void createNewEmptySemester(string yearName, string semesterName, CoreData &data
         newSemester->pHeadCourse = NULL;
         newSemester->next = curYear->pHeadSemesters;
         curYear->pHeadSemesters = newSemester;
-    }else{
-        //ask to create a new year
     }
+    return 1;
     
 }
 bool findCourse(string yearName, string semesterName, string courseID, Course *&foundCourse, CoreData data){
