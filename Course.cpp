@@ -1472,8 +1472,10 @@ void activity2(string pathName, CoreData& data)
 	getline(cin, curYearName);
 	if (curYearName != "0")
 	{
-		createNewEmptyYear(curYearName, data);
-		cout << "Create succesfully!" << endl;
+		if (createNewEmptyYear(curYearName, data))
+		{
+			cout << "Create successfully!" << endl;
+		}
 		saveToDataBase(pathName, data);
 	}
 	returnMenu2Arg(&activity2, pathName, data);
@@ -1525,8 +1527,10 @@ void activity5(string pathName, CoreData& data)
 			cout << endl << "Creating semester 'HK" << curYear->numOfSems + 1 << "' ..." << endl;
 			string curSemester;
 			curSemester = "HK" + to_string(curYear->numOfSems + 1);
-			createNewEmptySemester(curYear->name, curSemester, data);
-			cout << endl << "Create successfully!" << endl;
+			if (createNewEmptySemester(curYear->name, curSemester, data))
+			{
+				cout << endl << "Create successfully!" << endl;
+			}
 			saveToDataBase(pathName, data);
 		}
 	}
@@ -1684,7 +1688,6 @@ void activity12(string pathName, CoreData& data)
 				if (!findStudentInCourse(stdID, stdMng, curCourse))
 				{
 					addStudentToCourse(std, curCourse, curYear->name, curSem->name);
-
 					cout << "Add student " << std->id << " - " << std->lastName << " " << std->firstName << " to " << curCourse->id << " successfully!" << endl;
 					saveToDataBase(pathName, data);
 				}
