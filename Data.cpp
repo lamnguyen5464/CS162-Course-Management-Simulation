@@ -151,7 +151,7 @@ void importDataBase(string pathName, CoreData &data){
             string tmpName;
             getline(fin, tmpName);
             fin>>tmpHash;
-            addLecturer(tmpHash, tmpName, data);
+            addLecturer(tmpHash, tmpName, data);           
             fin.ignore(256, '\n');
         }
     }
@@ -437,11 +437,11 @@ bool findYear(string yearName, Year *&foundYear, CoreData data){
     //cout<<"The year "<<yearName<<" is not existing!"<<endl;
     return false;
 }
-void createNewEmptyYear(string yearName, CoreData &data){
+bool createNewEmptyYear(string yearName, CoreData &data){
     Year *newYear;
     if (findYear(yearName, newYear, data)){
         cout<<"The year "<<yearName<<" is already existing!"<<endl;
-        return;
+        return 0;
     }
     data.numOfYears++;
     newYear = new Year;
@@ -450,6 +450,7 @@ void createNewEmptyYear(string yearName, CoreData &data){
     newYear->pHeadSemesters = NULL;
     newYear->next = data.pHeadYear;
     data.pHeadYear = newYear;
+    return 1;
 }
 bool findSemester(string yearName, string semesterName, Semester *&foundSemester, CoreData data){
     Year *curYear;

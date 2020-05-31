@@ -132,7 +132,7 @@ void addStudentToClass(Class *&pClass, Student *& tmpSt);
 void addStudentToClass(string className, Student *&st, CoreData &data);
 //Year - Semester - Course
 bool findYear(string yearName, Year *&foundYear, CoreData data);
-void createNewEmptyYear(string yearName, CoreData &data);
+bool createNewEmptyYear(string yearName, CoreData &data);
 bool findSemester(string yearName, string semesterName, Semester *&foundSemester, CoreData data);
 void createNewEmptySemester(string yearName, string semesterName, CoreData &data);
 bool findCourse(string yearName, string semesterName, string courseID, Course *&foundCourse, CoreData data);
