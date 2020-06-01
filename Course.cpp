@@ -1540,20 +1540,24 @@ void activity5(string pathName, CoreData& data)
 	cout << endl << "_____________CREATE A SEMESTER_____________" << endl << endl;
 	cout << "Please input 1, 2, 3, 4, ... corresponding to your selection below: " << endl;
 	Year* curYear = NULL;
+	Semester* curSem = NULL;
 	yearMenu(curYear, data);
 
 	if (curYear != NULL)
 	{
 		cout << endl << "Year " << curYear->name << "'s number of semesters: " << curYear->numOfSems << endl;
-		cout << "CREATE SEMESTER 'HK" << curYear->numOfSems + 1 << "'? (0 - NO, 1 - YES): ";
+		int i = 1;
+		while (findSemester(curYear->name, "HK" + to_string(i), curSem, data))
+			++i;
+		cout << "CREATE SEMESTER 'HK" << i << "'? (0 - NO, 1 - YES): ";
 		int yourChoice;
 		cin >> yourChoice;
 		if (yourChoice == 1)
 		{
-			cout << endl << "Creating semester 'HK" << curYear->numOfSems + 1 << "' ..." << endl;
-			string curSemester;
-			curSemester = "HK" + to_string(curYear->numOfSems + 1);
-			if (createNewEmptySemester(curYear->name, curSemester, data))
+			cout << endl << "Creating semester 'HK" << i << "' ..." << endl;
+			string curSemesterName;
+			curSemesterName = "HK" + to_string(i);
+			if (createNewEmptySemester(curYear->name, curSemesterName, data))
 			{
 				cout << endl << "Create successfully!" << endl;
 			}
