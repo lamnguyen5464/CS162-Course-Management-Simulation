@@ -36,7 +36,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice);
 bool editAnExistingStudent (CoreData &data);
 bool editByMenu (CoreData &data);
 
-void findMaxLengthOfStudentInfo(Student *curSt,int &last,int &first,int &dob);
+void findMaxLengthOfStudentInfo(Student *curSt,int &last,int &first,int &dob,int &id);
 bool viewListOfStudents(Class *curClass,CoreData data);
 
 //

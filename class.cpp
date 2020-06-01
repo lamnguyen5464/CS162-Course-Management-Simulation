@@ -25,23 +25,23 @@ void staffClassMenu (string pathname,CoreData &data){
     bool showOption = true;
     while (1){
         if (showOption){
-            cout <<"    "<<" ______________________________________________________________" << endl;
-            cout <<"    "<<"|"<<"_______________________MENU_STAFF_CLASS_______________________"<<"|" << endl;
-            cout <<"    "<<"|   "<<setw(56)<<left<< "0.Return to previous menu." <<"   |"<< endl;
-            cout <<"    "<<"|   "<<setw(56)<<left<< "1.Import students of a class from the csv file." <<"   |"<< endl;
-            cout <<"    "<<"|   "<<setw(56)<<left<< "2.Manually add a student to a class." <<"   |"<< endl;
-            cout <<"    "<<"|   "<<setw(56)<<left<< "3.Edit an existing student" <<"   |"<< endl;
-            cout <<"    "<<"|   "<<setw(56)<<left<< "4.Remove a student"<<"   |" << endl;
-            cout <<"    "<<"|   "<<setw(56)<<left<< "5.Change a student from class A to class B." <<"   |"<< endl;
-            cout <<"    "<<"|   "<<setw(56)<<left<< "6.View list of classes and list of students in a class." <<"   |"<< endl;
-            cout <<"    "<<"|______________________________________________________________|" << endl;
+            cout <<"        "<<" ______________________________________________________________" << endl;
+            cout <<"        "<<"|"<<"_______________________MENU_STAFF_CLASS_______________________"<<"|" << endl;
+            cout <<"        "<<"|   "<<setw(56)<<left<< "0.Return to previous menu." <<"   |"<< endl;
+            cout <<"        "<<"|   "<<setw(56)<<left<< "1.Import students of a class from the csv file." <<"   |"<< endl;
+            cout <<"        "<<"|   "<<setw(56)<<left<< "2.Manually add a student to a class." <<"   |"<< endl;
+            cout <<"        "<<"|   "<<setw(56)<<left<< "3.Edit an existing student" <<"   |"<< endl;
+            cout <<"        "<<"|   "<<setw(56)<<left<< "4.Remove a student"<<"   |" << endl;
+            cout <<"        "<<"|   "<<setw(56)<<left<< "5.Change a student from class A to class B." <<"   |"<< endl;
+            cout <<"        "<<"|   "<<setw(56)<<left<< "6.View list of classes and list of students in a class." <<"   |"<< endl;
+            cout <<"        "<<"|______________________________________________________________|" << endl;
         }
         else{
-            cout <<"    "<< "Invalid choice!Try again!"<< endl;
+            cout <<"        "<< "Invalid choice!Try again!"<< endl;
             showOption = true;
         }
         int yourChoice;
-        cout <<"    "<< ">Your choice: ";
+        cout <<"        "<< ">Your choice: ";
         cin >> yourChoice;
         switch (yourChoice){
             case 0:
@@ -102,20 +102,20 @@ void inputStudentFromFile(Student *tmpSt,Class *&tmpClass,ifstream &fin,CoreData
 bool importStudentFromCsvFile (CoreData &data,string pathname){
     ifstream fin;
     string linkOfFile;
-    cout << "Csv file(0 to return): ";
+    cout <<"            "<< "Csv file(0 to return): ";
     cin.ignore();
     getline(cin, linkOfFile);
     if (linkOfFile == "0") return false;
     fin.open(pathname + linkOfFile);
     if (!fin.is_open()){
-        cout << "can not open file"<<endl;
+        cout <<"            "<< "can not open file"<<endl;
     }
     else{
         string classname = "";
         getClassName(classname,linkOfFile);
         Class *curClass = NULL;
         if (findClass(classname,data,curClass)){
-            cout << "Existing class!"<<endl;
+            cout <<"            "<< "Existing class!"<<endl;
             return true;
         }
        // t chua biet xu li ten lop sao
@@ -124,7 +124,7 @@ bool importStudentFromCsvFile (CoreData &data,string pathname){
         findClass(classname,data,tmpClass);
         Student *tmpSt = NULL ;
         inputStudentFromFile(tmpSt,tmpClass,fin,data);
-        cout << "Import successfully!"<<endl;
+        cout <<"            "<< "Import successfully!"<<endl;
         fin.close();
     }
     return true;
@@ -142,18 +142,25 @@ void createClassToImport(CoreData &data){
     string classname;
     while(1){
         if (!k) {
-            cout << "Invalid choice. Try again."<<endl;
+            cout <<"            "<< "Invalid choice. Try again."<<endl;
             k = true;
         }
         int choice;
-        cout << "Do you want to create a new class(0.No)&(1.Yes): ";
+        cout <<"            "<< "Do you want to create a new class(0.No)&(1.Yes): ";
         cin >> choice;
         switch(choice){
             case 1:{
-                cout << "Class's name: ";
+                cout <<"            "<< "Class's name: ";
                 cin.ignore();
                 getline(cin,classname);
-                createNewEmptyClass(classname,data);
+                Class *foundclass = NULL;
+                if (!findClass(classname,data,foundclass))
+                    createNewEmptyClass(classname,data);
+                else{
+                    cout <<"            "<< "Existing class!"<<endl;
+                    createClassToImport(data);
+                    return;
+                }
                 return;
             }
             case 0:
@@ -168,36 +175,46 @@ void createClassToImport(CoreData &data){
 void edit(Student *&tmpSt,int choice,bool &checkChoice){
     switch(choice){
         case 1:{
-            cout << "   New last name: ";
+            cout <<"            "<< "   New last name: ";
             string tmpLast;
             cin.ignore();
             getline(cin,tmpLast);
-            tmpSt ->lastName = tmpLast;
-            cout << "   Edit successfully!"<<endl;
+            if (tmpLast != "0"){
+                tmpSt ->lastName = tmpLast;
+                cout <<"            "<< "   Edit successfully!"<<endl;
+            }
             break;
         }
         case 2:{
-            cout << "   New first name: ";
+            cout <<"            "<< "   New first name: ";
             string tmpFirst;
             cin.ignore();
             getline(cin,tmpFirst);
-            tmpSt ->firstName = tmpFirst;
-            cout << "   Edit successfully!"<<endl;
+            if (tmpFirst != "0"){
+                tmpSt ->firstName = tmpFirst;
+                cout <<"            "<< "   Edit successfully!"<<endl;
+            }
             break;
         }
         case 3:{
-            cout << "   New doB: ";
+            cout <<"            "<< "   New doB: ";
             string tmpdob;
             cin.ignore();
             getline(cin,tmpdob);
-            tmpSt ->dOB = tmpdob;
-            cout << "   Edit successfully!"<<endl;
+            if (tmpdob != "0"){
+                tmpSt ->dOB = tmpdob;
+                cout <<"            "<< "   Edit successfully!"<<endl;
+            }
             break;
         }
         case 4:{
-            cout << "    New gender: "<<endl;
-            inputGender(tmpSt->gender);
-            cout << "    Edit successfully!"<<endl;
+            cout <<"            "<< "    New gender: "<<endl;
+            string tmpgender;
+            inputGender(tmpgender);
+            if (tmpgender != "0"){
+                tmpSt ->gender = tmpgender;
+                cout <<"            "<< "   Edit successfully!"<<endl;
+            }
             break;
         }
         default:
@@ -208,38 +225,42 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
 bool editAnExistingStudent(CoreData &data){
     bool checkChoice = true;
     long long ID;
-    cout << "Please input id of the student you want to edit(0 to return): ";
+    cout <<"            "<< "Please input id of the student you want to edit(0 to return): ";
     cin >> ID;
     if (ID == 0) return false;
     Student *tmpSt=NULL;
     Class *tmpClass=NULL;
     int choice;
     if (findStudent(ID,data,tmpSt,tmpClass)){
-        cout << "What part do you want to edit? "<<endl;
-        cout << "What part do you want to edit? "<<endl;
-        cout << "1.Last name: " << tmpSt->lastName<< endl;
-        cout << "2.First name: " << tmpSt->firstName << endl;
-        cout << "3.DoB: " << tmpSt->dOB << endl;
-        cout << "4.Gender: " << tmpSt->id << endl;
-        cout << ">Your choice (0 to return): ";
+        cout <<"            "<< "What part do you want to edit? "<<endl;
+        cout <<"            "<< "1.Last name: " << tmpSt->lastName<< endl;
+        cout <<"            "<< "2.First name: " << tmpSt->firstName << endl;
+        cout <<"            "<< "3.DoB: " << tmpSt->dOB << endl;
+        cout <<"            "<< "4.Gender: " << tmpSt->id << endl;
+        cout <<"            "<< ">Your choice (0 to return): ";
         cin >> choice;
         if (choice == 0) return false;
         edit(tmpSt,choice,checkChoice);
     }
     else{
-        cout << "Can not find student"<<endl;
-        cout << "1.Input another student."<<endl;
-        cout << "2.Return" << endl;
-        cout << ">Your choice: ";
+        cout <<"            "<< "Can not find student"<<endl;
+        cout <<"            "<< "0.Return" << endl;
+        cout <<"            "<< "1.Input another student."<<endl;
+        cout <<"            "<< ">Your choice: ";
         cin >> choice;
         switch(choice){
-            case 2:
+            case 0:
                 return false;
+            case 1:
+                return editAnExistingStudent(data);
             default:
                 break;
         }
     }
-    if (checkChoice == false) cout << "Invalid choice. Try again."<<endl;
+    if (checkChoice == false){
+        cout << "Invalid choice. Try again."<<endl;
+        checkChoice = true;
+    }
     return true;
 }
 
@@ -250,16 +271,19 @@ bool editByMenu (CoreData &data){
     int choice;
     if (!showMenuStudent(curClass,curSt,data)) return false;
     cout << endl;
-    cout << "What part do you want to edit? "<<endl;
-    cout << "1.Last name: " << curSt->lastName<< endl;
-    cout << "2.First name: " << curSt->firstName << endl;
-    cout << "3.DoB: " << curSt->dOB << endl;
-    cout << "4.Gender: " << curSt->id << endl;
-    cout << ">Your choice (0 to return): ";
+    cout <<"            "<< "What part do you want to edit? "<<endl;
+    cout <<"            "<< "1.Last name: " << curSt->lastName<< endl;
+    cout <<"            "<< "2.First name: " << curSt->firstName << endl;
+    cout <<"            "<< "3.DoB: " << curSt->dOB << endl;
+    cout <<"            "<< "4.Gender: " << curSt->id << endl;
+    cout <<"            "<< ">Your choice (0 to return): ";
     cin >> choice;
     if (choice == 0) return false;
     edit(curSt,choice,checkChoice);
-    if (checkChoice == false) cout << "Invalid choice. Try again."<<endl;
+    if (checkChoice == false){
+        cout << "Invalid choice. Try again."<<endl;
+        checkChoice = true;
+    }
     return true;
 }
 
@@ -267,22 +291,22 @@ void menuClass(Class *&curClass,CoreData data){
     bool checkChoice = true;
     while(1){
         if (checkChoice == false) {
-            cout << "Invalid choice. Try again. "<<endl;
+            cout <<"        "<< "Invalid choice. Try again. "<<endl;
             checkChoice = true;
         }
         if (data.numOfClasses == 0) {
-            cout << "There is no class"<<endl;
+            cout <<"        "<< "There is no class"<<endl;
             return;
         }
         curClass = data.pHeadClass;
         int a = 1,choice;
-        cout << "Choose class: "<<endl;
+        cout <<"        "<< "Choose class: "<<endl;
         while (curClass != NULL){
-            cout<<"        "<< a <<". " << "Class " << curClass ->name << ": " << curClass ->numOfStudents << " students." <<endl;
+            cout<<"        "<<"    "<< a <<". " << "Class " << curClass ->name << ": " << curClass ->numOfStudents << " students." <<endl;
             curClass = curClass ->next;
             a++;
         }
-        cout <<"        " << "Choose class: (0 to return): ";
+        cout <<"        " <<"    "<< "Choose class: (No - 0 to return): ";
         cin >> choice;
         if (choice == 0) return;
         else if (choice <= data.numOfClasses){
@@ -302,7 +326,7 @@ bool viewListOfStudents(Class *curClass,CoreData data){
     menuClass(curClass,data);
     if (curClass == NULL){
         if (data.numOfClasses == 0){
-            cout << "Input any number to return: ";
+            cout <<"    "<< "       "<< "Input any number to return: ";
             int tmp;
             cin >> tmp;
             return false;
@@ -311,21 +335,21 @@ bool viewListOfStudents(Class *curClass,CoreData data){
     }
     Student *tmpSt = curClass ->pHeadStudent;
     if (tmpSt == NULL){
-        cout << "There is no student. Input any number to return: ";
+        cout <<"    "<< "       "<< "There is no student. Input any number to return: ";
         int tmp;
         cin >> tmp;
         return false;
     }
     else{
-        int last = 10,first = 10,dob = 0;
-        findMaxLengthOfStudentInfo(tmpSt,last,first,dob);
+        int last = 10,first = 10,dob = 0,id = 3;
+        findMaxLengthOfStudentInfo(tmpSt,last,first,dob,id);
         int k =(last+first+dob+30);
         tmpSt = curClass ->pHeadStudent;
         int i = 1;
-        cout <<"        "<<setw(k/2+7)<< right << "CLASS " << curClass->name<<endl;
-        cout << "       "<<"|"<<"No"<<" |" <<setw(8) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<endl;
+        cout <<"    "<<"        "<<setw(k/2+7)<< right << "CLASS " << curClass->name<<endl;
+        cout <<"    "<< "       "<<"|"<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<endl;
         while(tmpSt != NULL){
-            cout <<"       "<< "|"<<i<<". |" <<setw(8) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(6)<< left <<tmpSt->gender<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<endl;
+            cout <<"    "<<"       "<< "|"<<i<<". |" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(6)<< left <<tmpSt->gender<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<endl;
             tmpSt = tmpSt -> next;
             ++i;
         }
@@ -333,8 +357,9 @@ bool viewListOfStudents(Class *curClass,CoreData data){
     return true;
 }
 
-void findMaxLengthOfStudentInfo(Student *curSt,int &last,int &first,int &dob){
+void findMaxLengthOfStudentInfo(Student *curSt,int &last,int &first,int &dob,int &id){
     while(curSt != NULL){
+        if ((to_string(curSt->id)).length() > id) id = (to_string(curSt->id)).length();
         if ((curSt ->lastName).length() > last) last = (curSt ->lastName).length();
         if ((curSt ->firstName).length() > first) first = (curSt ->firstName).length();
         if ((curSt ->dOB).length() > dob) dob = (curSt ->dOB).length();
@@ -345,13 +370,13 @@ bool showMenuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
     bool option = true;
     while(1){
         if (!option){
-            cout << "Invalid choice. Try again."<<endl;
+            cout <<"    "<< "       "<< "Invalid choice. Try again."<<endl;
             option = true;
         }
         menuClass(curClass,data);
         if (curClass == NULL){
             if (data.numOfClasses == 0){
-                cout << "Input any number to return: ";
+                cout <<"    "<< "       "<< "Input any number to return: ";
                 int tmp;
                 cin >> tmp;
                 return false;
@@ -360,24 +385,24 @@ bool showMenuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
         }
         tmpSt = curClass ->pHeadStudent;
         if (tmpSt == NULL){
-            cout << "There is no student in this class"<<endl;
+            cout << "       "<< "There is no student in this class"<<endl;
             return false;
         }
         else{
-            int last = 10,first = 10,dob = 0;
-            findMaxLengthOfStudentInfo(tmpSt,last,first,dob);
+            int last = 10,first = 10,dob = 0,id = 3;
+            findMaxLengthOfStudentInfo(tmpSt,last,first,dob,id);
             int k =(last+first+dob+30);
             tmpSt = curClass ->pHeadStudent;
             int i = 1,choice;
-            cout <<"        "<<setw(k/2+7)<< right << "CLASS " << curClass->name<<endl;
-            cout << "       "<<"|"<<"No"<<" |" <<setw(8) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<endl;
+            cout <<"    "<<"        "<<setw(k/2+7)<< right << "CLASS " << curClass->name<<endl;
+            cout <<"    "<< "       "<<"|"<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<endl;
             while(tmpSt != NULL){
-                cout <<"       "<< "|"<<i<<". |" <<setw(8) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<"  "<<setw(6)<<left<<tmpSt->gender<<"  |"<<endl;
+                cout <<"    "<<"       "<< "|"<<i<<". |" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<"  "<<setw(6)<<left<<tmpSt->gender<<"  |"<<endl;
                 tmpSt = tmpSt -> next;
                 ++i;
             }
             cout << endl;
-            cout << ">Choose student: (0 to return): ";
+            cout <<"    "<< "       "<<">Choose student: (No - 0 to return): ";
             cin >> choice;
             if (choice == 0) return showMenuStudent(curClass,tmpSt,data);
             else if (choice <= curClass ->numOfStudents){
@@ -399,16 +424,16 @@ bool addAStudent(CoreData &data){
     Student *curSt;
     Class *curClass;
     string classname;
-    cout << "Input(0 to return): "<<endl;
-    cout <<"    "<<"ID:" ;
+    cout <<"            "<< "Input(0 to return): "<<endl;
+    cout <<"            "<<"    "<<"ID:" ;
     cin >> tmpSt->id;
     if (tmpSt->id == 0) return false;
     if(findStudent(tmpSt->id,data,curSt,curClass)){
-        cout << "Existing student!"<<endl;
-        cout << "       1.Input again."<<endl;
-        cout << "       2.Return"<<endl;
+        cout <<"            "<< "Existing student!"<<endl;
+        cout <<"            "<< "       1.Input again."<<endl;
+        cout <<"            "<< "       2.Return"<<endl;
         int choice;
-        cout << "       >Your choice: ";
+        cout <<"            "<< "       >Your choice: ";
         cin >> choice;
         switch(choice){
             case 1:
@@ -416,25 +441,25 @@ bool addAStudent(CoreData &data){
             case 2:
                 return false;
             default:
-                cout << "Invalid choice!" <<endl;
+                cout <<"            "<< "Invalid choice!" <<endl;
                 return addAStudent(data);
         }
     }
     else{
-        cout << "    "<<"Last name: " ;
+        cout <<"            "<< "    "<<"Last name: " ;
         cin.ignore();
         getline(cin,tmpSt->lastName);
         if (tmpSt->lastName == "0") return false;
-        cout << "    "<<"First name: " ;
+        cout <<"            "<< "    "<<"First name: " ;
         getline(cin,tmpSt->firstName);
         if (tmpSt->firstName == "0") return false;
-        cout <<"    "<< "DoB: " ;
+        cout <<"            "<<"    "<< "DoB: " ;
         getline(cin,tmpSt->dOB);
         if (tmpSt->dOB == "0") return false;
         inputGender(tmpSt->gender);
         if (tmpSt->gender == "0") return false;
         createClassToImport(data);
-        cout <<"    "<< "Class: ";
+        cout <<"            "<<"    "<< "Class: ";
         Class *tmpClass = NULL;
         menuClass(tmpClass,data);
         if (tmpClass == NULL) return addAStudent(data);
@@ -449,10 +474,10 @@ void inputGender(string &gender){
     bool k = true;
     while (1){
         if (k == false){
-            cout <<"    "<< "Invalid choice,try again"<<endl;
+            cout <<"            "<<"    "<< "Invalid choice,try again"<<endl;
             k = true;
         }
-        cout << "    " <<"Gender(1.male)& (2.female): " ;
+        cout <<"            "<< "    " <<"Gender(1.male)& (2.female): " ;
         int choice;
         cin >> choice;
         switch(choice){
@@ -482,9 +507,11 @@ bool removeAStudent(CoreData &data){
 bool moveStudentFromAToB (CoreData &data){
     Student *tmpSt = NULL;
     Class *tmpClass = NULL;
+    cout <<"        "<<"YOU WANT TO MOVE?: "<<endl;
     if (!showMenuStudent(tmpClass,tmpSt,data)) return false;
     Class *curClass = NULL;
     Student *curSt;
+    cout <<"        "<<"CLASS TO MOVE THIS STUDENT INTO:"<<endl;
     menuClass(curClass,data);
     if (curClass != nullptr){
         removeStudent(tmpSt ->id,data, curSt);
@@ -509,10 +536,10 @@ void copyStudentInfor(Student *&dup,Student *tmpSt){
 
 void activity2_6(string pathname, CoreData &data){
     clearScreen();
-    cout << "_____________VIEW LIST OF CLASSES AND STUDENTS_____________" << endl;
+    cout <<"        "<< "_____________VIEW LIST OF CLASSES AND STUDENTS_____________" << endl;
     Class *curClass = NULL;
     if (!viewListOfStudents(curClass,data)) return;
-    cout << "Input any number to back and save (1 to run again): ";
+    cout <<"            "<< "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
     if(choice != 1) return;
@@ -522,11 +549,11 @@ void activity2_6(string pathname, CoreData &data){
 
 void activity2_3(string pathname, CoreData &data){
     clearScreen();
-    cout << "_____________EDIT AN EXISTING STUDENT_____________" << endl;
+    cout <<"            "<< "_____________EDIT AN EXISTING STUDENT_____________" << endl;
     int choice;
-    cout << "1.Input ID to edit." <<endl;
-    cout << "2.View menu." <<endl;
-    cout <<"Your choice (0 to return): ";
+    cout <<"            "<< "1.Input ID to edit." <<endl;
+    cout <<"            "<< "2.View menu." <<endl;
+    cout <<"            "<<"Your choice (0 to return): ";
     cin >> choice;
     switch(choice){
         case 0:
@@ -545,13 +572,13 @@ void activity2_3(string pathname, CoreData &data){
             }
             break;
         default:{
-            cout << "Invalid choice,try again.";
+            cout <<"            "<< "Invalid choice,try again."<<endl;
             activity2_3(pathname,data);
             return;
         }
     }
     saveToDataBase(pathname,data);
-    cout << "Input any number to back and save (1 to run again): ";
+    cout <<"            "<< "Input any number to back and save (1 to run again): ";
     cin >> choice;
     if(choice != 1) return;
     activity2_3(pathname,data);
@@ -559,11 +586,11 @@ void activity2_3(string pathname, CoreData &data){
 
 void activity2_5(string pathname, CoreData &data){
     clearScreen();
-    cout << "_____________CHANGE CLASS OF A STUDENT_____________" << endl;
+    cout <<"            "<< "_____________CHANGE CLASS OF A STUDENT_____________" << endl;
     if (!moveStudentFromAToB(data)) return;
     saveToDataBase(pathname,data);
-    cout << "Change successfully!" << endl;
-    cout << "Input any number to back and save (1 to run again): ";
+    cout <<"            "<< "Change successfully!" << endl;
+    cout <<"            "<< "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
     if(choice != 1) return;
@@ -572,11 +599,11 @@ void activity2_5(string pathname, CoreData &data){
 
 void activity2_2(string pathname, CoreData &data){
     clearScreen();
-    cout << "_____________MANUALLY ADD A STUDENT_____________" << endl;
+    cout <<"            "<< "_____________MANUALLY ADD A STUDENT_____________" << endl;
     if (!addAStudent(data)) return;
     saveToDataBase(pathname,data);
-    cout << "Add student successfully!"<<endl;
-    cout << "Input any number to back and save (1 to run again): ";
+    cout <<"            "<< "Add student successfully!"<<endl;
+    cout <<"            "<< "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
     if(choice != 1) return;
@@ -585,11 +612,11 @@ void activity2_2(string pathname, CoreData &data){
 
 void activity2_4(string pathname, CoreData &data){
     clearScreen();
-    cout << "_____________REMOVE A STUDENT_____________" << endl;
+    cout <<"            "<< "_____________REMOVE A STUDENT_____________" << endl;
     if (!removeAStudent(data)) return;
     saveToDataBase(pathname,data);
-    cout << "Remove student successfully!"<<endl;
-    cout << "Input any number to back and save (1 to run again): ";
+    cout <<"            "<< "Remove student successfully!"<<endl;
+    cout <<"            "<< "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
     if(choice != 1) return;
@@ -598,10 +625,10 @@ void activity2_4(string pathname, CoreData &data){
 
 void activity2_1(string pathname, CoreData &data){
     clearScreen();
-    cout << "_____________IMPORT STUDENTS FROM A CSV FILE_____________" << endl;
+    cout <<"            "<< "_____________IMPORT STUDENTS FROM A CSV FILE_____________" << endl;
     if (!importStudentFromCsvFile(data,pathname)) return;
     saveToDataBase(pathname,data);
-    cout << "Input any number to back and save (1 to run again): ";
+    cout <<"            "<< "Input any number to back and save (1 to run again): ";
     int choice;
     cin >> choice;
     if(choice != 1) return;
