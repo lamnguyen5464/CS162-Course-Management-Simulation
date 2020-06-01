@@ -249,7 +249,7 @@ void editYear(Year*& curYear, CoreData& data)
 			cout << endl << "New academic year name (INPUT 0 TO CANCEL): ";
 			string tmpYearName;
 			getline(cin, tmpYearName);
-			if (tmpYearName != "0" || tmpYearName != "")
+			if (tmpYearName != "0" && tmpYearName != "")
 			{
 				Year* tmpYear = NULL;
 				while (findYear(tmpYearName, tmpYear, data))
@@ -327,7 +327,7 @@ void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& d
 			cout << "New course name (INPUT 0 TO CANCEL): ";
 			string tmpCourseName;
 			getline(cin, tmpCourseName);
-			if (tmpCourseName != "0" || tmpCourseName != "")
+			if (tmpCourseName != "0" && tmpCourseName != "")
 			{
 				curCourse->name = tmpCourseName;
 				cout << "Update successfully!" << endl;
@@ -340,7 +340,7 @@ void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& d
 			cout << "New lecturer account (INPUT 0 TO CANCEL): ";
 			string tmpLecAcc;
 			getline(cin, tmpLecAcc);
-			if (tmpLecAcc != "0" || tmpLecAcc != "")
+			if (tmpLecAcc != "0" && tmpLecAcc != "")
 			{
 				curCourse->lectureAccount = tmpLecAcc;
 				Lecturer* tmpLec = NULL;
@@ -356,7 +356,7 @@ void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& d
 			cout << "New room (INPUT 0 TO CANCEL): ";
 			string tmpRoom;
 			getline(cin, tmpRoom);
-			if (tmpRoom != "0" || tmpRoom != "")
+			if (tmpRoom != "0" && tmpRoom != "")
 			{
 				curCourse->room = tmpRoom;
 				cout << "Update successfully!" << endl;
@@ -1496,7 +1496,7 @@ void activity2(string pathName, CoreData& data)
 	string curYearName;
 	cin.ignore();
 	getline(cin, curYearName);
-	if (curYearName != "0" || curYearName != "")
+	if (curYearName != "0" && curYearName != "")
 	{
 		if (createNewEmptyYear(curYearName, data))
 		{
@@ -1592,7 +1592,7 @@ void activity7(string pathName, CoreData& data)
 		string fileName;
 		cin.ignore();
 		getline(cin, fileName);
-		if (fileName != "0" || fileName != "")
+		if (fileName != "0" && fileName != "")
 		{
 			importCourse(pathName + fileName, curYear->name, curSem->name, data);
 			saveToDataBase(pathName, data);
@@ -1615,7 +1615,7 @@ void activity8(string pathName, CoreData& data)
 		string curCourseID;
 		cin.ignore();
 		getline(cin, curCourseID);
-		if (curCourseID != "0" || curCourseID != "")
+		if (curCourseID != "0" && curCourseID != "")
 		{
 			createNewEmptyCourse(curYear->name, curSem->name, curCourseID, data);
 			saveToDataBase(pathName, data);
@@ -1876,7 +1876,7 @@ void activityL5(string pathName, CoreData& data)
 		string fileName;
 		cin.ignore();
 		getline(cin, fileName);
-		if (fileName != "0" || fileName != "")
+		if (fileName != "0" && fileName != "")
 		{
 			importScoreboard(pathName + fileName, curCourse);
 			saveToDataBase(pathName, data);
