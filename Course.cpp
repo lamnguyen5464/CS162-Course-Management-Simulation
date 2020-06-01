@@ -984,13 +984,17 @@ void importScoreboard(string address, Course* &curCourse)
 				StudentManager* curStdMng = NULL;
 				if (findStudentInCourse(stdID, curStdMng, curCourse))
 				{
-					fin >> curStdMng->pCourseManager->scoreBoard.midTerm;
+					if (fin.peek() != ',')
+						fin >> curStdMng->pCourseManager->scoreBoard.midTerm;
 					fin.ignore(1);
-					fin >> curStdMng->pCourseManager->scoreBoard.finalTerm;
+					if (fin.peek() != ',')
+						fin >> curStdMng->pCourseManager->scoreBoard.finalTerm;
 					fin.ignore(1);
-					fin >> curStdMng->pCourseManager->scoreBoard.lab;
+					if (fin.peek() != ',')
+						fin >> curStdMng->pCourseManager->scoreBoard.lab;
 					fin.ignore(1);
-					fin >> curStdMng->pCourseManager->scoreBoard.bonus;
+					if (fin.peek() != '\n')
+						fin >> curStdMng->pCourseManager->scoreBoard.bonus;
 					fin.ignore(1);
 					cout << "Import grade for student " << stdID << " - " << curStdMng->pStudent->lastName << " " << curStdMng->pStudent->firstName << " successfully!" << endl;
 				}
@@ -1008,47 +1012,80 @@ void importScoreboard(string address, Course* &curCourse)
 
 void exportScoreboard(string pathName, Course* curCourse)
 {
-	ofstream fout(pathName + curCourse->id + "- Scoreboard.csv");
+	ofstream fout(pathName + curCourse->id + " - Scoreboard.csv");
 	fout << "No,Student ID,Last name,First name,Midterm,Final,Lab,Bonus" << endl;
 	StudentManager* curStdMng = curCourse->pHeadStudentManager;
-	int i = 1;
-	while (curStdMng != NULL)
+	int no = 1;
+
+	StudentPosition* curStdPos = NULL;
+	int numOfStdInCourse = countNumOfStdInCourse(curCourse);
+	sortStdInCourse(curCourse, curStdPos, numOfStdInCourse);
+	for (int i = 0; i < numOfStdInCourse; ++i)
 	{
-		fout << i++ << "," <<curStdMng->pStudent->id<<","<<curStdMng->pStudent->lastName<<","<<curStdMng->pStudent->firstName << "," << curStdMng->pCourseManager->scoreBoard.midTerm 
-			<< "," << curStdMng->pCourseManager->scoreBoard.finalTerm << "," << curStdMng->pCourseManager->scoreBoard.lab << "," << curStdMng->pCourseManager->scoreBoard.bonus << endl;
-		curStdMng = curStdMng->next;
+		for (int j = 0; j < curStdPos[i].position; ++j)
+		{
+			curStdMng = curStdMng->next;
+		}
+		fout << no++ << "," << curStdMng->pStudent->id << "," << curStdMng->pStudent->lastName << "," << curStdMng->pStudent->firstName << ",";
+		
+		if (curStdMng->pCourseManager->scoreBoard.midTerm != -1)
+			fout << curStdMng->pCourseManager->scoreBoard.midTerm;
+		fout << ",";
+
+		if (curStdMng->pCourseManager->scoreBoard.finalTerm != -1)
+			fout << curStdMng->pCourseManager->scoreBoard.finalTerm;
+		fout << ",";
+			
+		if (curStdMng->pCourseManager->scoreBoard.lab != -1)
+			fout << curStdMng->pCourseManager->scoreBoard.lab;
+		fout << ",";
+
+		if (curStdMng->pCourseManager->scoreBoard.bonus != -1)
+			fout << curStdMng->pCourseManager->scoreBoard.bonus;
+		fout << endl;
+
+		curStdMng = curCourse->pHeadStudentManager;
 	}
+	delete[] curStdPos;
 	fout.close();
 	cout << "Export successfully!" << endl;
 }
 void exportAttendance(string pathName, Course* curCourse, CoreData data)
 {
 	StudentManager* tmpStMng = curCourse->pHeadStudentManager;
-	ofstream fout(pathName + curCourse->id + "- Attendance.csv");
+	ofstream fout(pathName + curCourse->id + " - Attendance.csv");
 	fout << "No,Student ID,Last name,First name,DOB,Class";
 	for (int j = 1; j <= tmpStMng->pCourseManager->checkIn.numOfDays; ++j)
 	{
 		fout << ",W" << j;
 	}
 	fout << endl;
-	int i = 1;
-	while (tmpStMng != NULL)
+	int no = 1;
+	StudentPosition* curStdPos = NULL;
+	int numOfStdInCourse = countNumOfStdInCourse(curCourse);
+	sortStdInCourse(curCourse, curStdPos, numOfStdInCourse);
+	for (int i = 0; i < numOfStdInCourse; ++i)
 	{
+		for (int j = 0; j < curStdPos[i].position; ++j)
+		{
+			tmpStMng = tmpStMng->next;
+		}
 		Student* tmpSt;
 		Class* ofClass;
 		findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
-		fout << i++ << "," << tmpStMng->pStudent->id << "," << tmpStMng->pStudent->lastName << "," << tmpStMng->pStudent->firstName << "," << tmpStMng->pStudent->dOB
+		fout << no++ << "," << tmpStMng->pStudent->id << "," << tmpStMng->pStudent->lastName << "," << tmpStMng->pStudent->firstName << "," << tmpStMng->pStudent->dOB
 			<< "," << ofClass->name;
 		for (CheckInCell* tmpCheckIn = tmpStMng->pCourseManager->checkIn.pHeadCell; tmpCheckIn != NULL; tmpCheckIn = tmpCheckIn->next)
 		{
 			if (tmpCheckIn->checked == true)
 				fout << ",x";
 			else
-				fout << ", ";
+				fout << ",";
 		}
 		fout << endl;
-		tmpStMng = tmpStMng->next;
+		tmpStMng = curCourse->pHeadStudentManager;
 	}
+	delete[] curStdPos;
 	fout.close();
 	cout << "Export successfully!" << endl;
 }
