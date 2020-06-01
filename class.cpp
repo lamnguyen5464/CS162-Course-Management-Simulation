@@ -236,7 +236,7 @@ bool editAnExistingStudent(CoreData &data){
         cout <<"            "<< "1.Last name: " << tmpSt->lastName<< endl;
         cout <<"            "<< "2.First name: " << tmpSt->firstName << endl;
         cout <<"            "<< "3.DoB: " << tmpSt->dOB << endl;
-        cout <<"            "<< "4.Gender: " << tmpSt->id << endl;
+        cout <<"            "<< "4.Gender: " << tmpSt->gender << endl;
         cout <<"            "<< ">Your choice (0 to return): ";
         cin >> choice;
         if (choice == 0) return false;
@@ -275,7 +275,7 @@ bool editByMenu (CoreData &data){
     cout <<"            "<< "1.Last name: " << curSt->lastName<< endl;
     cout <<"            "<< "2.First name: " << curSt->firstName << endl;
     cout <<"            "<< "3.DoB: " << curSt->dOB << endl;
-    cout <<"            "<< "4.Gender: " << curSt->id << endl;
+    cout <<"            "<< "4.Gender: " << curSt->gender << endl;
     cout <<"            "<< ">Your choice (0 to return): ";
     cin >> choice;
     if (choice == 0) return false;
