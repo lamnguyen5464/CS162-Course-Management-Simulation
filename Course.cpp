@@ -196,7 +196,7 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 			Student* tmpSt;
 			Class* ofClass;
 			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
-			cout << "|" << i << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
+			cout << "|" << i + 1 << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
 			for (CheckInCell* tmpCheckIn = tmpStMng->pCourseManager->checkIn.pHeadCell; tmpCheckIn != NULL; tmpCheckIn = tmpCheckIn->next)
 			{
 				if (tmpCheckIn->checked == true)
@@ -1674,7 +1674,7 @@ void activity11(string pathName, CoreData& data)
 			cout << endl << "Input ID of the student you want to remove from " << curCourse->id << " (INPUT 0 TO CANCEL): ";
 			long long stdID;
 			cin >> stdID;
-			if (stdID != 0)
+			while (stdID != 0)
 			{
 				StudentManager* stdMng = NULL;
 				if (removeStudentFromCourse(stdID, curCourse))
@@ -1684,6 +1684,8 @@ void activity11(string pathName, CoreData& data)
 				}
 				else
 					cout << "There is no student with this ID in this course. Try again. " << endl;
+				cout << endl << "Input ID of the student you want to remove from " << curCourse->id << " (INPUT 0 TO CANCEL): ";
+				cin >> stdID;
 			}
 		}
 	}
@@ -1706,7 +1708,7 @@ void activity12(string pathName, CoreData& data)
 		Student* std;
 		Class* stdClass;
 		cin >> stdID;
-		if (stdID != 0)
+		while (stdID != 0)
 		{
 			if (findStudent(stdID, data, std, stdClass))
 			{
@@ -1722,6 +1724,8 @@ void activity12(string pathName, CoreData& data)
 			}
 			else
 				cout << "There is no student with this ID. " << endl;
+			cout << endl << "Input ID of the student you want to add to " << curCourse->id << " (INPUT 0 TO CANCEL): ";
+			cin >> stdID;
 		}
 	}
 	returnMenu2Arg(&activity12, pathName, data);
@@ -1837,25 +1841,18 @@ void activityL4(string pathName, CoreData& data)
 		cout << endl << "Input the ID of the student you want to edit attendance (INPUT 0 TO CANCEL): ";
 		long long stdID;
 		cin >> stdID;
-		if (stdID != 0)
+		while (stdID != 0)
 		{
 			StudentManager* curStdMng = NULL;
-			while (!findStudentInCourse(stdID, curStdMng, curCourse))
-			{
+			if (!findStudentInCourse(stdID, curStdMng, curCourse))
 				cout << "There is no student with this ID in " << curCourse->id << ". Try again." << endl;
-				cout << "Input the ID of the student you want to edit attendance (INPUT 0 TO CANCEL): ";
-				cin >> stdID;
-				if (stdID == 0)
-				{
-					curStdMng = NULL;
-					break;
-				}
-			}
-			if (curStdMng != NULL)
+			else
 			{
 				editAttendance(curCourse, curStdMng);
 				saveToDataBase(pathName, data);
 			}
+			cout << endl << "Input the ID of the student you want to edit attendance (INPUT 0 TO CANCEL): ";
+			cin >> stdID;
 		}
 	}
 	returnMenu2Arg(&activityL4, pathName, data);
@@ -1900,25 +1897,18 @@ void activityL6(string pathName, CoreData& data)
 		cout << endl << "Input the ID of the student you want to edit grade (INPUT 0 TO CANCEL): ";
 		long long stdID;
 		cin >> stdID;
-		if (stdID != 0)
+		while (stdID != 0)
 		{
 			StudentManager* curStdMng = NULL;
-			while (!findStudentInCourse(stdID, curStdMng, curCourse))
-			{
+			if (!findStudentInCourse(stdID, curStdMng, curCourse))
 				cout << "There is no student with this ID in " << curCourse->id << ". Try again." << endl;
-				cout << "Input the ID of the student you want to edit grade (INPUT 0 TO CANCEL): ";
-				cin >> stdID;
-				if (stdID == 0)
-				{
-					curStdMng = NULL;
-					break;
-				}
-			}
-			if (curStdMng != NULL)
+			else
 			{
 				editGrade(curCourse, curStdMng);
 				saveToDataBase(pathName, data);
 			}
+			cout << endl << "Input the ID of the student you want to edit grade (INPUT 0 TO CANCEL): ";
+			cin >> stdID;
 		}
 	}
 	returnMenu2Arg(&activityL6, pathName, data);
