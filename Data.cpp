@@ -4,11 +4,16 @@
 #include <ctime>
 #include <iostream>
 #include <sstream>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "Data.hpp"
 using namespace std;
 ifstream fin;
 char ch[1000];
 void importDataBase(string pathName, CoreData &data){
+    
+    //create dir
+//    mkdir(ch, 0777);
     //scan Academic.txt
     fin.open(pathName + "Academic.txt");
     if (!fin.is_open()){
@@ -68,7 +73,8 @@ void importDataBase(string pathName, CoreData &data){
             tmpClass->pHeadStudent = NULL;
             getline(fin, tmpClass->name);
             parseString(tmpClass->name);
-            fin>>tmpClass->numOfStudents;     
+            fin>>tmpClass->numOfStudents;
+            fin.ignore(256,'\n');                  
             for(int j=1; j<=tmpClass->numOfStudents; j++){
                 Student *tmpSt = new Student;
                 fin>>tmpSt->id;
@@ -103,10 +109,9 @@ void importDataBase(string pathName, CoreData &data){
                     fin>>numOfDays;                     // cout<<numOfDays<<" "<<tmpSt->id<<endl;
                     for(int i=0; i<numOfDays; i++){        //
                         CheckInCell *tmpCell = new CheckInCell;
-                        fin>>tmpCell->checked>>tmpCell->startTime>>tmpCell->endTime; 
+                        fin>>tmpCell->checked>>tmpCell->startTime>>tmpCell->endTime;
                         addCheckInCell(tmpSt->pHeadCourseManager->checkIn, tmpCell);
                     }
-                    
                     fin.ignore(256,'\n');
                     
                 }
@@ -117,6 +122,7 @@ void importDataBase(string pathName, CoreData &data){
                     tmpClass->pTailStudent->next = tmpSt;
                     tmpClass->pTailStudent = tmpSt;
                 }
+                
             }
             tmpClass->next = data.pHeadClass;
             data.pHeadClass = tmpClass;
