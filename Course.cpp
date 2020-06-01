@@ -376,15 +376,18 @@ void createNewEmptyCourse(string yearName, string semesterName, string courseID,
 		curSem->numOfCourses++;
 		newCourse = new Course;
 		newCourse->id = courseID;
-		inputCourseDetail(yearName, semesterName, newCourse, data);
-		if (newCourse != NULL)
+		if (inputCourseDetail(yearName, semesterName, newCourse, data))
 		{
 			newCourse->next = curSem->pHeadCourse;
 			curSem->pHeadCourse = newCourse;
 			cout << "Create course " << newCourse->id << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
 		}
 		else
+		{
+			delete newCourse;
+			newCourse = NULL;
 			curSem->numOfCourses--;
+		}
 	}
 }
 void removeYear(Year*& curYear, CoreData& data)
@@ -689,7 +692,7 @@ void removeLecturer(Lecturer*& curLec, CoreData& data)
 }
 
 //INPUT
-void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newCourse, CoreData& data)
+bool importCourse(ifstream& fin, string inYear, string inSemester, Course*& newCourse, CoreData& data)
 {
 	getline(fin, newCourse->name, ',');
 	string tmpClassName;
@@ -698,19 +701,43 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 	toUpper(tmpClassName);
 	getline(fin, newCourse->lectureAccount, ',');
 	getline(fin, newCourse->startDate, ',');
+	TimeInfo tmp;
+	if (!tmp.setDate(newCourse->startDate))
+	{
+		cout << newCourse->id << ": Invalid date format! Check your .csv file and try again." << endl;
+		return false;
+	}
 	getline(fin, newCourse->endDate, ',');
+	if (!tmp.setDate(newCourse->endDate))
+	{
+		cout << newCourse->id << ": Invalid date format! Check your .csv file and try again." << endl;
+		return false;
+	}
 	getline(fin, newCourse->dayOfWeek, ',');
+	if (getDayFromString(newCourse->dayOfWeek) == -1)
+	{
+		cout << newCourse->id << ": Invalid day of week format! Check your .csv file and try again." << endl;
+		return false;
+	}
 	getline(fin, newCourse->startHour, ',');
+	if (!tmp.setTime(newCourse->startHour))
+	{
+		cout << newCourse->id << ": Invalid time format! Check your .csv file and try again." << endl;
+		return false;
+	}
 	getline(fin, newCourse->endHour, ',');
+	if (!tmp.setTime(newCourse->endHour))
+	{
+		cout << newCourse->id << ": Invalid time format! Check your .csv file and try again." << endl;
+		return false;
+	}
 	getline(fin, newCourse->room, '\n');
 	newCourse->id += " - " + tmpClassName;
 	Course* tmpCourse = NULL;
 	if (findCourse(inYear, inSemester, newCourse->id, tmpCourse, data))
 	{
 		cout << "The course " << newCourse->id << " of semester " << inSemester << " of year " << inYear << " is already existing!" << endl;
-		delete newCourse;
-		newCourse = NULL;
-		return;
+		return false;
 	}
 	if (findClass(tmpClassName, data, tmpClass))
 	{
@@ -733,10 +760,10 @@ void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 	else
 	{
 		cout << "Class " << tmpClassName << " for course " << newCourse->id << " does not exist! Edit this course in your .csv file and try again." << endl;
-		delete newCourse;
-		newCourse = NULL;
-		return;
+		return false;
 	}
+
+	return true;
 }
 void importCourse(string address, string yearName, string semesterName, CoreData& data)
 {
@@ -766,99 +793,105 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 					curSem->numOfCourses++;
 					newCourse = new Course;
 					newCourse->id = courseID;
-					importCourse(fin, yearName, semesterName, newCourse, data);
-					if (newCourse != NULL)
+					if (importCourse(fin, yearName, semesterName, newCourse, data))
 					{
 						newCourse->next = curSem->pHeadCourse;
 						curSem->pHeadCourse = newCourse;
 						cout << "Import course " << newCourse->id << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
 					}
 					else
+					{
+						delete newCourse;
+						newCourse = NULL;
 						curSem->numOfCourses--;
+						string garbage;
+						getline(fin, garbage, '\n');
+					}
 				}
 			}
 		}
 		fin.close();
 	}
 }
-void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, CoreData& data)
+bool inputCourseDetail (string inYear, string inSemester, Course* &newCourse, CoreData& data)
 {
 	cout << "Please input your course details (INPUT 0 ANYWHERE TO CANCEL):" << endl;
 	cout << "	Course name: ";
 	getline(cin, newCourse->name);
-	if (newCourse->name == "0")
-	{
-		delete newCourse;
-		newCourse = NULL;
-		return;
-	}
+	if (newCourse->name == "0" || newCourse->name == "")
+		return false;
 	cout << "	Account of the lecturer: ";
 	getline(cin, newCourse->lectureAccount);
-	if (newCourse->lectureAccount == "0")
-	{
-		delete newCourse;
-		newCourse = NULL;
-		return;
-	}
-	cout << "	Start date: ";
+	if (newCourse->lectureAccount == "0" || newCourse->lectureAccount == "")
+		return false;
+
+	cout << "	Start date (DD/MM/YYYY): ";
 	getline(cin, newCourse->startDate);
-	if (newCourse->startDate == "0")
+	TimeInfo tmp;
+	while (!tmp.setDate(newCourse->startDate))
 	{
-		delete newCourse;
-		newCourse = NULL;
-		return;
+		if (newCourse->startDate == "0" || newCourse->startDate == "")
+			return false;
+		cout << "Invalid date format! Try again." << endl;
+		cout << "	Start date (DD/MM/YYYY): ";
+		getline(cin, newCourse->startDate);
 	}
-	cout << "	End date: ";
+	
+	cout << "	End date (DD/MM/YYYY): ";
 	getline(cin, newCourse->endDate);
-	if (newCourse->endDate == "0")
+	while (!tmp.setDate(newCourse->endDate))
 	{
-		delete newCourse;
-		newCourse = NULL;
-		return;
+		if (newCourse->endDate == "0" || newCourse->endDate == "")
+			return false;
+		cout << "Invalid date format! Try again." << endl;
+		cout << "	End date (DD/MM/YYYY): ";
+		getline(cin, newCourse->endDate);
 	}
-	cout << "	Day of the week: ";
+
+	cout << "	Day of the week (Mon, Tue,...): ";
 	getline(cin, newCourse->dayOfWeek);
-	if (newCourse->dayOfWeek == "0")
+	while (getDayFromString(newCourse->dayOfWeek) == -1)
 	{
-		delete newCourse;
-		newCourse = NULL;
-		return;
+		if (newCourse->dayOfWeek == "0" || newCourse->dayOfWeek == "")
+			return false;
+		cout << "Invalid day of week format! Try again." << endl;
+		cout << "	Day of the week (Mon, Tue,...): ";
+		getline(cin, newCourse->dayOfWeek);
 	}
-	cout << "	Start hour: ";
+
+	cout << "	Start hour (HH:MM): ";
 	getline(cin, newCourse->startHour);
-	if (newCourse->startHour == "0")
+	while (!tmp.setTime(newCourse->startHour))
 	{
-		delete newCourse;
-		newCourse = NULL;
-		return;
+		if (newCourse->startHour == "0" || newCourse->startHour == "")
+			return false;
+		cout << "Invalid time format! Try again." << endl;
+		cout << "	Start hour (HH:MM): ";
+		getline(cin, newCourse->startHour);
 	}
-	cout << "	End hour: ";
+
+	cout << "	End hour (HH:MM): ";
 	getline(cin, newCourse->endHour);
-	if (newCourse->endHour == "0")
+	while (!tmp.setTime(newCourse->endHour))
 	{
-		delete newCourse;
-		newCourse = NULL;
-		return;
+		if (newCourse->endHour == "0" || newCourse->endHour == "")
+			return false;
+		cout << "Invalid time format! Try again." << endl;
+		cout << "	End hour (HH:MM): ";
+		getline(cin, newCourse->endHour);
 	}
+
 	cout << "	Room: ";
 	getline(cin, newCourse->room);
-	if (newCourse->room == "0")
-	{
-		delete newCourse;
-		newCourse = NULL;
-		return;
-	}
+	if (newCourse->room == "0" || newCourse->room == "")
+		return false;
 
 	string tmpClassName;
 	Class* tmpClass = NULL;
 	cout << "	Class: ";
 	getline(cin, tmpClassName);
-	if (tmpClassName == "0")
-	{
-		delete newCourse;
-		newCourse = NULL;
-		return;
-	}
+	if (tmpClassName == "0" || tmpClassName == "")
+		return false;
 	toUpper(tmpClassName);
 	
 	bool showOption = true;
@@ -877,9 +910,7 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 			switch (yourChoice)
 			{
 			case 0:
-				delete newCourse;
-				newCourse = NULL;
-				return;
+				return false;
 			case 1:
 				createNewEmptyClass(tmpClassName, data);
 				cout << "Create class " << tmpClassName << " successfully!" << endl;
@@ -888,12 +919,8 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 				cin.ignore();
 				cout << "	Class: ";
 				getline(cin, tmpClassName);
-				if (tmpClassName == "0")
-				{
-					delete newCourse;
-					newCourse = NULL;
-					return;
-				}
+				if (tmpClassName == "0" || tmpClassName == "")
+					return false;
 				toUpper(tmpClassName);
 				break;
 			default:
@@ -907,9 +934,7 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 	if (findCourse(inYear, inSemester, newCourse->id, tmpCourse, data))
 	{
 		cout << "The course " << newCourse->id << " of semester " << inSemester << " of year " << inYear << " is already existing!" << endl;
-		delete newCourse;
-		newCourse = NULL;
-		return;
+		return false;
 	}
 
 	Lecturer* tmpLec = NULL;
@@ -927,6 +952,7 @@ void inputCourseDetail (string inYear, string inSemester, Course* &newCourse, Co
 			tmpStd = tmpStd->next;
 		}
 	}
+	return true;
 }
 void importScoreboard(string address, Course* &curCourse)
 {

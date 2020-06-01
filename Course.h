@@ -59,8 +59,8 @@ void courseMenu(Year*& curYear, Semester*& curSem, Course*& curCourse, CoreData 
 void displayCourseInfo(Course* curCourse);
 void editCourse(Year* curYear, Semester* curSem, Course*& curCourse, CoreData& data);
 void createNewEmptyCourse(string yearName, string semesterName, string courseID, CoreData& data);
-void inputCourseDetail(string inYear, string inSemester, Course*& newCourse, CoreData& data);
-void importCourse(ifstream& fin, string inYear, string inSemester, Course*& newCourse, CoreData& data);
+bool inputCourseDetail(string inYear, string inSemester, Course*& newCourse, CoreData& data);
+bool importCourse(ifstream& fin, string inYear, string inSemester, Course*& newCourse, CoreData& data);
 void importCourse(string address, string yearName, string semesterName, CoreData& data);
 void displayCoursesCurSem(Year* curYear, Semester* curSem);
 void viewListOfStudents(Course* curCourse, CoreData data);
