@@ -139,6 +139,8 @@ void importDataBase(string pathName, CoreData &data){
         data.numOfLecturers = 0;
         data.numOfStaffs = 0;
         addStaff(hashPass("123"), "admin", data);
+        addStaff(hashPass("123"), "admin2", data);
+        addStaff(hashPass("123"), "admin3", data);
         fout.close();
     }else{
         int numOfStaffs, numOfLecturers;
