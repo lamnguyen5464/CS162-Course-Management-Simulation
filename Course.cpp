@@ -75,7 +75,7 @@ void viewListOfStudents(Course* curCourse, CoreData data) {
 		cout << "       " << setw((k + 49 + curCourse->lectureAccount.length() + to_string(numOfStdInCourse).length() + curCourse->startDate.length() + curCourse->endDate.length())/2) << right
 			<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(numOfStdInCourse) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate << endl;
 
-		cout << "       " << "|" << "No" << "  |" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << 
+		cout << "       " << "|" << setw(2) << left << "No" << "|" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" <<
 			"  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(6) << left << "Gender" << "  |" << "  " << setw(className) << left << "Class" << "  |" << endl;
 		
 		StudentPosition* curStdPos = NULL;
@@ -89,7 +89,7 @@ void viewListOfStudents(Course* curCourse, CoreData data) {
 			Student* tmpSt;
 			Class* ofClass;
 			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
-			cout << "       " << "|" << i + 1 << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << 
+			cout << "       " << "|" << setw(2) << left << i + 1 << "|" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" <<
 				"  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(6) << left << tmpStMng->pStudent->gender << "  |" << "  " << setw(className) << left << ofClass->name << "  |" << endl;
 			tmpStMng = curCourse->pHeadStudentManager;
 		}
@@ -116,7 +116,7 @@ void displayScoreboard(Course* curCourse, CoreData data)
 		cout << "       " << setw((k + 49 + curCourse->lectureAccount.length() + to_string(numOfStdInCourse).length() + curCourse->startDate.length() + curCourse->endDate.length()) / 2) << right
 			<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(numOfStdInCourse) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate << endl;
 		
-		cout << "       " << "|" << "No" << "  |" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(className) << left << "Class" << "  |"
+		cout << "       " << "|" << setw(2) << left << "No" << "|" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(className) << left << "Class" << "  |"
 			<< "  " << setw(7) << left << "Midterm" << "  |" << "  " << setw(7) << left << "Final" << "  |" << "  " << setw(7) << left << "Lab" << "  |" << "  " << setw(7) << left << "Bonus" << "  |" << endl;
 		
 		StudentPosition* curStdPos = NULL;
@@ -131,7 +131,7 @@ void displayScoreboard(Course* curCourse, CoreData data)
 			Class* ofClass;
 			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
 
-			cout << "       " << "|" << i + 1 << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
+			cout << "       " << "|" << setw(2) << left << i+1 << "|" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
 				
 			//if scores are still -1, display nothing
 			if (tmpStMng->pCourseManager->scoreBoard.midTerm != -1)
@@ -178,7 +178,7 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 		cout << setw((k + 77 + curCourse->lectureAccount.length() + to_string(numOfStdInCourse).length() + curCourse->startDate.length() + curCourse->endDate.length() + curCourse->startHour.length() + curCourse->endHour.length() + curCourse->dayOfWeek.length()) / 2) << right
 		<< "Lecturer: " + curCourse->lectureAccount + "   Number of students: " + to_string(numOfStdInCourse) + "   Duration: " + curCourse->startDate + " - " + curCourse->endDate + "   Time: " + curCourse->startHour + " - " + curCourse->endHour + "   Day of Week: " + curCourse->dayOfWeek << endl;
 		
-		cout << "|" << "No" << "  |" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(className) << left << "Class" << "  |";
+		cout << "|" << setw(2) << left << "No" << "|" << setw(stdID) << left << "ID" << "|" << "  " << setw(last) << left << "Last name" << "  |" << "  " << setw(first) << left << "First name" << "  |" << "  " << setw(dob) << left << "DOB" << "  |" << "  " << setw(className) << left << "Class" << "  |";
 		for (int i = 1; i <= tmpStMng->pCourseManager->checkIn.numOfDays; ++i)
 		{
 			cout << " W" << setw(2) << left << i << " |";
@@ -196,7 +196,7 @@ void viewAttendanceList(Course* curCourse, CoreData data)
 			Student* tmpSt;
 			Class* ofClass;
 			findStudent(tmpStMng->pStudent->id, data, tmpSt, ofClass);
-			cout << "|" << i + 1 << ".  |" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
+			cout << "|" << setw(2) << left << i+1 << "|" << setw(stdID) << left << tmpStMng->pStudent->id << "|" << "  " << setw(last) << left << tmpStMng->pStudent->lastName << "  |" << "  " << setw(first) << left << tmpStMng->pStudent->firstName << "  |" << "  " << setw(dob) << left << tmpStMng->pStudent->dOB << "  |" << "  " << setw(className) << left << ofClass->name << "  |";
 			for (CheckInCell* tmpCheckIn = tmpStMng->pCourseManager->checkIn.pHeadCell; tmpCheckIn != NULL; tmpCheckIn = tmpCheckIn->next)
 			{
 				if (tmpCheckIn->checked == true)
@@ -428,6 +428,7 @@ void removeYear(Year*& curYear, CoreData& data)
 			if (curYear == data.pHeadYear)
 			{
 				data.pHeadYear = curYear->next;
+				delete curYear;
 			}
 			else 
 			{
@@ -437,6 +438,7 @@ void removeYear(Year*& curYear, CoreData& data)
 					tmpYear = tmpYear->next;
 				}
 				tmpYear->next = curYear->next;
+				delete curYear;
 			}
 
 			cout << "Delete successfully!" << endl;
@@ -699,6 +701,36 @@ bool importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 	Class* tmpClass = NULL;
 	getline(fin, tmpClassName,',');
 	toUpper(tmpClassName);
+	newCourse->id += " - " + tmpClassName;
+	Course* tmpCourse = NULL;
+	if (findCourse(inYear, inSemester, newCourse->id, tmpCourse, data))
+	{
+		cout << "The course " << newCourse->id << " of semester " << inSemester << " of year " << inYear << " is already existing!" << endl;
+		return false;
+	}
+	if (findClass(tmpClassName, data, tmpClass))
+	{
+		Lecturer* tmpLec = NULL;
+		if (!findLecturer(newCourse->lectureAccount, data, tmpLec))
+		{
+			addLecturer(hashPass(newCourse->lectureAccount), newCourse->lectureAccount, data);
+		}
+
+		if (tmpClass->pHeadStudent != NULL)
+		{
+			Student* tmpStd = tmpClass->pHeadStudent;
+			while (tmpStd != NULL)
+			{
+				addStudentToCourse(tmpStd, newCourse, inYear, inSemester);
+				tmpStd = tmpStd->next;
+			}
+		}
+	}
+	else
+	{
+		cout << "Class " << tmpClassName << " for course " << newCourse->id << " does not exist! Edit this course in your .csv file and try again." << endl;
+		return false;
+	}
 	getline(fin, newCourse->lectureAccount, ',');
 	getline(fin, newCourse->startDate, ',');
 	TimeInfo tmp;
@@ -732,36 +764,6 @@ bool importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 		return false;
 	}
 	getline(fin, newCourse->room, '\n');
-	newCourse->id += " - " + tmpClassName;
-	Course* tmpCourse = NULL;
-	if (findCourse(inYear, inSemester, newCourse->id, tmpCourse, data))
-	{
-		cout << "The course " << newCourse->id << " of semester " << inSemester << " of year " << inYear << " is already existing!" << endl;
-		return false;
-	}
-	if (findClass(tmpClassName, data, tmpClass))
-	{
-		Lecturer* tmpLec = NULL;
-		if (!findLecturer(newCourse->lectureAccount, data, tmpLec))
-		{
-			addLecturer(hashPass(newCourse->lectureAccount), newCourse->lectureAccount, data);
-		}
-
-		if (tmpClass->pHeadStudent != NULL)
-		{
-			Student* tmpStd = tmpClass->pHeadStudent;
-			while (tmpStd != NULL)
-			{
-				addStudentToCourse(tmpStd, newCourse, inYear, inSemester);
-				tmpStd = tmpStd->next;
-			}
-		}
-	}
-	else
-	{
-		cout << "Class " << tmpClassName << " for course " << newCourse->id << " does not exist! Edit this course in your .csv file and try again." << endl;
-		return false;
-	}
 
 	return true;
 }
@@ -804,7 +806,7 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 						delete newCourse;
 						newCourse = NULL;
 						curSem->numOfCourses--;
-						string garbage;
+						string garbage; //delete the remaining info of that course
 						getline(fin, garbage, '\n');
 					}
 				}
@@ -1077,10 +1079,9 @@ void exportAttendance(string pathName, Course* curCourse, CoreData data)
 			<< "," << ofClass->name;
 		for (CheckInCell* tmpCheckIn = tmpStMng->pCourseManager->checkIn.pHeadCell; tmpCheckIn != NULL; tmpCheckIn = tmpCheckIn->next)
 		{
+			fout << ",";
 			if (tmpCheckIn->checked == true)
-				fout << ",x";
-			else
-				fout << ",";
+				fout << "x";
 		}
 		fout << endl;
 		tmpStMng = curCourse->pHeadStudentManager;
