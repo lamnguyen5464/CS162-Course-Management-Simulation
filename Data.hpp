@@ -126,7 +126,6 @@ bool findStudent(long long id, CoreData data, Student *&st, Class *&ofClass);
 bool removeStudent(long long id, CoreData &data);
 bool removeStudent(long long id, CoreData &data, Student *&removedStudent);
 bool findClass(string className, CoreData data, Class *&foundClass);
-void deallocateStudent(Student *&st);
 void createNewEmptyClass(string className, CoreData &data);
 void addStudentToClass(Class *&pClass, Student *& tmpSt);
 void addStudentToClass(string className, Student *&st, CoreData &data);
@@ -143,10 +142,7 @@ void addStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear,
 void linkStudentToCourse(Student *&curStudent, Course *&curCourse, string inYear, string inSemester);
 bool findStudentInCourse(long long stId, StudentManager *&foundStudentManager, Course *curCourse);
 void removeCourse(Semester *curSem ,Course *curCourse);
-bool removeCourse(string yearName, string semesterName, string courseID, CoreData &data);
-void deallocateCourse(Course *curCourse);
-void deallocateCourseManager(CourseManager *curCourseManager);
-void deallocateStudentManager(StudentManager *curStudentManager);
+bool removeCourse(string yearName, string semesterName, string courseID, CoreData &data); 
 bool removeStudentFromCourse(long long stID, Course *curCourse);
 //Time  - checkIn
 int getDaysOfMonth(int month, int year);
@@ -164,4 +160,6 @@ void addStaff(long long hash, string userName, CoreData &data);
 void addLecturer(long long hash, string userName, CoreData &data);
 bool findLecturer(string nameLec, CoreData data, Lecturer *&foundLecturer);
 bool findStaff(string nameStaff, CoreData data, Staff *&foundStaff);
+//deallocate
+void deallocate(CoreData data);
 #endif /* Data_hpp */ 

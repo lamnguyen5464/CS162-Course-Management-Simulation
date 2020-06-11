@@ -309,7 +309,6 @@ bool removeStudent(long long id, CoreData &data){
                     removeStudentFromCourse(curStudent->id, courseManager->pCourse);
                     courseManager = courseManager->next;
                 }
-                deallocateStudent(curStudent);
                 return true;
                 //
             }
@@ -348,12 +347,6 @@ bool removeStudent(long long id, CoreData &data, Student *&removedStudent){
         }
     }
     return false;
-}
-void deallocateStudent(Student *&st){
-//    while (st->numOfCourse--){
-//        //deallocate *year
-//    }
-//    delete st;
 }
 void addStudentToClass(Class *&pClass, Student *& tmpSt){
 //    tmpSt->hashPassword = hashPass(to_string(tmpSt->id));
@@ -614,9 +607,7 @@ void removeCourseManager(StudentManager *curStudentManager){
         curCourseManager->pre->next = curCourseManager->next;
     }
     if (curCourseManager->next != NULL) curCourseManager->next->pre = curCourseManager->pre;
-    
-    deallocateCourseManager(curCourseManager);
-    deallocateStudentManager(curStudentManager);
+     
 }
 void removeCourse(Semester *curSem ,Course *curCourse){
     curSem->numOfCourses--;
@@ -633,15 +624,6 @@ void removeCourse(Semester *curSem ,Course *curCourse){
         StudentManager *tmp = curStudentManager->next;
         curStudentManager = tmp;
     }
-}
-void deallocateCourse(Course *curCourse){
-    
-}
-void deallocateCourseManager(CourseManager *curCourseManager){
-    
-}
-void deallocateStudentManager(StudentManager *curStudentManager){
-    
 }
 bool removeCourse(string yearName, string semesterName, string courseID, CoreData &data){
     Course *curCourse;
@@ -666,7 +648,6 @@ bool removeStudentFromCourse(long long stID, Course *curCourse){
             curStudentManager->pre->next = curStudentManager->next;
         }
         if (curStudentManager->next != NULL) curStudentManager->next->pre = curStudentManager->pre;
-        deallocateStudentManager(curStudentManager);
         return true;
     }
     return false;
@@ -937,4 +918,34 @@ bool findStaff(string nameStaff, CoreData data, Staff *&foundStaff){
         curStaff = curStaff->next;
     }
     return false;
+}
+void deallocateStudent(Student *curStudent){
+    delete curStudent;
+}
+void deallocateClass(Class *curClass){
+    Student *curStudent = curClass->pHeadStudent;
+    while (curStudent != NULL){
+        Student *tmpStudent =  curStudent;
+        curStudent = curStudent->next;
+        deallocateStudent(tmpStudent);
+    }
+}
+void deallocateYear(Year *curYear){
+    delete curYear;
+}
+void deallocate(CoreData data){
+    Class *curClass = data.pHeadClass;
+    while (curClass != NULL){
+        Class *tmpClass = curClass;
+        curClass = curClass->next;
+        deallocateClass(tmpClass);
+    }
+     
+    Year *curYear = data.pHeadYear;
+    while (curYear != NULL){
+        Year *tmpYear = curYear;
+        curYear = curYear->next;
+        deallocateYear(tmpYear);
+    }
+    
 }
