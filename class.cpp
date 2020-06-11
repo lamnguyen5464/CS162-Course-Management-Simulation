@@ -179,7 +179,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             string tmpLast;
             cin.ignore();
             getline(cin,tmpLast);
-            if (tmpLast != "0"){
+            if (tmpLast != "0" ){
                 tmpSt ->lastName = tmpLast;
                 cout <<"            "<< "   Edit successfully!"<<endl;
             }
@@ -190,7 +190,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             string tmpFirst;
             cin.ignore();
             getline(cin,tmpFirst);
-            if (tmpFirst != "0"){
+            if (tmpFirst != "0" ){
                 tmpSt ->firstName = tmpFirst;
                 cout <<"            "<< "   Edit successfully!"<<endl;
             }
@@ -201,7 +201,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             string tmpdob;
             cin.ignore();
             getline(cin,tmpdob);
-            if (tmpdob != "0"){
+            if (tmpdob != "0" ){
                 tmpSt ->dOB = tmpdob;
                 cout <<"            "<< "   Edit successfully!"<<endl;
             }
@@ -211,7 +211,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             cout <<"            "<< "    New gender: "<<endl;
             string tmpgender;
             inputGender(tmpgender);
-            if (tmpgender != "0"){
+            if (tmpgender != "0" ){
                 tmpSt ->gender = tmpgender;
                 cout <<"            "<< "   Edit successfully!"<<endl;
             }
@@ -341,7 +341,7 @@ bool viewListOfStudents(Class *curClass,CoreData data){
         return false;
     }
     else{
-        int last = 10,first = 10,dob = 0,id = 3;
+        int last = 10,first = 10,dob = 5,id = 3;
         findMaxLengthOfStudentInfo(tmpSt,last,first,dob,id);
         int k =(last+first+dob+30);
         tmpSt = curClass ->pHeadStudent;
@@ -389,7 +389,7 @@ bool showMenuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
             return false;
         }
         else{
-            int last = 10,first = 10,dob = 0,id = 3;
+            int last = 10,first = 10,dob = 5,id = 3;
             findMaxLengthOfStudentInfo(tmpSt,last,first,dob,id);
             int k =(last+first+dob+30);
             tmpSt = curClass ->pHeadStudent;
@@ -459,7 +459,6 @@ bool addAStudent(CoreData &data){
         inputGender(tmpSt->gender);
         if (tmpSt->gender == "0") return false;
         createClassToImport(data);
-        cout <<"            "<<"    "<< "Class: ";
         Class *tmpClass = NULL;
         menuClass(tmpClass,data);
         if (tmpClass == NULL) return addAStudent(data);
@@ -636,17 +635,20 @@ void activity2_1(string pathname, CoreData &data){
 }
 
 void login(CoreData &data,string pathName){
+    clearScreen();
     bool showoption = true;
     string userName;
     string password = "";
     while(1){
         if (showoption == false){
             cout << endl;
+            clearScreen();
             cout << "UserName or password is incorrect. Please try again!"<< endl;
             showoption = true;
         }
         cout << "_________________STUDENT_MANAGEMENT_SYSTEM_________________" << endl;
         cout << "UserName: ";
+        cin.ignore();
         getline(cin,userName);
         cout << "Password: ";
         inputPassword(password);
@@ -661,8 +663,8 @@ void login(CoreData &data,string pathName){
         }
         else{
             showFunctions(check,data,pathName,curSt,curLec,curStaff,tmpClass);
+            menuLogin(data,pathName);
         }
-        clearScreen();
     }
 }
 
@@ -923,5 +925,37 @@ void menuStaff (CoreData &data,string pathName){
                 break;
         }
         if (option) clearScreen();
+    }
+}
+
+void menuLogin(CoreData &data,string pathName){
+    clearScreen();
+    bool option = true;
+    while(1){
+        if (!option){
+            clearScreen();
+            cout << "Invalid choice. Try again."<<endl;
+
+            option = true;
+        }
+        cout << " ___________________________________"<<endl;
+        cout << "|_____STUDENT_MANAGEMENT_SYSTEM_____|"<<endl;
+        cout << "|                                   |"<<endl;
+        cout << "|      "<< "0.Exit" << "                       |"<<endl;
+        cout << "|      "<< "1.Login" << "                      |"<<endl;
+        cout << "|___________________________________|"<<endl;
+        cout << ">Your choice: ";
+        int choice;
+        cin >> choice;
+        switch(choice){
+            case 1:
+                login(data,pathName);
+                break;
+            case 0:
+                break;
+            default:
+                option = false;
+                break;
+        }
     }
 }

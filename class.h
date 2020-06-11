@@ -2,6 +2,7 @@
 #define CLASS_H_INCLUDED
 //login
 void convertStringToId (string username,long long &ID);
+void menuLogin(CoreData &data,string pathName);
 void login(CoreData &data,string pathName);
 void inputPassword(string &password);
 int checkUser(string Username,string password,Student *&curSt,Lecturer *&curLec,Staff *&curStaff,Class *&tmpClass,CoreData data);
