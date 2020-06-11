@@ -179,7 +179,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             string tmpLast;
             cin.ignore();
             getline(cin,tmpLast);
-            if (tmpLast != "0" ){
+            if (tmpLast != "0" && tmpLast != ""){
                 tmpSt ->lastName = tmpLast;
                 cout <<"            "<< "   Edit successfully!"<<endl;
             }
@@ -190,7 +190,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             string tmpFirst;
             cin.ignore();
             getline(cin,tmpFirst);
-            if (tmpFirst != "0" ){
+            if (tmpFirst != "0" && tmpFirst != ""){
                 tmpSt ->firstName = tmpFirst;
                 cout <<"            "<< "   Edit successfully!"<<endl;
             }
@@ -201,7 +201,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             string tmpdob;
             cin.ignore();
             getline(cin,tmpdob);
-            if (tmpdob != "0" ){
+            if (tmpdob != "0" && tmpdob != "" ){
                 tmpSt ->dOB = tmpdob;
                 cout <<"            "<< "   Edit successfully!"<<endl;
             }
@@ -211,7 +211,7 @@ void edit(Student *&tmpSt,int choice,bool &checkChoice){
             cout <<"            "<< "    New gender: "<<endl;
             string tmpgender;
             inputGender(tmpgender);
-            if (tmpgender != "0" ){
+            if (tmpgender != "0" && tmpgender != ""){
                 tmpSt ->gender = tmpgender;
                 cout <<"            "<< "   Edit successfully!"<<endl;
             }
@@ -347,9 +347,9 @@ bool viewListOfStudents(Class *curClass,CoreData data){
         tmpSt = curClass ->pHeadStudent;
         int i = 1;
         cout <<"    "<<"        "<<setw(k/2+7)<< right << "CLASS " << curClass->name<<endl;
-        cout <<"    "<< "       "<<"|"<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<endl;
+        cout <<"    "<< "       "<<"|"<<setw(3)<<left<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<endl;
         while(tmpSt != NULL){
-            cout <<"    "<<"       "<< "|"<<i<<". |" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(6)<< left <<tmpSt->gender<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<endl;
+            cout <<"    "<<"       "<< "|"<<setw(3)<<left<<i<<".|" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(6)<< left <<tmpSt->gender<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<endl;
             tmpSt = tmpSt -> next;
             ++i;
         }
@@ -395,9 +395,9 @@ bool showMenuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
             tmpSt = curClass ->pHeadStudent;
             int i = 1,choice;
             cout <<"    "<<"        "<<setw(k/2+7)<< right << "CLASS " << curClass->name<<endl;
-            cout <<"    "<< "       "<<"|"<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<endl;
+            cout <<"    "<< "       "<<"|"<<setw(3)<<left<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<endl;
             while(tmpSt != NULL){
-                cout <<"    "<<"       "<< "|"<<i<<". |" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<"  "<<setw(6)<<left<<tmpSt->gender<<"  |"<<endl;
+                cout <<"    "<<"       "<< "|"<<setw(3)<<left<<i<<".|" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<"  "<<setw(6)<<left<<tmpSt->gender<<"  |"<<endl;
                 tmpSt = tmpSt -> next;
                 ++i;
             }
@@ -449,15 +449,15 @@ bool addAStudent(CoreData &data){
         cout <<"            "<< "    "<<"Last name: " ;
         cin.ignore();
         getline(cin,tmpSt->lastName);
-        if (tmpSt->lastName == "0") return false;
+        if (tmpSt->lastName == "0" || tmpSt->lastName == "") return false;
         cout <<"            "<< "    "<<"First name: " ;
         getline(cin,tmpSt->firstName);
-        if (tmpSt->firstName == "0") return false;
+        if (tmpSt->firstName == "0" || tmpSt->firstName == "") return false;
         cout <<"            "<<"    "<< "DoB: " ;
         getline(cin,tmpSt->dOB);
-        if (tmpSt->dOB == "0") return false;
+        if (tmpSt->dOB == "0" || tmpSt->dOB == "") return false;
         inputGender(tmpSt->gender);
-        if (tmpSt->gender == "0") return false;
+        if (tmpSt->gender == "0" ||tmpSt->gender == "") return false;
         createClassToImport(data);
         Class *tmpClass = NULL;
         menuClass(tmpClass,data);
@@ -635,9 +635,10 @@ void activity2_1(string pathname, CoreData &data){
 }
 
 void login(CoreData &data,string pathName){
-    clearScreen();
     bool showoption = true;
     string userName;
+    cin.ignore();
+    clearScreen();
     string password = "";
     while(1){
         if (showoption == false){
@@ -648,7 +649,6 @@ void login(CoreData &data,string pathName){
         }
         cout << "_________________STUDENT_MANAGEMENT_SYSTEM_________________" << endl;
         cout << "UserName: ";
-        cin.ignore();
         getline(cin,userName);
         cout << "Password: ";
         inputPassword(password);
@@ -657,9 +657,9 @@ void login(CoreData &data,string pathName){
         Staff *curStaff = NULL;
         Class *tmpClass = NULL;
         int check = checkUser(userName,password,curSt,curLec,curStaff,tmpClass,data);
-        password = "";
         if (check == 0){
             showoption = false;
+            password = "";
         }
         else{
             showFunctions(check,data,pathName,curSt,curLec,curStaff,tmpClass);
@@ -843,21 +843,21 @@ void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff
         }
         case 3:{
             if (tmpHash != curStaff->hashPassword){
-                cout << "Your password is incorrect!"<<endl;
+                cout <<"        "<< "Your password is incorrect!"<<endl;
             }
             else{
-                cout << "New password: ";
+                cout <<"        "<< "New password: ";
                 inputPassword(newPass);
                 cout << endl;
-                cout << "Confirm password: ";
+                cout <<"        "<< "Confirm password: ";
                 inputPassword(reNewPass);
                 cout << endl;
                 if (newPass == reNewPass){
                     curStaff->hashPassword=hashPass(newPass);
-                    cout << "Change successfully"<<endl;
+                    cout <<"        "<< "Change successfully"<<endl;
                 }
                 else{
-                    cout << "Incorrect new pass!"<<endl;
+                    cout <<"        "<< "Incorrect new pass!"<<endl;
                 }
             }
             break;
@@ -867,7 +867,7 @@ void changePassword(int check,Student *&curSt,Lecturer *&curLec,Staff *&curStaff
             break;
     }
     saveToDataBase(pathName,data);
-    cout << "Input any number to return: ";
+    cout <<"        "<< "Input any number to return: ";
     int tmp;
     cin >> tmp;
 }
