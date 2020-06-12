@@ -663,8 +663,8 @@ void login(CoreData &data,string pathName){
         }
         else{
             showFunctions(check,data,pathName,curSt,curLec,curStaff,tmpClass);
-            menuLogin(data,pathName);
         }
+        if (showoption) return;
     }
 }
 
@@ -929,13 +929,12 @@ void menuStaff (CoreData &data,string pathName){
 }
 
 void menuLogin(CoreData &data,string pathName){
-    clearScreen();
     bool option = true;
     while(1){
+        clearScreen();
         if (!option){
             clearScreen();
             cout << "Invalid choice. Try again."<<endl;
-
             option = true;
         }
         cout << " ___________________________________"<<endl;
