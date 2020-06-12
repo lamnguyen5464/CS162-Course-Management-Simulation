@@ -347,9 +347,9 @@ bool viewListOfStudents(Class *curClass,CoreData data){
         tmpSt = curClass ->pHeadStudent;
         int i = 1;
         cout <<"    "<<"        "<<setw(k/2+7)<< right << "CLASS " << curClass->name<<endl;
-        cout <<"    "<< "       "<<"|"<<setw(3)<<left<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<endl;
+        cout <<"    "<< "       "<<"|"<<setw(2)<<left<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<endl;
         while(tmpSt != NULL){
-            cout <<"    "<<"       "<< "|"<<setw(3)<<left<<i<<".|" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(6)<< left <<tmpSt->gender<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<endl;
+            cout <<"    "<<"       "<< "|"<<setw(2)<<left<<i<<" |" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(6)<< left <<tmpSt->gender<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<endl;
             tmpSt = tmpSt -> next;
             ++i;
         }
@@ -395,9 +395,9 @@ bool showMenuStudent(Class *&curClass,Student *&tmpSt,CoreData data){
             tmpSt = curClass ->pHeadStudent;
             int i = 1,choice;
             cout <<"    "<<"        "<<setw(k/2+7)<< right << "CLASS " << curClass->name<<endl;
-            cout <<"    "<< "       "<<"|"<<setw(3)<<left<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<endl;
+            cout <<"    "<< "       "<<"|"<<setw(2)<<left<<"No"<<" |" <<setw(id) <<left <<"ID"<<"|"<<"  "<<setw(last)<<left<<"Last name"<<"  |"<<"  "<<setw(first)<<left<<"First name"<<"  |"<<"  "<<setw(dob)<<left<<"DOB"<<"  |"<<"  "<<setw(6)<<left<<"Gender"<<"  |"<<endl;
             while(tmpSt != NULL){
-                cout <<"    "<<"       "<< "|"<<setw(3)<<left<<i<<".|" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<"  "<<setw(6)<<left<<tmpSt->gender<<"  |"<<endl;
+                cout <<"    "<<"       "<< "|"<<setw(2)<<left<<i<<" |" <<setw(id) <<left <<tmpSt->id<<"|"<<"  "<<setw(last)<<left<<tmpSt->lastName<<"  |"<<"  "<<setw(first)<<left<<tmpSt->firstName<<"  |"<<"  "<<setw(dob)<<left<<tmpSt->dOB<<"  |"<<"  "<<setw(6)<<left<<tmpSt->gender<<"  |"<<endl;
                 tmpSt = tmpSt -> next;
                 ++i;
             }
@@ -952,7 +952,8 @@ void menuLogin(CoreData &data,string pathName){
                 login(data,pathName);
                 break;
             case 0:
-                break;
+                deallocate(data);
+                return;
             default:
                 option = false;
                 break;
