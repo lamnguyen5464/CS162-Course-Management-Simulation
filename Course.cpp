@@ -700,37 +700,7 @@ bool importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 	string tmpClassName;
 	Class* tmpClass = NULL;
 	getline(fin, tmpClassName,',');
-	toUpper(tmpClassName);
-	newCourse->id += " - " + tmpClassName;
-	Course* tmpCourse = NULL;
-	if (findCourse(inYear, inSemester, newCourse->id, tmpCourse, data))
-	{
-		cout << "The course " << newCourse->id << " of semester " << inSemester << " of year " << inYear << " is already existing!" << endl;
-		return false;
-	}
-	if (findClass(tmpClassName, data, tmpClass))
-	{
-		Lecturer* tmpLec = NULL;
-		if (!findLecturer(newCourse->lectureAccount, data, tmpLec))
-		{
-			addLecturer(hashPass(newCourse->lectureAccount), newCourse->lectureAccount, data);
-		}
-
-		if (tmpClass->pHeadStudent != NULL)
-		{
-			Student* tmpStd = tmpClass->pHeadStudent;
-			while (tmpStd != NULL)
-			{
-				addStudentToCourse(tmpStd, newCourse, inYear, inSemester);
-				tmpStd = tmpStd->next;
-			}
-		}
-	}
-	else
-	{
-		cout << "Class " << tmpClassName << " for course " << newCourse->id << " does not exist! Edit this course in your .csv file and try again." << endl;
-		return false;
-	}
+	
 	getline(fin, newCourse->lectureAccount, ',');
 	getline(fin, newCourse->startDate, ',');
 	TimeInfo tmp;
@@ -761,6 +731,37 @@ bool importCourse(ifstream& fin, string inYear, string inSemester, Course*& newC
 	if (!tmp.setTime(newCourse->endHour))
 	{
 		cout << newCourse->id << ": Invalid time format! Check your .csv file and try again." << endl;
+		return false;
+	}
+	toUpper(tmpClassName);
+	newCourse->id += " - " + tmpClassName;
+	Course* tmpCourse = NULL;
+	if (findCourse(inYear, inSemester, newCourse->id, tmpCourse, data))
+	{
+		cout << "The course " << newCourse->id << " of semester " << inSemester << " of year " << inYear << " is already existing!" << endl;
+		return false;
+	}
+	if (findClass(tmpClassName, data, tmpClass))
+	{
+		Lecturer* tmpLec = NULL;
+		if (!findLecturer(newCourse->lectureAccount, data, tmpLec))
+		{
+			addLecturer(hashPass(newCourse->lectureAccount), newCourse->lectureAccount, data);
+		}
+
+		if (tmpClass->pHeadStudent != NULL)
+		{
+			Student* tmpStd = tmpClass->pHeadStudent;
+			while (tmpStd != NULL)
+			{
+				addStudentToCourse(tmpStd, newCourse, inYear, inSemester);
+				tmpStd = tmpStd->next;
+			}
+		}
+	}
+	else
+	{
+		cout << "Class " << tmpClassName << " for course " << newCourse->id << " does not exist! Edit this course in your .csv file and try again." << endl;
 		return false;
 	}
 	getline(fin, newCourse->room, '\n');
