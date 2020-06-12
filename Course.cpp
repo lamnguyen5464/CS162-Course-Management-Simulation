@@ -378,8 +378,7 @@ void createNewEmptyCourse(string yearName, string semesterName, string courseID,
 		newCourse->id = courseID;
 		if (inputCourseDetail(yearName, semesterName, newCourse, data))
 		{
-			newCourse->next = curSem->pHeadCourse;
-			curSem->pHeadCourse = newCourse;
+			addNewCourse(curSem, newCourse);
 			cout << "Create course " << newCourse->id << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
 		}
 		else
@@ -798,8 +797,7 @@ void importCourse(string address, string yearName, string semesterName, CoreData
 					newCourse->id = courseID;
 					if (importCourse(fin, yearName, semesterName, newCourse, data))
 					{
-						newCourse->next = curSem->pHeadCourse;
-						curSem->pHeadCourse = newCourse;
+						addNewCourse(curSem, newCourse);
 						cout << "Import course " << newCourse->id << " of semester " << semesterName << " of year " << yearName << " successfully!" << endl;
 					}
 					else
